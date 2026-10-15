@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingVertical="10dp"
+    android:background="?attr/selectableItemBackground">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginEnd="12dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_pack_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/ink"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            tools:text="OTP &amp; verification codes" />
+
+        <TextView
+            android:id="@+id/tv_pack_desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textColor="@color/sub"
+            android:textSize="12sp"
+            android:lineSpacingExtra="2dp"
+            tools:text="Always show one-time passcodes, even from blocked senders." />
+    </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_add_pack"
+        style="@style/Widget.Material3.Button.TonalButton"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:text="Add"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:textColor="@color/accent"
+        app:backgroundTint="@color/accentSoft"
+        app:cornerRadius="10dp" />
+
+</LinearLayout>

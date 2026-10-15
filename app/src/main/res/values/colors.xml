@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="bg">#F5F5F2</color>
+    <color name="card">#FFFFFF</color>
+    <color name="ink">#1C1C1A</color>
+    <color name="sub">#6B6B66</color>
+    <color name="line">#E3E2DC</color>
+    <color name="accent">#0F6E56</color>
+    <color name="accentSoft">#DDF1EA</color>
+    <color name="allow">#15803D</color>
+    <color name="allowSoft">#DCF3E3</color>
+    <color name="block">#B42318</color>
+    <color name="blockSoft">#FBE4E1</color>
+    <color name="info">#1D4ED8</color>
+    <color name="infoSoft">#EFF6FF</color>
+    <color name="warning">#B45309</color>
+    <color name="warningSoft">#FEF3C7</color>
+
+    <color name="colorPrimary">#0F6E56</color>
+    <color name="colorPrimaryDark">#094E3C</color>
+    <color name="colorAccent">#0F6E56</color>
+    <color name="splashscreen_background">#F5F5F2</color>
+</resources>
