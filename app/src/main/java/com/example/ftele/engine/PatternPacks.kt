@@ -38,7 +38,7 @@ object PatternPacks {
             id = "scam-words",
             name = "Scam & fraud words",
             description = "Common lures used by SMS scammers.",
-            seed = false,
+            seed = true,
             rules = listOf(
                 PresetRule(RuleAction.BLOCK, RuleTarget.BODY, MatchMode.CONTAINS, "lottery"),
                 PresetRule(RuleAction.BLOCK, RuleTarget.BODY, MatchMode.CONTAINS, "prize"),

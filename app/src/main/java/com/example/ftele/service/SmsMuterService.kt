@@ -2,6 +2,7 @@ package com.example.ftele.service
 
 import android.app.Notification
 import android.content.Context
+import android.os.Bundle
 import android.provider.Telephony
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
@@ -34,9 +35,32 @@ class SmsMuterService : NotificationListenerService() {
         if (!isSmsApp(ctx, sbn.packageName)) return
 
         val extras = n.extras
-        val title = extras.getCharSequence(Notification.EXTRA_TITLE)?.toString() ?: ""
-        val text = (extras.getCharSequence(Notification.EXTRA_BIG_TEXT)
+        var title = extras.getCharSequence(Notification.EXTRA_TITLE)?.toString() ?: ""
+        var text = (extras.getCharSequence(Notification.EXTRA_BIG_TEXT)
             ?: extras.getCharSequence(Notification.EXTRA_TEXT))?.toString() ?: ""
+
+        // Handle MessagingStyle notifications (Google Messages, etc.)
+        if (text.isEmpty() || text.contains("Sensitive", ignoreCase = true)) {
+            val messages = extras.getParcelableArray(Notification.EXTRA_MESSAGES)
+            if (messages != null && messages.isNotEmpty()) {
+                val last = messages.last()
+                if (last is Bundle) {
+                    val msgText = last.getCharSequence("text")?.toString()
+                    if (!msgText.isNullOrBlank()) {
+                        text = msgText
+                    }
+                }
+            }
+        }
+
+        // Fallback to tickerText if text is empty or masked
+        if ((text.isEmpty() || text.contains("Sensitive", ignoreCase = true)) && n.tickerText != null) {
+            val ticker = n.tickerText.toString()
+            if (ticker.isNotBlank()) {
+                text = ticker
+            }
+        }
+
         if (title.isEmpty() && text.isEmpty()) return
 
         val decision = RuleStore.decide(ctx, title, text)
