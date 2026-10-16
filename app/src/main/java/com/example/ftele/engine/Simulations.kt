@@ -52,11 +52,6 @@ object Simulations {
             sender = "CallSign",
             text = "ይህ የጥሪ ፊርማ አገልግሎት ነው። ለዕለታዊ ጥቅል ለመመዝገብ *623*1*1# ይጫኑ፤ ለሳምንታዊ *623*1*2# ይጫኑ። ኢትዮ ቴሌኮም",
             expectedDecision = "Muted (VAS Ringtone)"
-        ),
-        SampleSms(
-            sender = "Gugu",
-            text = "Selam temu, yet neh? Let's eat lunch together at 1.",
-            expectedDecision = "Allowed (Personal SMS)"
         )
     )
 }
