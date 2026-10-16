@@ -74,29 +74,23 @@ class ActivityAdapter(
             // Allow button styling
             if (rule?.action == RuleAction.ALLOW) {
                 b.btnAllowSender.text = "Allowed"
-                b.btnAllowSender.setBackgroundColor(ContextCompat.getColor(ctx, R.color.allow))
-                b.btnAllowSender.setTextColor(Color.WHITE)
-                b.btnAllowSender.strokeWidth = 0
+                b.btnAllowSender.setBackgroundResource(R.drawable.bg_chip_shown)
+                b.btnAllowSender.setTextColor(ContextCompat.getColor(ctx, R.color.allow))
             } else {
                 b.btnAllowSender.text = "Allow sender"
-                b.btnAllowSender.setBackgroundColor(Color.TRANSPARENT)
+                b.btnAllowSender.setBackgroundResource(R.drawable.bg_input)
                 b.btnAllowSender.setTextColor(ContextCompat.getColor(ctx, R.color.ink))
-                b.btnAllowSender.strokeColor = ColorStateList.valueOf(ContextCompat.getColor(ctx, R.color.line))
-                b.btnAllowSender.strokeWidth = 2
             }
 
             // Block button styling
             if (rule?.action == RuleAction.BLOCK) {
                 b.btnBlockSender.text = "Blocked"
-                b.btnBlockSender.setBackgroundColor(ContextCompat.getColor(ctx, R.color.block))
-                b.btnBlockSender.setTextColor(Color.WHITE)
-                b.btnBlockSender.strokeWidth = 0
+                b.btnBlockSender.setBackgroundResource(R.drawable.bg_chip_muted)
+                b.btnBlockSender.setTextColor(ContextCompat.getColor(ctx, R.color.block))
             } else {
                 b.btnBlockSender.text = "Block sender"
-                b.btnBlockSender.setBackgroundColor(Color.TRANSPARENT)
+                b.btnBlockSender.setBackgroundResource(R.drawable.bg_input)
                 b.btnBlockSender.setTextColor(ContextCompat.getColor(ctx, R.color.ink))
-                b.btnBlockSender.strokeColor = ColorStateList.valueOf(ContextCompat.getColor(ctx, R.color.line))
-                b.btnBlockSender.strokeWidth = 2
             }
 
             b.btnAllowSender.setOnClickListener { onAllowSender(entry.sender) }

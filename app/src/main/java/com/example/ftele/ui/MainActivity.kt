@@ -26,7 +26,6 @@ import com.example.ftele.model.MatchMode
 import com.example.ftele.model.Rule
 import com.example.ftele.model.RuleAction
 import com.example.ftele.model.RuleTarget
-import com.google.android.material.tabs.TabLayout
 import kotlin.random.Random
 
 class MainActivity : AppCompatActivity() {
@@ -48,27 +47,27 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-
+        WindowCompat.setDecorFitsSystemWindows(window, true)
         b = ActivityMainBinding.inflate(layoutInflater)
         setContentView(b.root)
 
-        initData()
-        setupHeader()
-        setupModeCard()
+        setupMasterSwitch()
+        setupPermissionWarning()
+        setupModeToggle()
         setupTabs()
         setupActivityList()
         setupShieldsSection()
         setupRulesSection()
         setupTryIt()
-        refreshTryIt()
+
+        refreshData(onlyLog = false)
     }
 
     override fun onResume() {
         super.onResume()
         checkPermission()
         refreshData(onlyLog = false)
-        refreshHandler.postDelayed(refreshRunnable, 2000)
+        refreshHandler.post(refreshRunnable)
     }
 
     override fun onPause() {
@@ -76,95 +75,76 @@ class MainActivity : AppCompatActivity() {
         refreshHandler.removeCallbacks(refreshRunnable)
     }
 
-    private fun initData() {
-        customRules = RuleStore.getCustomRules(this).toMutableList()
-    }
-
-    private fun checkPermission() {
-        val granted = isAccessGranted()
-        b.cardPermission.visibility = if (granted) View.GONE else View.VISIBLE
-    }
-
-    private fun isAccessGranted(): Boolean {
-        val enabled = Settings.Secure.getString(
-            contentResolver,
-            "enabled_notification_listeners"
-        ) ?: ""
-        return enabled.split(":").any { it.startsWith("$packageName/") }
-    }
-
-    private fun setupHeader() {
+    private fun setupMasterSwitch() {
         b.switchMaster.isChecked = RuleStore.isEnabled(this)
         b.switchMaster.setOnCheckedChangeListener { _, isChecked ->
             RuleStore.setEnabled(this, isChecked)
         }
+    }
 
+    private fun setupPermissionWarning() {
         b.btnOpenAccess.setOnClickListener {
-            val intent = Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(intent)
+            startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
         }
     }
 
-    private fun setupModeCard() {
-        val currentMode = RuleStore.getMode(this)
-        if (currentMode == "allowlist") {
-            b.toggleMode.check(R.id.btn_mode_allowlist)
-            updateModeDesc("allowlist")
-        } else {
-            b.toggleMode.check(R.id.btn_mode_blocklist)
-            updateModeDesc("blocklist")
-        }
+    private fun checkPermission() {
+        val flat = Settings.Secure.getString(contentResolver, "enabled_notification_listeners") ?: ""
+        val hasPermission = flat.contains(packageName)
+        b.cardPermission.visibility = if (hasPermission) View.GONE else View.VISIBLE
+    }
 
-        b.toggleMode.addOnButtonCheckedListener { _, checkedId, isChecked ->
-            if (!isChecked) return@addOnButtonCheckedListener
-            val newMode = if (checkedId == R.id.btn_mode_allowlist) "allowlist" else "blocklist"
-            RuleStore.setMode(this, newMode)
-            updateModeDesc(newMode)
+    private fun setupModeToggle() {
+        val currentMode = RuleStore.getMode(this)
+        updateModeUI(currentMode)
+
+        b.btnModeBlocklist.setOnClickListener {
+            RuleStore.setMode(this, "blocklist")
+            updateModeUI("blocklist")
+            refreshTryIt()
+        }
+        b.btnModeAllowlist.setOnClickListener {
+            RuleStore.setMode(this, "allowlist")
+            updateModeUI("allowlist")
             refreshTryIt()
         }
     }
 
-    private fun updateModeDesc(mode: String) {
-        if (mode == "blocklist") {
-            b.tvModeDesc.text =
-                "Only senders and words on your block list are muted. Everything else rings as usual."
+    private fun updateModeUI(mode: String) {
+        val isBlocklist = mode == "blocklist"
+        b.btnModeBlocklist.setBackgroundResource(if (isBlocklist) R.drawable.bg_tab_indicator else R.drawable.bg_input)
+        b.btnModeBlocklist.setTextColor(if (isBlocklist) 0xFFFFFFFF.toInt() else ContextCompat.getColor(this, R.color.ink))
+
+        b.btnModeAllowlist.setBackgroundResource(if (!isBlocklist) R.drawable.bg_tab_indicator else R.drawable.bg_input)
+        b.btnModeAllowlist.setTextColor(if (!isBlocklist) 0xFFFFFFFF.toInt() else ContextCompat.getColor(this, R.color.ink))
+
+        b.tvModeDesc.text = if (isBlocklist) {
+            "Only senders and words on your block list are muted. Everything else rings as usual."
         } else {
-            b.tvModeDesc.text =
-                "Every SMS is muted unless it matches an allow rule. Add your banks and contacts first."
+            "Every SMS is muted unless it matches an allow rule. Add your banks and contacts first."
         }
     }
 
     private fun setupTabs() {
-        b.tabLayout.removeAllTabs()
-        b.tabLayout.addTab(b.tabLayout.newTab().setText("Activity (0)"))
-        b.tabLayout.addTab(b.tabLayout.newTab().setText("Shields"))
-        b.tabLayout.addTab(b.tabLayout.newTab().setText("Custom Rules (0)"))
+        showTab(0)
+        b.btnTabActivity.setOnClickListener { showTab(0) }
+        b.btnTabShields.setOnClickListener { showTab(1) }
+        b.btnTabRules.setOnClickListener { showTab(2) }
+    }
 
-        b.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab?) {
-                when (tab?.position) {
-                    0 -> {
-                        b.layoutActivity.visibility = View.VISIBLE
-                        b.layoutShields.visibility = View.GONE
-                        b.layoutRules.visibility = View.GONE
-                    }
-                    1 -> {
-                        b.layoutActivity.visibility = View.GONE
-                        b.layoutShields.visibility = View.VISIBLE
-                        b.layoutRules.visibility = View.GONE
-                    }
-                    2 -> {
-                        b.layoutActivity.visibility = View.GONE
-                        b.layoutShields.visibility = View.GONE
-                        b.layoutRules.visibility = View.VISIBLE
-                    }
-                }
-            }
+    private fun showTab(index: Int) {
+        b.layoutActivity.visibility = if (index == 0) View.VISIBLE else View.GONE
+        b.layoutShields.visibility = if (index == 1) View.VISIBLE else View.GONE
+        b.layoutRules.visibility = if (index == 2) View.VISIBLE else View.GONE
 
-            override fun onTabUnselected(tab: TabLayout.Tab?) {}
-            override fun onTabReselected(tab: TabLayout.Tab?) {}
-        })
+        b.btnTabActivity.setBackgroundResource(if (index == 0) R.drawable.bg_tab_indicator else android.R.color.transparent)
+        b.btnTabActivity.setTextColor(if (index == 0) 0xFFFFFFFF.toInt() else ContextCompat.getColor(this, R.color.sub))
+
+        b.btnTabShields.setBackgroundResource(if (index == 1) R.drawable.bg_tab_indicator else android.R.color.transparent)
+        b.btnTabShields.setTextColor(if (index == 1) 0xFFFFFFFF.toInt() else ContextCompat.getColor(this, R.color.sub))
+
+        b.btnTabRules.setBackgroundResource(if (index == 2) R.drawable.bg_tab_indicator else android.R.color.transparent)
+        b.btnTabRules.setTextColor(if (index == 2) 0xFFFFFFFF.toInt() else ContextCompat.getColor(this, R.color.sub))
     }
 
     private fun setupActivityList() {
@@ -212,7 +192,7 @@ class MainActivity : AppCompatActivity() {
     private fun setupShieldsSection() {
         b.btnSimulateShield.setOnClickListener {
             runSimulation()
-            b.tabLayout.getTabAt(0)?.select()
+            showTab(0)
             Toast.makeText(this, "Simulated SMS! Check Activity log.", Toast.LENGTH_SHORT).show()
         }
         renderShields()
@@ -227,7 +207,7 @@ class MainActivity : AppCompatActivity() {
             itemBinding.tvShieldIcon.text = category.icon
             itemBinding.tvShieldTitle.text = category.title
             itemBinding.tvShieldDesc.text = category.description
-            itemBinding.tvShieldCount.text = "${category.rules.size} rules active"
+            itemBinding.tvShieldCount.text = "${category.rules.size} behavioral rules"
 
             if (category.isProtection) {
                 itemBinding.tvShieldProtectionBadge.visibility = View.VISIBLE
@@ -278,13 +258,13 @@ class MainActivity : AppCompatActivity() {
 
             val senderFilter = b.etDraftSender.text?.toString()?.trim()?.ifBlank { null }
 
-            val target = when (b.toggleTarget.checkedButtonId) {
+            val target = when (b.toggleTarget.checkedRadioButtonId) {
                 R.id.btn_target_sender -> RuleTarget.SENDER
                 R.id.btn_target_body -> RuleTarget.BODY
                 else -> RuleTarget.BOTH
             }
 
-            val mode = when (b.chipgroupMode.checkedChipId) {
+            val mode = when (b.chipgroupMode.checkedRadioButtonId) {
                 R.id.chip_mode_exact -> MatchMode.EXACT
                 R.id.chip_mode_prefix -> MatchMode.PREFIX
                 R.id.chip_mode_suffix -> MatchMode.SUFFIX
@@ -303,7 +283,7 @@ class MainActivity : AppCompatActivity() {
             }
             b.tvRegexError.visibility = View.GONE
 
-            val action = if (b.toggleAction.checkedButtonId == R.id.btn_action_allow) {
+            val action = if (b.toggleAction.checkedRadioButtonId == R.id.btn_action_allow) {
                 RuleAction.ALLOW
             } else {
                 RuleAction.BLOCK
@@ -364,6 +344,7 @@ class MainActivity : AppCompatActivity() {
             b.tvTestChip.setTextColor(ContextCompat.getColor(this, R.color.allow))
             b.tvTestChip.setBackgroundResource(R.drawable.bg_chip_shown)
         }
+
         b.tvTestReason.text = decision.reason
     }
 
@@ -376,7 +357,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun refreshData(onlyLog: Boolean) {
         logs = RuleStore.getLog(this)
-
         if (logs.isEmpty()) {
             b.rvActivity.visibility = View.GONE
             b.layoutEmptyActivity.visibility = View.VISIBLE
@@ -391,19 +371,19 @@ class MainActivity : AppCompatActivity() {
         val effectiveRules = RuleStore.getAllEffectiveRules(this)
         activityAdapter.updateRules(effectiveRules)
 
-        b.tabLayout.getTabAt(0)?.text = "Activity (${logs.size})"
+        b.btnTabActivity.text = "Activity (${logs.size})"
 
         var activeShieldCount = 0
         for (c in PatternPacks.CATEGORIES) {
             if (RuleStore.isCategoryEnabled(this, c.id)) activeShieldCount++
         }
-        b.tabLayout.getTabAt(1)?.text = "Shields ($activeShieldCount/${PatternPacks.CATEGORIES.size})"
+        b.btnTabShields.text = "Shields ($activeShieldCount/${PatternPacks.CATEGORIES.size})"
 
         if (!onlyLog) {
             customRules = RuleStore.getCustomRules(this).toMutableList()
             ruleAdapter.submitList(customRules.toList())
             b.tvEmptyRules.visibility = if (customRules.isEmpty()) View.VISIBLE else View.GONE
-            b.tabLayout.getTabAt(2)?.text = "Custom Rules (${customRules.size})"
+            b.btnTabRules.text = "Custom Rules (${customRules.size})"
         }
     }
 }

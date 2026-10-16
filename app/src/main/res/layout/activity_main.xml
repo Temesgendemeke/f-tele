@@ -5,18 +5,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg"
     android:orientation="vertical"
+    android:background="@color/bg"
     android:fitsSystemWindows="true">
 
-    <!-- Top Bar -->
+    <!-- App Header & Master Switch -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:paddingHorizontal="16dp"
-        android:paddingTop="14dp"
+        android:paddingTop="12dp"
         android:paddingBottom="6dp">
 
         <LinearLayout
@@ -36,15 +36,16 @@
                     android:layout_height="wrap_content"
                     android:text="F*ck Tele"
                     android:textColor="@color/ink"
-                    android:textSize="26sp"
+                    android:textSize="22sp"
                     android:textStyle="bold"
                     android:letterSpacing="-0.02" />
 
                 <TextView
+                    android:id="@+id/tv_offline_badge"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:paddingHorizontal="7dp"
+                    android:paddingHorizontal="6dp"
                     android:paddingVertical="2dp"
                     android:text="OFFLINE"
                     android:textSize="10sp"
@@ -63,16 +64,14 @@
                 android:textSize="13sp" />
         </LinearLayout>
 
-        <com.google.android.material.materialswitch.MaterialSwitch
+        <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/switch_master"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:thumbTint="@color/card"
-            app:trackTint="@color/accent" />
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
     <!-- Permission Warning Card -->
-    <com.google.android.material.card.MaterialCardView
+    <androidx.cardview.widget.CardView
         android:id="@+id/card_permission"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -80,8 +79,6 @@
         android:layout_marginTop="8dp"
         app:cardCornerRadius="14dp"
         app:cardElevation="0dp"
-        app:strokeWidth="1dp"
-        app:strokeColor="@color/block"
         app:cardBackgroundColor="@color/blockSoft"
         android:visibility="gone"
         tools:visibility="visible">
@@ -109,7 +106,7 @@
                 android:textSize="13sp"
                 android:lineSpacingExtra="2dp" />
 
-            <com.google.android.material.button.MaterialButton
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_open_access"
                 android:layout_width="match_parent"
                 android:layout_height="44dp"
@@ -118,15 +115,12 @@
                 android:textColor="#FFFFFF"
                 android:textStyle="bold"
                 android:textSize="14sp"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                app:backgroundTint="@color/block"
-                app:cornerRadius="12dp" />
+                android:background="@color/block" />
         </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
+    </androidx.cardview.widget.CardView>
 
     <!-- Mode Card -->
-    <com.google.android.material.card.MaterialCardView
+    <androidx.cardview.widget.CardView
         android:id="@+id/card_mode"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -134,8 +128,6 @@
         android:layout_marginTop="8dp"
         app:cardCornerRadius="14dp"
         app:cardElevation="0dp"
-        app:strokeWidth="1dp"
-        app:strokeColor="@color/line"
         app:cardBackgroundColor="@color/card">
 
         <LinearLayout
@@ -152,32 +144,37 @@
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
-            <com.google.android.material.button.MaterialButtonToggleGroup
+            <LinearLayout
                 android:id="@+id/toggle_mode"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                app:singleSelection="true"
-                app:selectionRequired="true">
+                android:orientation="horizontal">
 
-                <com.google.android.material.button.MaterialButton
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btn_mode_blocklist"
-                    style="@style/Widget.App.SegmentedButton"
                     android:layout_width="0dp"
                     android:layout_height="40dp"
                     android:layout_weight="1"
+                    android:layout_marginEnd="4dp"
+                    android:background="@drawable/bg_radio_segment"
                     android:text="Only blocked"
-                    android:textSize="13sp" />
+                    android:textColor="@color/text_color_radio_segment"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
 
-                <com.google.android.material.button.MaterialButton
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btn_mode_allowlist"
-                    style="@style/Widget.App.SegmentedButton"
                     android:layout_width="0dp"
                     android:layout_height="40dp"
                     android:layout_weight="1"
+                    android:layout_marginStart="4dp"
+                    android:background="@drawable/bg_radio_segment"
                     android:text="All except allowed"
-                    android:textSize="13sp" />
-            </com.google.android.material.button.MaterialButtonToggleGroup>
+                    android:textColor="@color/text_color_radio_segment"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/tv_mode_desc"
@@ -189,25 +186,52 @@
                 android:lineSpacingExtra="2dp"
                 tools:text="Only senders and words on your block list are muted. Everything else rings as usual." />
         </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
+    </androidx.cardview.widget.CardView>
 
     <!-- Navigation Tabs (Activity | Shields | Rules) -->
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tab_layout"
+    <LinearLayout
+        android:id="@+id/tab_container"
         android:layout_width="match_parent"
         android:layout_height="44dp"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="8dp"
         android:background="@drawable/bg_segmented_tab"
-        app:tabIndicatorColor="@color/card"
-        app:tabIndicatorHeight="38dp"
-        app:tabIndicatorGravity="center"
-        app:tabIndicator="@drawable/bg_tab_indicator"
-        app:tabSelectedTextColor="@color/ink"
-        app:tabTextColor="@color/sub"
-        app:tabRippleColor="@null"
-        app:tabMode="fixed"
-        app:tabGravity="fill" />
+        android:orientation="horizontal"
+        android:padding="3dp">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_tab_activity"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/bg_tab_indicator"
+            android:text="Activity (0)"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_tab_shields"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:text="Shields"
+            android:textColor="@color/sub"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_tab_rules"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:text="Custom Rules (0)"
+            android:textColor="@color/sub"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+    </LinearLayout>
 
     <!-- Tab View Container -->
     <FrameLayout
@@ -252,17 +276,16 @@
                     android:textSize="14sp"
                     android:lineSpacingExtra="3dp" />
 
-                <com.google.android.material.button.MaterialButton
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btn_simulate_empty"
-                    style="@style/Widget.Material3.Button.TonalButton"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="38dp"
                     android:layout_marginTop="16dp"
                     android:text="Simulate Real SMS"
                     android:textColor="@color/accent"
                     android:textStyle="bold"
-                    app:backgroundTint="@color/accentSoft"
-                    app:cornerRadius="10dp" />
+                    android:background="@drawable/bg_chip_shown"
+                    android:paddingHorizontal="16dp" />
             </LinearLayout>
 
             <TextView
@@ -295,15 +318,13 @@
                 android:paddingBottom="36dp">
 
                 <!-- Shields Overview Card -->
-                <com.google.android.material.card.MaterialCardView
+                <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
                     android:layout_marginBottom="12dp"
                     app:cardCornerRadius="14dp"
                     app:cardElevation="0dp"
-                    app:strokeWidth="1dp"
-                    app:strokeColor="@color/line"
                     app:cardBackgroundColor="@color/card">
 
                     <LinearLayout
@@ -329,9 +350,8 @@
                             android:textSize="13sp"
                             android:lineSpacingExtra="2dp" />
 
-                        <com.google.android.material.button.MaterialButton
+                        <androidx.appcompat.widget.AppCompatButton
                             android:id="@+id/btn_simulate_shield"
-                            style="@style/Widget.Material3.Button.TonalButton"
                             android:layout_width="match_parent"
                             android:layout_height="42dp"
                             android:layout_marginTop="12dp"
@@ -339,12 +359,9 @@
                             android:textColor="@color/accent"
                             android:textStyle="bold"
                             android:textSize="13sp"
-                            android:insetTop="0dp"
-                            android:insetBottom="0dp"
-                            app:backgroundTint="@color/accentSoft"
-                            app:cornerRadius="10dp" />
+                            android:background="@drawable/bg_chip_shown" />
                     </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                </androidx.cardview.widget.CardView>
 
                 <!-- Container for category shields dynamically rendered -->
                 <LinearLayout
@@ -372,15 +389,13 @@
                 android:orientation="vertical"
                 android:paddingBottom="36dp">
 
-                <!-- Add a Custom Rule Card -->
-                <com.google.android.material.card.MaterialCardView
+                <!-- Add Rule Card -->
+                <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
                     app:cardCornerRadius="14dp"
                     app:cardElevation="0dp"
-                    app:strokeWidth="1dp"
-                    app:strokeColor="@color/line"
                     app:cardBackgroundColor="@color/card">
 
                     <LinearLayout
@@ -392,7 +407,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Add a custom rule"
+                            android:text="Add new rule"
                             android:textColor="@color/ink"
                             android:textSize="15sp"
                             android:textStyle="bold" />
@@ -400,31 +415,30 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:text="Target a whole contact or a specific phrase within a contact."
+                            android:layout_marginTop="12dp"
+                            android:text="Text or pattern"
                             android:textColor="@color/sub"
-                            android:textSize="12sp" />
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
 
-                        <!-- Word or Phrase to Match -->
                         <EditText
                             android:id="@+id/et_draft_value"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
+                            android:layout_marginTop="4dp"
                             android:background="@drawable/bg_input"
                             android:paddingHorizontal="12dp"
                             android:paddingVertical="10dp"
-                            android:hint="Text or pattern to match"
+                            android:hint="e.g. lottery, loan, *won*, 605"
                             android:textColorHint="@color/sub"
                             android:textColor="@color/ink"
                             android:textSize="14sp"
                             android:inputType="textNoSuggestions" />
 
-                        <!-- Specific Contact/Sender Filter (Optional) -->
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
+                            android:layout_marginTop="12dp"
                             android:text="Specific sender (optional)"
                             android:textColor="@color/sub"
                             android:textSize="12sp"
@@ -453,41 +467,55 @@
                             android:textSize="12sp"
                             android:textStyle="bold" />
 
-                        <com.google.android.material.button.MaterialButtonToggleGroup
+                        <RadioGroup
                             android:id="@+id/toggle_target"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
-                            app:singleSelection="true"
-                            app:selectionRequired="true">
+                            android:orientation="horizontal">
 
-                            <com.google.android.material.button.MaterialButton
+                            <RadioButton
                                 android:id="@+id/btn_target_sender"
-                                style="@style/Widget.App.SegmentedButton"
                                 android:layout_width="0dp"
                                 android:layout_height="38dp"
                                 android:layout_weight="1"
+                                android:layout_marginEnd="4dp"
+                                android:button="@null"
+                                android:gravity="center"
+                                android:background="@drawable/bg_radio_segment"
                                 android:text="Sender"
-                                android:textSize="12sp" />
+                                android:textColor="@color/text_color_radio_segment"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
 
-                            <com.google.android.material.button.MaterialButton
+                            <RadioButton
                                 android:id="@+id/btn_target_body"
-                                style="@style/Widget.App.SegmentedButton"
                                 android:layout_width="0dp"
                                 android:layout_height="38dp"
                                 android:layout_weight="1"
+                                android:layout_marginHorizontal="2dp"
+                                android:button="@null"
+                                android:gravity="center"
+                                android:background="@drawable/bg_radio_segment"
                                 android:text="Message"
-                                android:textSize="12sp" />
+                                android:textColor="@color/text_color_radio_segment"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
 
-                            <com.google.android.material.button.MaterialButton
+                            <RadioButton
                                 android:id="@+id/btn_target_both"
-                                style="@style/Widget.App.SegmentedButton"
                                 android:layout_width="0dp"
                                 android:layout_height="38dp"
                                 android:layout_weight="1"
+                                android:layout_marginStart="4dp"
+                                android:button="@null"
+                                android:gravity="center"
+                                android:background="@drawable/bg_radio_segment"
                                 android:text="Both"
-                                android:textSize="12sp" />
-                        </com.google.android.material.button.MaterialButtonToggleGroup>
+                                android:textColor="@color/text_color_radio_segment"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+                        </RadioGroup>
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -504,56 +532,96 @@
                             android:layout_marginTop="6dp"
                             android:scrollbars="none">
 
-                            <com.google.android.material.chip.ChipGroup
+                            <RadioGroup
                                 android:id="@+id/chipgroup_mode"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                app:singleSelection="true"
-                                app:selectionRequired="true">
+                                android:orientation="horizontal">
 
-                                <com.google.android.material.chip.Chip
+                                <RadioButton
                                     android:id="@+id/chip_mode_contains"
-                                    style="@style/Widget.App.FilterChip"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
+                                    android:layout_height="34dp"
+                                    android:layout_marginEnd="6dp"
+                                    android:button="@null"
+                                    android:gravity="center"
+                                    android:paddingHorizontal="14dp"
+                                    android:background="@drawable/bg_radio_segment"
                                     android:text="Contains"
+                                    android:textColor="@color/text_color_radio_segment"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold"
                                     android:checked="true" />
 
-                                <com.google.android.material.chip.Chip
+                                <RadioButton
                                     android:id="@+id/chip_mode_exact"
-                                    style="@style/Widget.App.FilterChip"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Exact" />
+                                    android:layout_height="34dp"
+                                    android:layout_marginEnd="6dp"
+                                    android:button="@null"
+                                    android:gravity="center"
+                                    android:paddingHorizontal="14dp"
+                                    android:background="@drawable/bg_radio_segment"
+                                    android:text="Exact"
+                                    android:textColor="@color/text_color_radio_segment"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold" />
 
-                                <com.google.android.material.chip.Chip
+                                <RadioButton
                                     android:id="@+id/chip_mode_prefix"
-                                    style="@style/Widget.App.FilterChip"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Starts" />
+                                    android:layout_height="34dp"
+                                    android:layout_marginEnd="6dp"
+                                    android:button="@null"
+                                    android:gravity="center"
+                                    android:paddingHorizontal="14dp"
+                                    android:background="@drawable/bg_radio_segment"
+                                    android:text="Starts"
+                                    android:textColor="@color/text_color_radio_segment"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold" />
 
-                                <com.google.android.material.chip.Chip
+                                <RadioButton
                                     android:id="@+id/chip_mode_suffix"
-                                    style="@style/Widget.App.FilterChip"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Ends" />
+                                    android:layout_height="34dp"
+                                    android:layout_marginEnd="6dp"
+                                    android:button="@null"
+                                    android:gravity="center"
+                                    android:paddingHorizontal="14dp"
+                                    android:background="@drawable/bg_radio_segment"
+                                    android:text="Ends"
+                                    android:textColor="@color/text_color_radio_segment"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold" />
 
-                                <com.google.android.material.chip.Chip
+                                <RadioButton
                                     android:id="@+id/chip_mode_wildcard"
-                                    style="@style/Widget.App.FilterChip"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Wildcard" />
+                                    android:layout_height="34dp"
+                                    android:layout_marginEnd="6dp"
+                                    android:button="@null"
+                                    android:gravity="center"
+                                    android:paddingHorizontal="14dp"
+                                    android:background="@drawable/bg_radio_segment"
+                                    android:text="Wildcard"
+                                    android:textColor="@color/text_color_radio_segment"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold" />
 
-                                <com.google.android.material.chip.Chip
+                                <RadioButton
                                     android:id="@+id/chip_mode_regex"
-                                    style="@style/Widget.App.FilterChip"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Regex" />
-                            </com.google.android.material.chip.ChipGroup>
+                                    android:layout_height="34dp"
+                                    android:button="@null"
+                                    android:gravity="center"
+                                    android:paddingHorizontal="14dp"
+                                    android:background="@drawable/bg_radio_segment"
+                                    android:text="Regex"
+                                    android:textColor="@color/text_color_radio_segment"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold" />
+                            </RadioGroup>
                         </HorizontalScrollView>
 
                         <TextView
@@ -576,34 +644,44 @@
                             android:textSize="12sp"
                             android:textStyle="bold" />
 
-                        <com.google.android.material.button.MaterialButtonToggleGroup
+                        <RadioGroup
                             android:id="@+id/toggle_action"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
-                            app:singleSelection="true"
-                            app:selectionRequired="true">
+                            android:orientation="horizontal">
 
-                            <com.google.android.material.button.MaterialButton
+                            <RadioButton
                                 android:id="@+id/btn_action_block"
-                                style="@style/Widget.App.SegmentedButton"
                                 android:layout_width="0dp"
                                 android:layout_height="38dp"
                                 android:layout_weight="1"
+                                android:layout_marginEnd="4dp"
+                                android:button="@null"
+                                android:gravity="center"
+                                android:background="@drawable/bg_radio_segment"
                                 android:text="Block (mute)"
-                                android:textSize="12sp" />
+                                android:textColor="@color/text_color_radio_segment"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                android:checked="true" />
 
-                            <com.google.android.material.button.MaterialButton
+                            <RadioButton
                                 android:id="@+id/btn_action_allow"
-                                style="@style/Widget.App.SegmentedButton"
                                 android:layout_width="0dp"
                                 android:layout_height="38dp"
                                 android:layout_weight="1"
+                                android:layout_marginStart="4dp"
+                                android:button="@null"
+                                android:gravity="center"
+                                android:background="@drawable/bg_radio_segment"
                                 android:text="Allow (show)"
-                                android:textSize="12sp" />
-                        </com.google.android.material.button.MaterialButtonToggleGroup>
+                                android:textColor="@color/text_color_radio_segment"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+                        </RadioGroup>
 
-                        <com.google.android.material.button.MaterialButton
+                        <androidx.appcompat.widget.AppCompatButton
                             android:id="@+id/btn_add_rule"
                             android:layout_width="match_parent"
                             android:layout_height="44dp"
@@ -612,10 +690,7 @@
                             android:textColor="#FFFFFF"
                             android:textStyle="bold"
                             android:textSize="14sp"
-                            android:insetTop="0dp"
-                            android:insetBottom="0dp"
-                            app:backgroundTint="@color/accent"
-                            app:cornerRadius="12dp" />
+                            android:background="@drawable/bg_tab_indicator" />
 
                         <TextView
                             android:layout_width="match_parent"
@@ -626,17 +701,15 @@
                             android:textSize="12sp"
                             android:lineSpacingExtra="2dp" />
                     </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                </androidx.cardview.widget.CardView>
 
                 <!-- Try it Card -->
-                <com.google.android.material.card.MaterialCardView
+                <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     app:cardCornerRadius="14dp"
                     app:cardElevation="0dp"
-                    app:strokeWidth="1dp"
-                    app:strokeColor="@color/line"
                     app:cardBackgroundColor="@color/card">
 
                     <LinearLayout
@@ -722,7 +795,7 @@
                                 tools:text="No rule" />
                         </LinearLayout>
                     </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                </androidx.cardview.widget.CardView>
 
                 <!-- Your Custom Rules Section -->
                 <TextView
