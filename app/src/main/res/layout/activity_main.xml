@@ -191,7 +191,7 @@
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Navigation Tabs -->
+    <!-- Navigation Tabs (Activity | Shields | Rules) -->
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_layout"
         android:layout_width="match_parent"
@@ -216,7 +216,7 @@
         android:layout_weight="1"
         android:layout_marginTop="6dp">
 
-        <!-- Activity Tab Container -->
+        <!-- 1. Activity Tab -->
         <LinearLayout
             android:id="@+id/layout_activity"
             android:layout_width="match_parent"
@@ -247,7 +247,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="No messages seen yet. New SMS notifications will show up here, with buttons to allow or block each sender."
+                    android:text="No messages seen yet. New SMS notifications will appear here with the interception reason and quick controls."
                     android:textColor="@color/ink"
                     android:textSize="14sp"
                     android:lineSpacingExtra="3dp" />
@@ -258,7 +258,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="Simulate Sample SMS"
+                    android:text="Simulate Real SMS"
                     android:textColor="@color/accent"
                     android:textStyle="bold"
                     app:backgroundTint="@color/accentSoft"
@@ -278,7 +278,85 @@
                 android:background="?attr/selectableItemBackground" />
         </LinearLayout>
 
-        <!-- Rules Tab Container -->
+        <!-- 2. Smart Shields Tab -->
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/layout_shields"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:paddingHorizontal="16dp"
+            android:clipToPadding="false"
+            tools:visibility="visible">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="36dp">
+
+                <!-- Shields Overview Card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginBottom="12dp"
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="0dp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="@color/line"
+                    app:cardBackgroundColor="@color/card">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="14dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Smart Behavior Muting"
+                            android:textColor="@color/ink"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:text="Carriers send critical OTPs and transaction receipts, but also push endless lottery and marketing ads from the same number. These shields selectively silence spam behavior without ever muting your banking or security codes."
+                            android:textColor="@color/sub"
+                            android:textSize="13sp"
+                            android:lineSpacingExtra="2dp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_simulate_shield"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="42dp"
+                            android:layout_marginTop="12dp"
+                            android:text="Simulate Sample From Your Export"
+                            android:textColor="@color/accent"
+                            android:textStyle="bold"
+                            android:textSize="13sp"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            app:backgroundTint="@color/accentSoft"
+                            app:cornerRadius="10dp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Container for category shields dynamically rendered -->
+                <LinearLayout
+                    android:id="@+id/layout_shields_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+        <!-- 3. Custom Rules & Try-It Tab -->
         <androidx.core.widget.NestedScrollView
             android:id="@+id/layout_rules"
             android:layout_width="match_parent"
@@ -294,7 +372,7 @@
                 android:orientation="vertical"
                 android:paddingBottom="36dp">
 
-                <!-- Add a Rule Card -->
+                <!-- Add a Custom Rule Card -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -314,11 +392,20 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Add a rule"
+                            android:text="Add a custom rule"
                             android:textColor="@color/ink"
                             android:textSize="15sp"
                             android:textStyle="bold" />
 
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="Target a whole contact or a specific phrase within a contact."
+                            android:textColor="@color/sub"
+                            android:textSize="12sp" />
+
+                        <!-- Word or Phrase to Match -->
                         <EditText
                             android:id="@+id/et_draft_value"
                             android:layout_width="match_parent"
@@ -327,7 +414,31 @@
                             android:background="@drawable/bg_input"
                             android:paddingHorizontal="12dp"
                             android:paddingVertical="10dp"
-                            android:hint="Text to match"
+                            android:hint="Text or pattern to match"
+                            android:textColorHint="@color/sub"
+                            android:textColor="@color/ink"
+                            android:textSize="14sp"
+                            android:inputType="textNoSuggestions" />
+
+                        <!-- Specific Contact/Sender Filter (Optional) -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="Specific sender (optional)"
+                            android:textColor="@color/sub"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+
+                        <EditText
+                            android:id="@+id/et_draft_sender"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:background="@drawable/bg_input"
+                            android:paddingHorizontal="12dp"
+                            android:paddingVertical="10dp"
+                            android:hint="e.g. ethio tel or 127 · Leave blank for all"
                             android:textColorHint="@color/sub"
                             android:textColor="@color/ink"
                             android:textSize="14sp"
@@ -510,7 +621,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:text="Allow rules always win, so an allowed keyword like &quot;otp&quot; keeps codes coming even from a blocked sender."
+                            android:text="Allow rules always win, keeping critical codes and messages coming even from blocked senders."
                             android:textColor="@color/sub"
                             android:textSize="12sp"
                             android:lineSpacingExtra="2dp" />
@@ -547,7 +658,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
                             android:layout_marginBottom="8dp"
-                            android:text="Preview what the rules do to a sample message. Nothing is sent or saved."
+                            android:text="Preview what the active shields and rules do to a message. Nothing is sent or saved."
                             android:textColor="@color/sub"
                             android:textSize="12sp" />
 
@@ -613,57 +724,13 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Pattern Packs Card -->
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    app:cardCornerRadius="14dp"
-                    app:cardElevation="0dp"
-                    app:strokeWidth="1dp"
-                    app:strokeColor="@color/line"
-                    app:cardBackgroundColor="@color/card">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="14dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Pattern packs"
-                            android:textColor="@color/ink"
-                            android:textSize="15sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:layout_marginBottom="6dp"
-                            android:text="Ready-made groups of rules. Add one, then tweak or remove the rules below."
-                            android:textColor="@color/sub"
-                            android:textSize="12sp" />
-
-                        <LinearLayout
-                            android:id="@+id/layout_packs_container"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:showDividers="middle"
-                            android:divider="@drawable/divider_line" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- Your Rules Section -->
+                <!-- Your Custom Rules Section -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:layout_marginBottom="6dp"
-                    android:text="YOUR RULES"
+                    android:text="YOUR CUSTOM RULES"
                     android:textColor="@color/sub"
                     android:textSize="13sp"
                     android:textStyle="bold"
@@ -675,7 +742,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:paddingVertical="16dp"
-                    android:text="No rules yet."
+                    android:text="No custom rules added yet."
                     android:textColor="@color/ink"
                     android:textSize="14sp"
                     android:visibility="gone" />

@@ -41,17 +41,31 @@ data class Rule(
     val target: RuleTarget,
     val mode: MatchMode,
     val value: String,
+    val senderFilter: String? = null,
+    val category: String? = null,
     val enabled: Boolean = true
 ) {
     val key: String
-        get() = "${action.value}|${target.value}|${mode.value}|${value.trim().lowercase()}"
+        get() = "${action.value}|${target.value}|${mode.value}|${senderFilter?.trim()?.lowercase() ?: ""}|${value.trim().lowercase()}"
 }
 
 data class PresetRule(
     val action: RuleAction,
     val target: RuleTarget,
     val mode: MatchMode,
-    val value: String
+    val value: String,
+    val senderFilter: String? = null,
+    val category: String? = null
+)
+
+data class BehaviorCategory(
+    val id: String,
+    val title: String,
+    val description: String,
+    val icon: String,
+    val isProtection: Boolean = false,
+    val defaultEnabled: Boolean = true,
+    val rules: List<PresetRule>
 )
 
 data class PatternPack(

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
+    app:cardCornerRadius="14dp"
+    app:cardElevation="0dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="@color/line"
+    app:cardBackgroundColor="@color/card">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="14dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/tv_shield_icon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:gravity="center"
+                android:textSize="20sp"
+                tools:text="🎰" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_shield_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/ink"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    tools:text="Lottery &amp; Lucky Draws" />
+
+                <TextView
+                    android:id="@+id/tv_shield_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/sub"
+                    android:textSize="11sp"
+                    tools:text="19 rules active" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_shield_protection_badge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="3dp"
+                android:text="ALWAYS ACTIVE"
+                android:textColor="@color/allow"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.04"
+                android:background="@drawable/bg_chip_shown"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/switch_shield"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:thumbTint="@color/card"
+                app:trackTint="@color/accent" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_shield_desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/ink"
+            android:textSize="13sp"
+            android:lineSpacingExtra="2dp"
+            tools:text="Mutes lottery promotions, raffle draws, EV car sweepstakes, weekly draw tickets, silver coins, and teleplay games." />
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

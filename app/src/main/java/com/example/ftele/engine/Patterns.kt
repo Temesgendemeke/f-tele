@@ -69,9 +69,14 @@ object Patterns {
         }
     }
 
-    /** Test one rule against title and text. */
+    /** Test one rule against title and text, respecting optional sender filter. */
     fun matchRule(rule: Rule, title: String, text: String): Boolean {
         if (!rule.enabled || rule.value.isEmpty()) return false
+        if (!rule.senderFilter.isNullOrBlank()) {
+            if (!matchOne(rule.senderFilter, MatchMode.CONTAINS, title)) {
+                return false
+            }
+        }
         val targets = when (rule.target) {
             RuleTarget.BOTH -> listOf(title, text)
             RuleTarget.SENDER -> listOf(title)
@@ -82,7 +87,7 @@ object Patterns {
 
     /**
      * Decide whether a notification should be muted.
-     * Allow rules win over block rules; the first matching block rule is reported.
+     * Allow rules ALWAYS take priority over block rules.
      */
     fun decide(
         rules: List<Rule>,
@@ -90,19 +95,31 @@ object Patterns {
         title: String,
         text: String
     ): Decision {
-        var blockedBy: String? = null
+        // 1. Strict Priority: Check all enabled ALLOW rules first
         for (rule in rules) {
-            if (!matchRule(rule, title, text)) continue
-            if (rule.action == RuleAction.ALLOW) {
-                return Decision(false, "Allowed: ${rule.value}")
-            }
-            if (blockedBy == null) {
-                blockedBy = rule.value
+            if (rule.enabled && rule.action == RuleAction.ALLOW && matchRule(rule, title, text)) {
+                val label = if (!rule.category.isNullOrBlank()) {
+                    "Protected: ${rule.category}"
+                } else {
+                    "Allowed: ${rule.value}"
+                }
+                return Decision(false, label)
             }
         }
-        if (blockedBy != null) {
-            return Decision(true, "Blocked: $blockedBy")
+
+        // 2. Check enabled BLOCK rules
+        for (rule in rules) {
+            if (rule.enabled && rule.action == RuleAction.BLOCK && matchRule(rule, title, text)) {
+                val label = if (!rule.category.isNullOrBlank()) {
+                    "Muted: ${rule.category}"
+                } else {
+                    "Blocked: ${rule.value}"
+                }
+                return Decision(true, label)
+            }
         }
+
+        // 3. Fallback based on selected operating mode
         return if (mode == "allowlist") {
             Decision(true, "Not on allow list")
         } else {

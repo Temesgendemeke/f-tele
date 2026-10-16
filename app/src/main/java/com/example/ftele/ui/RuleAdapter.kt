@@ -44,7 +44,9 @@ class RuleAdapter(
                 onToggleRule(rule)
             }
 
-            b.tvRuleMeta.text = "${rule.target.label} · ${rule.mode.label}"
+            val senderPart = if (!rule.senderFilter.isNullOrBlank()) "From [${rule.senderFilter}] · " else ""
+            val catPart = if (!rule.category.isNullOrBlank()) " · ${rule.category}" else ""
+            b.tvRuleMeta.text = "$senderPart${rule.target.label} · ${rule.mode.label}$catPart"
 
             if (rule.action == RuleAction.ALLOW) {
                 b.tvRuleChip.text = "Allow"

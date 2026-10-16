@@ -1,6 +1,7 @@
 package com.example.ftele
 
 import com.example.ftele.data.RuleStore
+import com.example.ftele.engine.PatternPacks
 import com.example.ftele.engine.Patterns
 import com.example.ftele.model.MatchMode
 import com.example.ftele.model.Rule
@@ -18,6 +19,8 @@ class PatternsTest {
         action: RuleAction = RuleAction.BLOCK,
         target: RuleTarget = RuleTarget.BODY,
         mode: MatchMode = MatchMode.CONTAINS,
+        senderFilter: String? = null,
+        category: String? = null,
         enabled: Boolean = true,
         id: String = "r"
     ) = Rule(
@@ -26,6 +29,8 @@ class PatternsTest {
         target = target,
         mode = mode,
         value = value,
+        senderFilter = senderFilter,
+        category = category,
         enabled = enabled
     )
 
@@ -77,6 +82,37 @@ class PatternsTest {
 
         val both = rule(value = "scam", target = RuleTarget.BOTH)
         assertTrue(Patterns.decide(listOf(both), "blocklist", "friend", "a scam").mute)
+    }
+
+    @Test
+    fun testSenderFilterScoping() {
+        // Only block 'teleplay' if sender is 127
+        val scopedRule = rule(
+            value = "teleplay",
+            action = RuleAction.BLOCK,
+            target = RuleTarget.BODY,
+            senderFilter = "127"
+        )
+
+        // Matching sender + message -> Muted
+        val out1 = Patterns.decide(listOf(scopedRule), "blocklist", "127", "win with teleplay car")
+        assertTrue(out1.mute)
+
+        // Different sender with same message -> Allowed
+        val out2 = Patterns.decide(listOf(scopedRule), "blocklist", "Friend", "win with teleplay car")
+        assertFalse(out2.mute)
+    }
+
+    @Test
+    fun testAmharicMatching() {
+        val lotteryRule = rule(value = "ሎተሪ", action = RuleAction.BLOCK, target = RuleTarget.BODY)
+        val outLottery = Patterns.decide(listOf(lotteryRule), "blocklist", "605", "44ኛው ዙር አድማስ ዲጂታል ሎተሪ")
+        assertTrue(outLottery.mute)
+
+        val otpRule = rule(value = "ምስጢር ቁጥር", action = RuleAction.ALLOW, target = RuleTarget.BODY)
+        val outOtp = Patterns.decide(listOf(otpRule, lotteryRule), "blocklist", "Safaricom", "የM-PESA ምስጢር ቁጥርዎን አያጋሩ")
+        assertFalse(outOtp.mute)
+        assertTrue(outOtp.reason.contains("Allowed"))
     }
 
     @Test

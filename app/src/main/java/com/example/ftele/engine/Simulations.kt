@@ -1,24 +1,62 @@
 package com.example.ftele.engine
 
-data class SampleSms(val sender: String, val text: String)
+data class SampleSms(
+    val sender: String,
+    val text: String,
+    val expectedDecision: String
+)
 
 object Simulations {
     val SAMPLES = listOf(
         SampleSms(
-            sender = "Telebirr",
-            text = "Weekend Flash Sale! 100% bonus airtime on every recharge today. Dial *127# to participate."
+            sender = "127",
+            text = "Dear Temesgen You have received ETB 243.75 from CHAPA FINANCIAL TECHNOLOGY SHARE COMPANY - short code 500423 on 02/12/2025 22:05:23. Your transaction number is CF16M70KJI. Thank you for using telebirr",
+            expectedDecision = "Allowed (Transaction)"
+        ),
+        SampleSms(
+            sender = "127",
+            text = "በቴሌብር ስላደረጉት የገንዘብ ዝውውር እናመሰግናለን። ወደ *830*1# በመደወል በቴሌፕለይ ጨዋታዎች እለታዊ 25,000 ብር፣ ሳምንታዊ 100,000 ብር እና ዘመናዊ የኤሌክትሪክ መኪና እንዲሁም ሌሎች አጓጊ ሽልማቶችን ያሸንፉ!",
+            expectedDecision = "Muted (Lottery/Teleplay)"
+        ),
+        SampleSms(
+            sender = "Safaricom",
+            text = "<#> 9098 is your verification code. NEVER share your M-PESA Safaricom verification code. oeJMZxkqPJq",
+            expectedDecision = "Allowed (OTP)"
+        ),
+        SampleSms(
+            sender = "Safaricom",
+            text = "ነፃ 1 ጂቢ+ 35 ደቂቃ ለእርስዎ፣ *777# ላይ በመደወል በሽን በመምረጥ አስደሳች ቅናሾችን ያግኙ",
+            expectedDecision = "Muted (Telecom Promo)"
+        ),
+        SampleSms(
+            sender = "605",
+            text = "44ኛው ዙር አድማስ ዲጂታል ሎተሪ ሊወጣ ጥቂት ቀናት ቀሩት! 4 ሚሊየን ብር እና ሌሎችም ሽልማቶች ዕድለኛ ለመሆን ወደ 605 A ብለው ይላኩ!",
+            expectedDecision = "Muted (Pure Spam Sender)"
         ),
         SampleSms(
             sender = "CBE",
-            text = "Your account 1000***456 has been credited with 3,500.00 ETB. Reference: CBE9482."
+            text = "Dear Temesgen your Account 1*********7169 has been Credited with ETB 2,000.00 from Meron Demeke, on 12/12/2025 with Ref No FT253464TYJV. Your Current Balance is ETB 3,450.00.",
+            expectedDecision = "Allowed (Bank Credit)"
         ),
         SampleSms(
-            sender = "LuckyDraw",
-            text = "Congratulations! You won 50,000 ETB in today's lottery. Reply CLAIM to receive your prize."
+            sender = "apollo",
+            text = "በአፖሎ እስከ 100,000 ብር ያለማስያዣ ይበደሩ! አሁኑኑ የአፖሎ ሂሳብ በመክፈትና ሂሳብዎን በማንቀሳቀስ፣ የጎደለ መሙያ ብድር ተጠቃሚ ይሁኑ። https://onelink.to/apollo",
+            expectedDecision = "Muted (Loan Promo)"
         ),
         SampleSms(
-            sender = "Google",
-            text = "G-839201 is your Google verification code. Never share this code with anyone."
+            sender = "824",
+            text = "MCN:+251969138931 called you once on 20.02.2026 at 17:22:29, Please call back.",
+            expectedDecision = "Allowed (Missed Call)"
+        ),
+        SampleSms(
+            sender = "CallSign",
+            text = "ይህ የጥሪ ፊርማ አገልግሎት ነው። ለዕለታዊ ጥቅል ለመመዝገብ *623*1*1# ይጫኑ፤ ለሳምንታዊ *623*1*2# ይጫኑ። ኢትዮ ቴሌኮም",
+            expectedDecision = "Muted (VAS Ringtone)"
+        ),
+        SampleSms(
+            sender = "Gugu",
+            text = "Selam temu, yet neh? Let's eat lunch together at 1.",
+            expectedDecision = "Allowed (Personal SMS)"
         )
     )
 }

@@ -1,7 +1,6 @@
 package com.example.ftele.ui
 
 import android.content.Intent
-import android.content.res.ColorStateList
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -10,6 +9,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
@@ -17,13 +17,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.ftele.R
 import com.example.ftele.data.RuleStore
 import com.example.ftele.databinding.ActivityMainBinding
-import com.example.ftele.databinding.ItemPackBinding
+import com.example.ftele.databinding.ItemShieldBinding
 import com.example.ftele.engine.PatternPacks
 import com.example.ftele.engine.Patterns
 import com.example.ftele.engine.Simulations
 import com.example.ftele.model.LogEntry
 import com.example.ftele.model.MatchMode
-import com.example.ftele.model.PatternPack
 import com.example.ftele.model.Rule
 import com.example.ftele.model.RuleAction
 import com.example.ftele.model.RuleTarget
@@ -36,14 +35,14 @@ class MainActivity : AppCompatActivity() {
     private lateinit var activityAdapter: ActivityAdapter
     private lateinit var ruleAdapter: RuleAdapter
 
-    private var rules: MutableList<Rule> = mutableListOf()
+    private var customRules: MutableList<Rule> = mutableListOf()
     private var logs: List<LogEntry> = emptyList()
 
     private val refreshHandler = Handler(Looper.getMainLooper())
     private val refreshRunnable = object : Runnable {
         override fun run() {
             refreshData(onlyLog = true)
-            refreshHandler.postDelayed(this, 2000)
+            refreshHandler.postDelayed(this, 3000)
         }
     }
 
@@ -59,9 +58,9 @@ class MainActivity : AppCompatActivity() {
         setupModeCard()
         setupTabs()
         setupActivityList()
+        setupShieldsSection()
         setupRulesSection()
         setupTryIt()
-        refreshPacks()
         refreshTryIt()
     }
 
@@ -78,14 +77,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initData() {
-        val storedRules = RuleStore.getRules(this)
-        rules = if (storedRules == null) {
-            val defaults = PatternPacks.seedRules()
-            RuleStore.saveRules(this, defaults)
-            defaults.toMutableList()
-        } else {
-            storedRules.toMutableList()
-        }
+        customRules = RuleStore.getCustomRules(this).toMutableList()
     }
 
     private fun checkPermission() {
@@ -146,17 +138,25 @@ class MainActivity : AppCompatActivity() {
     private fun setupTabs() {
         b.tabLayout.removeAllTabs()
         b.tabLayout.addTab(b.tabLayout.newTab().setText("Activity (0)"))
-        b.tabLayout.addTab(b.tabLayout.newTab().setText("Rules (0)"))
+        b.tabLayout.addTab(b.tabLayout.newTab().setText("Shields"))
+        b.tabLayout.addTab(b.tabLayout.newTab().setText("Custom Rules (0)"))
 
         b.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 when (tab?.position) {
                     0 -> {
                         b.layoutActivity.visibility = View.VISIBLE
+                        b.layoutShields.visibility = View.GONE
                         b.layoutRules.visibility = View.GONE
                     }
                     1 -> {
                         b.layoutActivity.visibility = View.GONE
+                        b.layoutShields.visibility = View.VISIBLE
+                        b.layoutRules.visibility = View.GONE
+                    }
+                    2 -> {
+                        b.layoutActivity.visibility = View.GONE
+                        b.layoutShields.visibility = View.GONE
                         b.layoutRules.visibility = View.VISIBLE
                     }
                 }
@@ -184,146 +184,155 @@ class MainActivity : AppCompatActivity() {
 
     private fun toggleSenderRule(sender: String, action: RuleAction) {
         val looseSender = Patterns.loose(sender)
-        val existing = rules.find {
+        val existing = customRules.find {
             it.target == RuleTarget.SENDER && Patterns.loose(it.value) == looseSender
         }
 
         if (existing != null && existing.action == action) {
-            rules.remove(existing)
+            customRules.remove(existing)
         } else {
-            if (existing != null) rules.remove(existing)
+            if (existing != null) customRules.remove(existing)
             val newRule = Rule(
                 id = PatternPacks.newRuleId(),
                 action = action,
                 target = RuleTarget.SENDER,
-                mode = MatchMode.CONTAINS,
+                mode = MatchMode.EXACT,
                 value = sender,
+                category = "Sender Rule",
                 enabled = true
             )
-            rules.add(0, newRule)
+            customRules.add(0, newRule)
         }
 
-        RuleStore.saveRules(this, rules)
+        RuleStore.saveCustomRules(this, customRules)
         refreshData(onlyLog = false)
+        refreshTryIt()
+    }
+
+    private fun setupShieldsSection() {
+        b.btnSimulateShield.setOnClickListener {
+            runSimulation()
+            b.tabLayout.getTabAt(0)?.select()
+            Toast.makeText(this, "Simulated SMS! Check Activity log.", Toast.LENGTH_SHORT).show()
+        }
+        renderShields()
+    }
+
+    private fun renderShields() {
+        b.layoutShieldsList.removeAllViews()
+        val inflater = LayoutInflater.from(this)
+
+        for (category in PatternPacks.CATEGORIES) {
+            val itemBinding = ItemShieldBinding.inflate(inflater, b.layoutShieldsList, false)
+            itemBinding.tvShieldIcon.text = category.icon
+            itemBinding.tvShieldTitle.text = category.title
+            itemBinding.tvShieldDesc.text = category.description
+            itemBinding.tvShieldCount.text = "${category.rules.size} rules active"
+
+            if (category.isProtection) {
+                itemBinding.tvShieldProtectionBadge.visibility = View.VISIBLE
+                itemBinding.switchShield.visibility = View.GONE
+            } else {
+                itemBinding.tvShieldProtectionBadge.visibility = View.GONE
+                itemBinding.switchShield.visibility = View.VISIBLE
+                itemBinding.switchShield.isChecked = RuleStore.isCategoryEnabled(this, category.id)
+                itemBinding.switchShield.setOnCheckedChangeListener { _, isChecked ->
+                    RuleStore.setCategoryEnabled(this, category.id, isChecked)
+                    refreshData(onlyLog = false)
+                    refreshTryIt()
+                }
+            }
+
+            b.layoutShieldsList.addView(itemBinding.root)
+        }
     }
 
     private fun setupRulesSection() {
-        b.toggleTarget.check(R.id.btn_target_body)
-        b.toggleAction.check(R.id.btn_action_block)
-
         ruleAdapter = RuleAdapter(
             onToggleRule = { rule ->
-                val index = rules.indexOfFirst { it.id == rule.id }
-                if (index != -1) {
-                    rules[index] = rule.copy(enabled = !rule.enabled)
-                    RuleStore.saveRules(this, rules)
+                val idx = customRules.indexOfFirst { it.id == rule.id }
+                if (idx != -1) {
+                    customRules[idx] = rule.copy(enabled = !rule.enabled)
+                    RuleStore.saveCustomRules(this, customRules)
                     refreshData(onlyLog = false)
+                    refreshTryIt()
                 }
             },
             onRemoveRule = { rule ->
-                rules.removeAll { it.id == rule.id }
-                RuleStore.saveRules(this, rules)
+                customRules.removeAll { it.id == rule.id }
+                RuleStore.saveCustomRules(this, customRules)
                 refreshData(onlyLog = false)
+                refreshTryIt()
             }
         )
+
         b.rvRules.layoutManager = LinearLayoutManager(this)
         b.rvRules.adapter = ruleAdapter
 
-        b.etDraftValue.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                validateRegex()
-                refreshTryIt()
-            }
-            override fun afterTextChanged(s: Editable?) {}
-        })
+        b.toggleTarget.check(R.id.btn_target_body)
+        b.toggleAction.check(R.id.btn_action_block)
 
-        b.chipgroupMode.setOnCheckedStateChangeListener { _, _ ->
-            updateDraftHint()
-            validateRegex()
+        b.btnAddRule.setOnClickListener {
+            val value = b.etDraftValue.text?.toString()?.trim() ?: ""
+            if (value.isEmpty()) return@setOnClickListener
+
+            val senderFilter = b.etDraftSender.text?.toString()?.trim()?.ifBlank { null }
+
+            val target = when (b.toggleTarget.checkedButtonId) {
+                R.id.btn_target_sender -> RuleTarget.SENDER
+                R.id.btn_target_body -> RuleTarget.BODY
+                else -> RuleTarget.BOTH
+            }
+
+            val mode = when (b.chipgroupMode.checkedChipId) {
+                R.id.chip_mode_exact -> MatchMode.EXACT
+                R.id.chip_mode_prefix -> MatchMode.PREFIX
+                R.id.chip_mode_suffix -> MatchMode.SUFFIX
+                R.id.chip_mode_wildcard -> MatchMode.WILDCARD
+                R.id.chip_mode_regex -> MatchMode.REGEX
+                else -> MatchMode.CONTAINS
+            }
+
+            if (mode == MatchMode.REGEX) {
+                try {
+                    Regex(value)
+                } catch (_: Exception) {
+                    b.tvRegexError.visibility = View.VISIBLE
+                    return@setOnClickListener
+                }
+            }
+            b.tvRegexError.visibility = View.GONE
+
+            val action = if (b.toggleAction.checkedButtonId == R.id.btn_action_allow) {
+                RuleAction.ALLOW
+            } else {
+                RuleAction.BLOCK
+            }
+
+            val newRule = Rule(
+                id = PatternPacks.newRuleId(),
+                action = action,
+                target = target,
+                mode = mode,
+                value = value,
+                senderFilter = senderFilter,
+                category = "Custom Rule",
+                enabled = true
+            )
+
+            val existingIdx = customRules.indexOfFirst { it.key == newRule.key }
+            if (existingIdx != -1) {
+                customRules[existingIdx] = newRule
+            } else {
+                customRules.add(0, newRule)
+            }
+
+            RuleStore.saveCustomRules(this, customRules)
+            b.etDraftValue.setText("")
+            b.etDraftSender.setText("")
+            refreshData(onlyLog = false)
             refreshTryIt()
         }
-
-        b.toggleTarget.addOnButtonCheckedListener { _, _, _ -> refreshTryIt() }
-        b.toggleAction.addOnButtonCheckedListener { _, _, _ -> refreshTryIt() }
-
-        b.btnAddRule.setOnClickListener { addDraftRule() }
-    }
-
-    private fun getSelectedDraftMode(): MatchMode = when (b.chipgroupMode.checkedChipId) {
-        R.id.chip_mode_exact -> MatchMode.EXACT
-        R.id.chip_mode_prefix -> MatchMode.PREFIX
-        R.id.chip_mode_suffix -> MatchMode.SUFFIX
-        R.id.chip_mode_wildcard -> MatchMode.WILDCARD
-        R.id.chip_mode_regex -> MatchMode.REGEX
-        else -> MatchMode.CONTAINS
-    }
-
-    private fun getSelectedDraftTarget(): RuleTarget = when (b.toggleTarget.checkedButtonId) {
-        R.id.btn_target_sender -> RuleTarget.SENDER
-        R.id.btn_target_both -> RuleTarget.BOTH
-        else -> RuleTarget.BODY
-    }
-
-    private fun getSelectedDraftAction(): RuleAction = when (b.toggleAction.checkedButtonId) {
-        R.id.btn_action_allow -> RuleAction.ALLOW
-        else -> RuleAction.BLOCK
-    }
-
-    private fun updateDraftHint() {
-        b.etDraftValue.hint = when (getSelectedDraftMode()) {
-            MatchMode.REGEX -> "Regular expression"
-            MatchMode.WILDCARD -> "Pattern with * and ?"
-            else -> "Text to match"
-        }
-    }
-
-    private fun validateRegex(): Boolean {
-        if (getSelectedDraftMode() != MatchMode.REGEX) {
-            b.tvRegexError.visibility = View.GONE
-            return true
-        }
-        val text = b.etDraftValue.text.toString().trim()
-        if (text.isEmpty()) {
-            b.tvRegexError.visibility = View.GONE
-            return true
-        }
-        return try {
-            Regex(text)
-            b.tvRegexError.visibility = View.GONE
-            true
-        } catch (_: Exception) {
-            b.tvRegexError.visibility = View.VISIBLE
-            false
-        }
-    }
-
-    private fun addDraftRule() {
-        val value = b.etDraftValue.text.toString().trim()
-        if (value.isEmpty()) return
-        if (!validateRegex()) return
-
-        val action = getSelectedDraftAction()
-        val target = getSelectedDraftTarget()
-        val mode = getSelectedDraftMode()
-
-        val candidate = Rule(
-            id = PatternPacks.newRuleId(),
-            action = action,
-            target = target,
-            mode = mode,
-            value = value,
-            enabled = true
-        )
-
-        val alreadyExists = rules.any { it.key == candidate.key }
-        if (!alreadyExists) {
-            rules.add(0, candidate)
-            RuleStore.saveRules(this, rules)
-            refreshData(onlyLog = false)
-        }
-
-        b.etDraftValue.setText("")
     }
 
     private fun setupTryIt() {
@@ -340,28 +349,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun refreshTryIt() {
-        val sender = b.etTestSender.text.toString()
-        val text = b.etTestText.text.toString()
+        val sender = b.etTestSender.text?.toString() ?: ""
+        val text = b.etTestText.text?.toString() ?: ""
 
-        val draftText = b.etDraftValue.text.toString().trim()
-        val effectiveRules = rules.toMutableList()
-
-        if (draftText.isNotEmpty() && validateRegex()) {
-            effectiveRules.add(
-                0,
-                Rule(
-                    id = "draft",
-                    action = getSelectedDraftAction(),
-                    target = getSelectedDraftTarget(),
-                    mode = getSelectedDraftMode(),
-                    value = draftText,
-                    enabled = true
-                )
-            )
-        }
-
-        val appMode = RuleStore.getMode(this)
-        val decision = Patterns.decide(effectiveRules, appMode, sender, text)
+        val effectiveRules = RuleStore.getAllEffectiveRules(this)
+        val decision = Patterns.decide(effectiveRules, RuleStore.getMode(this), sender, text)
 
         if (decision.mute) {
             b.tvTestChip.text = "Would mute"
@@ -375,61 +367,6 @@ class MainActivity : AppCompatActivity() {
         b.tvTestReason.text = decision.reason
     }
 
-    private fun refreshPacks() {
-        b.layoutPacksContainer.removeAllViews()
-        val currentKeys = rules.map { it.key }.toSet()
-
-        for (pack in PatternPacks.ALL) {
-            val packBinding = ItemPackBinding.inflate(
-                LayoutInflater.from(this),
-                b.layoutPacksContainer,
-                false
-            )
-            packBinding.tvPackName.text = pack.name
-            packBinding.tvPackDesc.text = pack.description
-
-            val packRuleKeys = pack.rules.map {
-                "${it.action.value}|${it.target.value}|${it.mode.value}|${it.value.trim().lowercase()}"
-            }
-            val isAdded = packRuleKeys.all { currentKeys.contains(it) }
-
-            if (isAdded) {
-                packBinding.btnAddPack.text = "Added"
-                packBinding.btnAddPack.isEnabled = false
-                packBinding.btnAddPack.setTextColor(ContextCompat.getColor(this, R.color.sub))
-                packBinding.btnAddPack.backgroundTintList =
-                    ColorStateList.valueOf(ContextCompat.getColor(this, R.color.line))
-            } else {
-                packBinding.btnAddPack.text = "Add"
-                packBinding.btnAddPack.isEnabled = true
-                packBinding.btnAddPack.setTextColor(ContextCompat.getColor(this, R.color.accent))
-                packBinding.btnAddPack.backgroundTintList =
-                    ColorStateList.valueOf(ContextCompat.getColor(this, R.color.accentSoft))
-                packBinding.btnAddPack.setOnClickListener {
-                    addPack(pack)
-                }
-            }
-
-            b.layoutPacksContainer.addView(packBinding.root)
-        }
-    }
-
-    private fun addPack(pack: PatternPack) {
-        val currentKeys = rules.map { it.key }.toSet()
-        val additions = pack.rules
-            .filter {
-                val key = "${it.action.value}|${it.target.value}|${it.mode.value}|${it.value.trim().lowercase()}"
-                !currentKeys.contains(key)
-            }
-            .map { PatternPacks.presetToRule(it) }
-
-        if (additions.isNotEmpty()) {
-            rules.addAll(0, additions)
-            RuleStore.saveRules(this, rules)
-            refreshData(onlyLog = false)
-        }
-    }
-
     private fun runSimulation() {
         val sample = Simulations.SAMPLES[Random.nextInt(Simulations.SAMPLES.size)]
         val decision = RuleStore.decide(this, sample.sender, sample.text)
@@ -439,26 +376,34 @@ class MainActivity : AppCompatActivity() {
 
     private fun refreshData(onlyLog: Boolean) {
         logs = RuleStore.getLog(this)
-        activityAdapter.submitList(logs)
-        activityAdapter.updateRules(rules)
 
-        val logCount = logs.size
-        b.tabLayout.getTabAt(0)?.text = "Activity ($logCount)"
-        b.layoutEmptyActivity.visibility = if (logs.isEmpty()) View.VISIBLE else View.GONE
-        b.btnClearActivity.visibility = if (logs.isNotEmpty()) View.VISIBLE else View.GONE
+        if (logs.isEmpty()) {
+            b.rvActivity.visibility = View.GONE
+            b.layoutEmptyActivity.visibility = View.VISIBLE
+            b.btnClearActivity.visibility = View.GONE
+        } else {
+            b.rvActivity.visibility = View.VISIBLE
+            b.layoutEmptyActivity.visibility = View.GONE
+            b.btnClearActivity.visibility = View.VISIBLE
+            activityAdapter.submitList(logs)
+        }
+
+        val effectiveRules = RuleStore.getAllEffectiveRules(this)
+        activityAdapter.updateRules(effectiveRules)
+
+        b.tabLayout.getTabAt(0)?.text = "Activity (${logs.size})"
+
+        var activeShieldCount = 0
+        for (c in PatternPacks.CATEGORIES) {
+            if (RuleStore.isCategoryEnabled(this, c.id)) activeShieldCount++
+        }
+        b.tabLayout.getTabAt(1)?.text = "Shields ($activeShieldCount/${PatternPacks.CATEGORIES.size})"
 
         if (!onlyLog) {
-            val stored = RuleStore.getRules(this)
-            if (stored != null) {
-                rules.clear()
-                rules.addAll(stored)
-            }
-            ruleAdapter.submitList(rules.toList())
-            val ruleCount = rules.size
-            b.tabLayout.getTabAt(1)?.text = "Rules ($ruleCount)"
-            b.tvEmptyRules.visibility = if (rules.isEmpty()) View.VISIBLE else View.GONE
-            refreshPacks()
-            refreshTryIt()
+            customRules = RuleStore.getCustomRules(this).toMutableList()
+            ruleAdapter.submitList(customRules.toList())
+            b.tvEmptyRules.visibility = if (customRules.isEmpty()) View.VISIBLE else View.GONE
+            b.tabLayout.getTabAt(2)?.text = "Custom Rules (${customRules.size})"
         }
     }
 }

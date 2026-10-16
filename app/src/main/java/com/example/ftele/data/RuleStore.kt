@@ -3,6 +3,7 @@ package com.example.ftele.data
 import android.content.Context
 import com.example.ftele.engine.PatternPacks
 import com.example.ftele.engine.Patterns
+import com.example.ftele.model.BehaviorCategory
 import com.example.ftele.model.Decision
 import com.example.ftele.model.LogEntry
 import com.example.ftele.model.MatchMode
@@ -24,16 +25,87 @@ object RuleStore {
         prefs(c).edit().putBoolean("enabled", value).apply()
     }
 
-    /** "blocklist": mute only blocked senders. "allowlist": mute everything except allowed. */
+    /** "blocklist": mute only blocked senders/words. "allowlist": mute everything except allowed. */
     fun getMode(c: Context): String = prefs(c).getString("mode", "blocklist") ?: "blocklist"
 
     fun setMode(c: Context, value: String) {
         prefs(c).edit().putString("mode", value).apply()
     }
 
-    fun getRules(c: Context): List<Rule>? {
-        val raw = prefs(c).getString("rules", null) ?: return null
-        return parseRules(raw)
+    // --- Behavioral Category Toggles ---
+
+    fun isCategoryEnabled(c: Context, catId: String): Boolean {
+        if (catId == "cat_protection") return true // Non-negotiable shield
+        return prefs(c).getBoolean("cat_$catId", true)
+    }
+
+    fun setCategoryEnabled(c: Context, catId: String, enabled: Boolean) {
+        if (catId == "cat_protection") return // Cannot be turned off
+        prefs(c).edit().putBoolean("cat_$catId", enabled).apply()
+    }
+
+    fun getCategoryRules(c: Context): List<Rule> {
+        val list = mutableListOf<Rule>()
+        for (category in PatternPacks.CATEGORIES) {
+            if (isCategoryEnabled(c, category.id)) {
+                list.addAll(category.rules.map { preset ->
+                    Rule(
+                        id = "cat_${category.id}_${preset.value.hashCode()}",
+                        action = preset.action,
+                        target = preset.target,
+                        mode = preset.mode,
+                        value = preset.value,
+                        senderFilter = preset.senderFilter,
+                        category = preset.category ?: category.title,
+                        enabled = true
+                    )
+                })
+            }
+        }
+        return list
+    }
+
+    // --- Custom User Rules ---
+
+    fun getCustomRules(c: Context): List<Rule> {
+        val raw = prefs(c).getString("custom_rules", null)
+        if (raw != null) {
+            return parseRules(raw)
+        }
+        // Legacy fallback
+        val legacy = prefs(c).getString("rules", null)
+        return if (legacy != null) parseRules(legacy) else emptyList()
+    }
+
+    fun saveCustomRules(c: Context, rules: List<Rule>) {
+        val array = JSONArray()
+        for (r in rules) {
+            val obj = JSONObject()
+                .put("id", r.id)
+                .put("action", r.action.value)
+                .put("target", r.target.value)
+                .put("mode", r.mode.value)
+                .put("value", r.value)
+                .put("senderFilter", r.senderFilter ?: "")
+                .put("category", r.category ?: "")
+                .put("enabled", r.enabled)
+            array.put(obj)
+        }
+        prefs(c).edit()
+            .putString("custom_rules", array.toString())
+            .putString("rules", array.toString()) // Keep legacy key in sync
+            .apply()
+    }
+
+    // Backward-compatible alias for custom rules
+    fun getRules(c: Context): List<Rule> = getCustomRules(c)
+    fun saveRules(c: Context, rules: List<Rule>) = saveCustomRules(c, rules)
+
+    /**
+     * All effective rules: Active behavioral category rules + user custom rules.
+     */
+    fun getAllEffectiveRules(c: Context): List<Rule> {
+        return getCategoryRules(c) + getCustomRules(c)
     }
 
     fun parseRules(jsonStr: String): List<Rule> {
@@ -64,6 +136,8 @@ object RuleStore {
                     MatchMode.CONTAINS
                 }
 
+                val senderFilter = obj.optString("senderFilter", "").ifBlank { null }
+                val category = obj.optString("category", "").ifBlank { null }
                 val enabled = obj.optBoolean("enabled", true)
 
                 list.add(
@@ -73,6 +147,8 @@ object RuleStore {
                         target = target,
                         mode = mode,
                         value = value,
+                        senderFilter = senderFilter,
+                        category = category,
                         enabled = enabled
                     )
                 )
@@ -81,20 +157,7 @@ object RuleStore {
         return list
     }
 
-    fun saveRules(c: Context, rules: List<Rule>) {
-        val array = JSONArray()
-        for (r in rules) {
-            val obj = JSONObject()
-                .put("id", r.id)
-                .put("action", r.action.value)
-                .put("target", r.target.value)
-                .put("mode", r.mode.value)
-                .put("value", r.value)
-                .put("enabled", r.enabled)
-            array.put(obj)
-        }
-        prefs(c).edit().putString("rules", array.toString()).apply()
-    }
+    // --- Activity Log ---
 
     fun getLog(c: Context): List<LogEntry> {
         val list = mutableListOf<LogEntry>()
@@ -122,8 +185,11 @@ object RuleStore {
         prefs(c).edit().putString("log", "[]").apply()
     }
 
+    /**
+     * Decides notification fate using all active category shields + custom rules.
+     */
     fun decide(c: Context, title: String, text: String): Decision {
-        val rules = getRules(c) ?: PatternPacks.seedRules()
+        val rules = getAllEffectiveRules(c)
         return Patterns.decide(rules, getMode(c), title, text)
     }
 
