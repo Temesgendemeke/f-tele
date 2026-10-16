@@ -40,13 +40,11 @@ High-performance, ultra-low-size native Android app that hides ad SMS notificati
 
 ### Gradle Commands
 
-Run inside the `android/` directory:
-
 ```bash
 # Run unit tests
 ./gradlew testDebugUnitTest
 
-# Build optimized release APK (2.2 MB)
+# Build optimized release APK (~628 KB)
 ./gradlew assembleRelease
 
 # Build debug APK
@@ -57,17 +55,35 @@ Run inside the `android/` directory:
 ```
 
 The compiled release APK is located at:
-`android/app/build/outputs/apk/release/app-release.apk`
+`app/build/outputs/apk/release/app-release.apk`
+
+### Running on Emulator
+
+1. **Start your Android Emulator** (e.g. `Small_Phone`):
+   ```powershell
+   emulator -avd Small_Phone
+   ```
+2. **Install and Launch the App**:
+   ```powershell
+   .\gradlew.bat installDebug
+   adb shell am start -n com.example.ftele/.ui.MainActivity
+   ```
+3. **Grant Notification Listener Access** in the emulator:
+   - Tap **Open notification access** warning on the home screen (or go to *Settings > Apps > Special app access > Device & app notifications*).
+   - Toggle **F*ck Tele** to **Allow**.
+4. **Test Interceptions**:
+   - Tap **Simulate Real SMS** in the Activity tab or **Simulate Sample From Your Export** in the Shields tab to see live blocking and allowing in action!
 
 ## Architecture & Code Structure
 
-- `android/app/src/main/java/com/example/ftele/`
-  - `engine/Patterns.kt`: Core pattern-matching engine (wildcards, regex, normalization, decision logic).
-  - `engine/PatternPacks.kt`: Preset pattern packs and default seeding.
-  - `engine/Simulations.kt`: Sample messages for in-app testing.
-  - `data/RuleStore.kt`: SharedPreferences store for rules, settings, and activity logs.
-  - `service/SmsMuterService.kt`: `NotificationListenerService` that catches and dismisses notifications in the background.
-  - `ui/MainActivity.kt`: Material 3 user interface with live Try-It evaluation, Activity feed, and Rule editor.
+- `app/src/main/java/com/example/ftele/`
+  - `engine/Patterns.kt`: Core pattern-matching engine (wildcards, regex, Ethiopic Unicode normalization, decision logic).
+  - `engine/PatternPacks.kt`: Preset behavioral categories and Shields (Financial & OTP Protection, Lottery, Telecom Promos, VAS, Loans, Pure Spam Senders).
+  - `engine/Simulations.kt`: Authentic Ethiopian carrier & bank SMS samples for in-app testing.
+  - `data/RuleStore.kt`: SharedPreferences store for rules, category states, settings, and activity logs.
+  - `service/SmsMuterService.kt`: `NotificationListenerService` that intercepts and dismisses spam notifications in the background.
+  - `ui/MainActivity.kt`: Ultra-lightweight native interface with Activity feed, Shields toggles, Custom Rules editor, and live Try-It preview.
   - `ui/ActivityAdapter.kt`: RecyclerView adapter for log entries.
   - `ui/RuleAdapter.kt`: RecyclerView adapter for custom rules.
-- `android/app/src/test/java/com/example/ftele/PatternsTest.kt`: JUnit test suite verifying the matching engine.
+- `app/src/test/java/com/example/ftele/PatternsTest.kt`: JUnit test suite verifying the matching engine.
+
