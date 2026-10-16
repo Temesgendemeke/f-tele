@@ -2,11 +2,38 @@
 <resources>
     <style name="AppTheme" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/accent</item>
-        <item name="colorSecondary">@color/accent</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorSecondary">@color/ink</item>
+        <item name="colorSecondaryContainer">@color/accentSoft</item>
+        <item name="colorOnSecondaryContainer">@color/accent</item>
         <item name="android:windowBackground">@color/bg</item>
         <item name="android:statusBarColor">@color/bg</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:navigationBarColor">@color/bg</item>
+    </style>
+
+    <style name="Widget.App.SegmentedButton" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:textColor">@color/selector_segmented_text</item>
+        <item name="backgroundTint">@color/selector_segmented_bg</item>
+        <item name="strokeColor">@color/line</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="cornerRadius">10dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:insetLeft">0dp</item>
+        <item name="android:insetRight">0dp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Widget.App.FilterChip" parent="Widget.Material3.Chip.Filter">
+        <item name="chipBackgroundColor">@color/selector_chip_bg</item>
+        <item name="android:textColor">@color/selector_chip_text</item>
+        <item name="chipCornerRadius">8dp</item>
+        <item name="chipStrokeWidth">0dp</item>
+        <item name="chipIconVisible">false</item>
+        <item name="checkedIconVisible">false</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">12sp</item>
     </style>
 
     <style name="Theme.App.SplashScreen" parent="AppTheme">

@@ -60,11 +60,11 @@ class ActivityAdapter(
             if (entry.muted) {
                 b.tvChipStatus.text = "Muted"
                 b.tvChipStatus.setTextColor(ContextCompat.getColor(ctx, R.color.block))
-                b.tvChipStatus.setBackgroundColor(ContextCompat.getColor(ctx, R.color.blockSoft))
+                b.tvChipStatus.setBackgroundResource(R.drawable.bg_chip_muted)
             } else {
                 b.tvChipStatus.text = "Shown"
                 b.tvChipStatus.setTextColor(ContextCompat.getColor(ctx, R.color.allow))
-                b.tvChipStatus.setBackgroundColor(ContextCompat.getColor(ctx, R.color.allowSoft))
+                b.tvChipStatus.setBackgroundResource(R.drawable.bg_chip_shown)
             }
 
             b.tvReason.text = entry.reason

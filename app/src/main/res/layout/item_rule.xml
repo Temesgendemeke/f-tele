@@ -69,7 +69,7 @@
                 android:paddingVertical="3dp"
                 android:textSize="11sp"
                 android:textStyle="bold"
-                android:background="@color/allowSoft"
+                android:background="@drawable/bg_chip_shown"
                 android:textColor="@color/allow"
                 tools:text="Allow" />
         </LinearLayout>

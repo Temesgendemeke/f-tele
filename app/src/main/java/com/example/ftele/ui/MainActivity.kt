@@ -366,11 +366,11 @@ class MainActivity : AppCompatActivity() {
         if (decision.mute) {
             b.tvTestChip.text = "Would mute"
             b.tvTestChip.setTextColor(ContextCompat.getColor(this, R.color.block))
-            b.tvTestChip.setBackgroundColor(ContextCompat.getColor(this, R.color.blockSoft))
+            b.tvTestChip.setBackgroundResource(R.drawable.bg_chip_muted)
         } else {
             b.tvTestChip.text = "Would show"
             b.tvTestChip.setTextColor(ContextCompat.getColor(this, R.color.allow))
-            b.tvTestChip.setBackgroundColor(ContextCompat.getColor(this, R.color.allowSoft))
+            b.tvTestChip.setBackgroundResource(R.drawable.bg_chip_shown)
         }
         b.tvTestReason.text = decision.reason
     }

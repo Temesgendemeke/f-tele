@@ -49,11 +49,11 @@ class RuleAdapter(
             if (rule.action == RuleAction.ALLOW) {
                 b.tvRuleChip.text = "Allow"
                 b.tvRuleChip.setTextColor(ContextCompat.getColor(ctx, R.color.allow))
-                b.tvRuleChip.setBackgroundColor(ContextCompat.getColor(ctx, R.color.allowSoft))
+                b.tvRuleChip.setBackgroundResource(R.drawable.bg_chip_shown)
             } else {
                 b.tvRuleChip.text = "Block"
                 b.tvRuleChip.setTextColor(ContextCompat.getColor(ctx, R.color.block))
-                b.tvRuleChip.setBackgroundColor(ContextCompat.getColor(ctx, R.color.blockSoft))
+                b.tvRuleChip.setBackgroundResource(R.drawable.bg_chip_muted)
             }
 
             b.btnRemoveRule.setOnClickListener {

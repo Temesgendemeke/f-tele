@@ -16,7 +16,7 @@
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:paddingHorizontal="16dp"
-        android:paddingTop="12dp"
+        android:paddingTop="14dp"
         android:paddingBottom="6dp">
 
         <LinearLayout
@@ -25,13 +25,34 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
-            <TextView
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="F*ck Tele"
-                android:textColor="@color/ink"
-                android:textSize="26sp"
-                android:textStyle="bold" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="F*ck Tele"
+                    android:textColor="@color/ink"
+                    android:textSize="26sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="-0.02" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:paddingHorizontal="7dp"
+                    android:paddingVertical="2dp"
+                    android:text="OFFLINE"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.06"
+                    android:textColor="@color/accent"
+                    android:background="@drawable/bg_chip_shown" />
+            </LinearLayout>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -97,6 +118,8 @@
                 android:textColor="#FFFFFF"
                 android:textStyle="bold"
                 android:textSize="14sp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
                 app:backgroundTint="@color/block"
                 app:cornerRadius="12dp" />
         </LinearLayout>
@@ -139,23 +162,21 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_mode_blocklist"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    style="@style/Widget.App.SegmentedButton"
                     android:layout_width="0dp"
                     android:layout_height="40dp"
                     android:layout_weight="1"
                     android:text="Only blocked"
-                    android:textSize="13sp"
-                    android:textStyle="bold" />
+                    android:textSize="13sp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_mode_allowlist"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    style="@style/Widget.App.SegmentedButton"
                     android:layout_width="0dp"
                     android:layout_height="40dp"
                     android:layout_weight="1"
                     android:text="All except allowed"
-                    android:textSize="13sp"
-                    android:textStyle="bold" />
+                    android:textSize="13sp" />
             </com.google.android.material.button.MaterialButtonToggleGroup>
 
             <TextView
@@ -174,12 +195,12 @@
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_layout"
         android:layout_width="match_parent"
-        android:layout_height="42dp"
+        android:layout_height="44dp"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="8dp"
         android:background="@drawable/bg_segmented_tab"
         app:tabIndicatorColor="@color/card"
-        app:tabIndicatorHeight="36dp"
+        app:tabIndicatorHeight="38dp"
         app:tabIndicatorGravity="center"
         app:tabIndicator="@drawable/bg_tab_indicator"
         app:tabSelectedTextColor="@color/ink"
@@ -331,7 +352,7 @@
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/btn_target_sender"
-                                style="@style/Widget.Material3.Button.OutlinedButton"
+                                style="@style/Widget.App.SegmentedButton"
                                 android:layout_width="0dp"
                                 android:layout_height="38dp"
                                 android:layout_weight="1"
@@ -340,7 +361,7 @@
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/btn_target_body"
-                                style="@style/Widget.Material3.Button.OutlinedButton"
+                                style="@style/Widget.App.SegmentedButton"
                                 android:layout_width="0dp"
                                 android:layout_height="38dp"
                                 android:layout_weight="1"
@@ -349,7 +370,7 @@
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/btn_target_both"
-                                style="@style/Widget.Material3.Button.OutlinedButton"
+                                style="@style/Widget.App.SegmentedButton"
                                 android:layout_width="0dp"
                                 android:layout_height="38dp"
                                 android:layout_weight="1"
@@ -381,7 +402,7 @@
 
                                 <com.google.android.material.chip.Chip
                                     android:id="@+id/chip_mode_contains"
-                                    style="@style/Widget.Material3.Chip.Filter"
+                                    style="@style/Widget.App.FilterChip"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Contains"
@@ -389,35 +410,35 @@
 
                                 <com.google.android.material.chip.Chip
                                     android:id="@+id/chip_mode_exact"
-                                    style="@style/Widget.Material3.Chip.Filter"
+                                    style="@style/Widget.App.FilterChip"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Exact" />
 
                                 <com.google.android.material.chip.Chip
                                     android:id="@+id/chip_mode_prefix"
-                                    style="@style/Widget.Material3.Chip.Filter"
+                                    style="@style/Widget.App.FilterChip"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Starts" />
 
                                 <com.google.android.material.chip.Chip
                                     android:id="@+id/chip_mode_suffix"
-                                    style="@style/Widget.Material3.Chip.Filter"
+                                    style="@style/Widget.App.FilterChip"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Ends" />
 
                                 <com.google.android.material.chip.Chip
                                     android:id="@+id/chip_mode_wildcard"
-                                    style="@style/Widget.Material3.Chip.Filter"
+                                    style="@style/Widget.App.FilterChip"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Wildcard" />
 
                                 <com.google.android.material.chip.Chip
                                     android:id="@+id/chip_mode_regex"
-                                    style="@style/Widget.Material3.Chip.Filter"
+                                    style="@style/Widget.App.FilterChip"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Regex" />
@@ -454,23 +475,21 @@
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/btn_action_block"
-                                style="@style/Widget.Material3.Button.OutlinedButton"
+                                style="@style/Widget.App.SegmentedButton"
                                 android:layout_width="0dp"
                                 android:layout_height="38dp"
                                 android:layout_weight="1"
                                 android:text="Block (mute)"
-                                android:textSize="12sp"
-                                android:textStyle="bold" />
+                                android:textSize="12sp" />
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/btn_action_allow"
-                                style="@style/Widget.Material3.Button.OutlinedButton"
+                                style="@style/Widget.App.SegmentedButton"
                                 android:layout_width="0dp"
                                 android:layout_height="38dp"
                                 android:layout_weight="1"
                                 android:text="Allow (show)"
-                                android:textSize="12sp"
-                                android:textStyle="bold" />
+                                android:textSize="12sp" />
                         </com.google.android.material.button.MaterialButtonToggleGroup>
 
                         <com.google.android.material.button.MaterialButton
@@ -482,6 +501,8 @@
                             android:textColor="#FFFFFF"
                             android:textStyle="bold"
                             android:textSize="14sp"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
                             app:backgroundTint="@color/accent"
                             app:cornerRadius="12dp" />
 
@@ -573,7 +594,7 @@
                                 android:paddingVertical="3dp"
                                 android:textSize="11sp"
                                 android:textStyle="bold"
-                                android:background="@color/allowSoft"
+                                android:background="@drawable/bg_chip_shown"
                                 android:textColor="@color/allow"
                                 tools:text="Would show" />
 
