@@ -1,4 +1,8 @@
 # ProGuard / R8 rules for F*ck Tele native build
--keep class com.example.ftele.model.** { *; }
--keep class com.example.ftele.service.SmsMuterService { *; }
--keep class com.example.ftele.ui.MainActivity { *; }
+-repackageclasses ''
+-allowaccessmodification
+
+# Service & Activity declared in AndroidManifest
+-keep class com.example.ftele.service.SmsMuterService { <init>(...); }
+-keep class com.example.ftele.ui.MainActivity { <init>(...); }
+

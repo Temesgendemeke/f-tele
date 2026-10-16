@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
+<androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -8,8 +8,6 @@
     android:layout_marginBottom="10dp"
     app:cardCornerRadius="14dp"
     app:cardElevation="0dp"
-    app:strokeWidth="1dp"
-    app:strokeColor="@color/line"
     app:cardBackgroundColor="@color/card">
 
     <LinearLayout
@@ -96,40 +94,30 @@
             android:layout_marginTop="12dp"
             android:orientation="horizontal">
 
-            <com.google.android.material.button.MaterialButton
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_allow_sender"
-                style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="0dp"
-                android:layout_height="40dp"
+                android:layout_height="38dp"
                 android:layout_weight="1"
                 android:layout_marginEnd="5dp"
                 android:text="Allow sender"
                 android:textSize="13sp"
                 android:textStyle="bold"
                 android:textColor="@color/ink"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                app:strokeColor="@color/line"
-                app:strokeWidth="1dp"
-                app:cornerRadius="10dp" />
+                android:background="@drawable/bg_input" />
 
-            <com.google.android.material.button.MaterialButton
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_block_sender"
-                style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="0dp"
-                android:layout_height="40dp"
+                android:layout_height="38dp"
                 android:layout_weight="1"
                 android:layout_marginStart="5dp"
                 android:text="Block sender"
                 android:textSize="13sp"
                 android:textStyle="bold"
                 android:textColor="@color/ink"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                app:strokeColor="@color/line"
-                app:strokeWidth="1dp"
-                app:cornerRadius="10dp" />
+                android:background="@drawable/bg_input" />
         </LinearLayout>
 
     </LinearLayout>
-</com.google.android.material.card.MaterialCardView>
+</androidx.cardview.widget.CardView>

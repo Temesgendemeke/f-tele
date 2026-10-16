@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
+<androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -8,8 +7,6 @@
     android:layout_marginBottom="10dp"
     app:cardCornerRadius="14dp"
     app:cardElevation="0dp"
-    app:strokeWidth="1dp"
-    app:strokeColor="@color/line"
     app:cardBackgroundColor="@color/card">
 
     <LinearLayout
@@ -73,12 +70,10 @@
                 android:visibility="gone"
                 tools:visibility="visible" />
 
-            <com.google.android.material.materialswitch.MaterialSwitch
+            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/switch_shield"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:thumbTint="@color/card"
-                app:trackTint="@color/accent" />
+                android:layout_height="wrap_content" />
         </LinearLayout>
 
         <TextView
@@ -92,4 +87,4 @@
             tools:text="Mutes lottery promotions, raffle draws, EV car sweepstakes, weekly draw tickets, silver coins, and teleplay games." />
 
     </LinearLayout>
-</com.google.android.material.card.MaterialCardView>
+</androidx.cardview.widget.CardView>

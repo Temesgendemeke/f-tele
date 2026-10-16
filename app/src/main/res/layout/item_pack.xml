@@ -37,16 +37,14 @@
             tools:text="Always show one-time passcodes, even from blocked senders." />
     </LinearLayout>
 
-    <com.google.android.material.button.MaterialButton
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_add_pack"
-        style="@style/Widget.Material3.Button.TonalButton"
         android:layout_width="wrap_content"
         android:layout_height="36dp"
         android:text="Add"
         android:textSize="13sp"
         android:textStyle="bold"
         android:textColor="@color/accent"
-        app:backgroundTint="@color/accentSoft"
-        app:cornerRadius="10dp" />
+        android:background="@drawable/bg_chip_shown" />
 
 </LinearLayout>
