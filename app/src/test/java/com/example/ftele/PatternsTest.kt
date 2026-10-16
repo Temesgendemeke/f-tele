@@ -162,4 +162,77 @@ class PatternsTest {
         assertEquals(RuleTarget.SENDER, parsed[1].target)
         assertEquals(RuleAction.BLOCK, parsed[1].action)
     }
+
+    @Test
+    fun testMultiBankProtectionShield() {
+        val seedRules = PatternPacks.seedRules()
+
+        // Awash Bank
+        val awash = Patterns.decide(
+            seedRules, "blocklist", "Awash",
+            "your account 0132*****98 has been debited with ETB 500.00. Your current balance is ETB 1,230.50. Receipt: https://awashpay.com/tx/A78932"
+        )
+        assertFalse("Awash transaction must be allowed", awash.mute)
+
+        // Bank of Abyssinia (BOA)
+        val boa = Patterns.decide(
+            seedRules, "blocklist", "BOA",
+            "your account 5*****42 was debited with ETB 1,200.00. Available Balance: ETB 8,500.25. Receipt: https://boa.et/r?trx=B99214"
+        )
+        assertFalse("BOA transaction must be allowed", boa.mute)
+
+        // Dashen Bank
+        val dashen = Patterns.decide(
+            seedRules, "blocklist", "Dashen",
+            "your account '0021*****1201' is credited with ETB 3,500.00 on 14/10/2026. current balance is ETB 12,400.00"
+        )
+        assertFalse("Dashen transaction must be allowed", dashen.mute)
+
+        // Zemen Bank
+        val zemen = Patterns.decide(
+            seedRules, "blocklist", "Zemen",
+            "Birr 4,000.00 ATM cash withdrawal has been made from A/c No. 120*****91 on 12-OCT-2026. Available Bal. is Birr 15,200.00"
+        )
+        assertFalse("Zemen transaction must be allowed", zemen.mute)
+
+        // telebirr receipt
+        val telebirr = Patterns.decide(
+            seedRules, "blocklist", "127",
+            "Dear Temesgen You have received ETB 243.75 from CHAPA FINANCIAL TECHNOLOGY SHARE COMPANY on 02/12/2025. Your transaction number is CF16M70KJI. current balance is ETB 1,500.00"
+        )
+        assertFalse("telebirr transaction must be allowed", telebirr.mute)
+    }
+
+    @Test
+    fun testCarrierBehavioralMutingShields() {
+        val seedRules = PatternPacks.seedRules()
+
+        // Teleplay lottery promotion from 127 (telecom sender) -> MUST BE MUTED
+        val teleplay = Patterns.decide(
+            seedRules, "blocklist", "127",
+            "በቴሌብር ስላደረጉት የገንዘብ ዝውውር እናመሰግናለን። ወደ *830*1# በመደወል በቴሌፕለይ ጨዋታዎች እለታዊ 25,000 ብር እና መኪና ያሸንፉ!"
+        )
+        assertTrue("Teleplay lottery promo must be muted", teleplay.mute)
+
+        // Pure spam sender 605 -> MUST BE MUTED
+        val admas = Patterns.decide(
+            seedRules, "blocklist", "605",
+            "44ኛው ዙር አድማስ ዲጂታል ሎተሪ ሊወጣ ጥቂት ቀናት ቀሩት! ወደ 605 ይላኩ!"
+        )
+        assertTrue("Shortcode 605 must be muted", admas.mute)
+
+        // Telecom marketing from Safaricom -> MUST BE MUTED
+        val promo = Patterns.decide(
+            seedRules, "blocklist", "Safaricom",
+            "ነፃ 1 ጂቢ+ 35 ደቂቃ ለእርስዎ፣ *777# ላይ በመደወል አስደሳች ቅናሾችን ያግኙ"
+        )
+        assertTrue("Telecom bundle promo must be muted", promo.mute)
+
+        // Ringtone VAS from CallSign -> MUST BE MUTED
+        val ringtone = Patterns.decide(
+            seedRules, "blocklist", "CallSign",
+            "ይህ የጥሪ ፊርማ አገልግሎት ነው። ለዕለታዊ ጥቅል ለመመዝገብ *623*1*1# ይጫኑ"
+        )
+        assertTrue("Ringtone promo must be muted", ringtone.mute)
+    }
 }

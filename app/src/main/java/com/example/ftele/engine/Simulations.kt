@@ -44,6 +44,21 @@ object Simulations {
             expectedDecision = "Muted (Loan Promo)"
         ),
         SampleSms(
+            sender = "Awash",
+            text = "your account 0132*****98 has been debited with ETB 500.00. Your current balance is ETB 1,230.50. Receipt: https://awashpay.com/tx/A78932",
+            expectedDecision = "Allowed (Awash Bank Debit)"
+        ),
+        SampleSms(
+            sender = "BOA",
+            text = "your account 5*****42 was debited with ETB 1,200.00. Available Balance: ETB 8,500.25. Receipt: https://boa.et/r?trx=B99214",
+            expectedDecision = "Allowed (BOA Bank Debit)"
+        ),
+        SampleSms(
+            sender = "Dashen",
+            text = "your account '0021*****1201' is credited with ETB 3,500.00 on 14/10/2026. current balance is ETB 12,400.00",
+            expectedDecision = "Allowed (Dashen Bank Credit)"
+        ),
+        SampleSms(
             sender = "824",
             text = "MCN:+251969138931 called you once on 20.02.2026 at 17:22:29, Please call back.",
             expectedDecision = "Allowed (Missed Call)"
