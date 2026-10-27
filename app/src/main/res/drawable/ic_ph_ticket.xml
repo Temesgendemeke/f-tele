@@ -1,0 +1,16 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="256"
+    android:viewportHeight="256">
+    <!-- Phosphor Ticket Regular (256x256) -->
+    <path
+        android:fillColor="@color/ink"
+        android:pathData="M232,88a16,16 0,0 0,-16,-16H40A16,16 0,0 0,24 88a32,32 0,0 1,0 64,16,16 0,0 0,16 16H216a16,16 0,0 0,16,-16,32,32 0,0 1,0 -64zM216,152H40a47.88,47.88 0,0 0,-0.16 -48H216.16A47.88,47.88 0,0 0,216 152z" />
+    <path
+        android:fillColor="@color/ink"
+        android:pathData="M128,104a8,8 0,0 0,-8,8v16a8,8 0,0 0,16,0V112A8,8 0,0 0,128 104z" />
+    <path
+        android:fillColor="@color/ink"
+        android:pathData="M128,144a8,8 0,0 0,-8,8v16a8,8 0,0 0,16,0V152A8,8 0,0 0,128 144z" />
+</vector>

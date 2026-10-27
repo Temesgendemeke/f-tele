@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="bg">#F5F5F2</color>
+    <!-- Base -->
+    <color name="bg">#F7F6F2</color>
     <color name="card">#FFFFFF</color>
-    <color name="ink">#1C1C1A</color>
-    <color name="sub">#6B6B66</color>
-    <color name="line">#E3E2DC</color>
+    <color name="cardSoft">#F4F3EE</color>
+    <color name="ink">#1A1A18</color>
+    <color name="inkSoft">#4A4A45</color>
+    <color name="sub">#7A7A74</color>
+    <color name="line">#E8E7E0</color>
+    <color name="lineSoft">#F0EFE8</color>
+
+    <!-- Brand -->
     <color name="accent">#0F6E56</color>
-    <color name="accentSoft">#DDF1EA</color>
+    <color name="accentDark">#0B5544</color>
+    <color name="accentSoft">#E2F1EA</color>
+    <color name="accentText">#FFFFFF</color>
+
+    <!-- Semantic -->
     <color name="allow">#15803D</color>
     <color name="allowSoft">#DCF3E3</color>
     <color name="block">#B42318</color>
@@ -16,8 +26,13 @@
     <color name="warning">#B45309</color>
     <color name="warningSoft">#FEF3C7</color>
 
+    <!-- Legacy theme attrs -->
     <color name="colorPrimary">#0F6E56</color>
-    <color name="colorPrimaryDark">#094E3C</color>
+    <color name="colorPrimaryDark">#0B5544</color>
     <color name="colorAccent">#0F6E56</color>
-    <color name="splashscreen_background">#F5F5F2</color>
+    <color name="splashscreen_background">#F7F6F2</color>
+
+    <!-- Segmented / radio text -->
+    <color name="segment_on">#FFFFFF</color>
+    <color name="segment_off">#4A4A45</color>
 </resources>

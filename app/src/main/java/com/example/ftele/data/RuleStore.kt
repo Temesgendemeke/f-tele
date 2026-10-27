@@ -32,6 +32,13 @@ object RuleStore {
         prefs(c).edit().putString("mode", value).apply()
     }
 
+    /** Theme mode: "system", "dark", "light" */
+    fun getThemeMode(c: Context): String = prefs(c).getString("theme_mode", "system") ?: "system"
+
+    fun setThemeMode(c: Context, value: String) {
+        prefs(c).edit().putString("theme_mode", value).apply()
+    }
+
     // --- Behavioral Category Toggles ---
 
     fun isCategoryEnabled(c: Context, catId: String): Boolean {

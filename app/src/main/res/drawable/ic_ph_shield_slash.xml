@@ -1,0 +1,16 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="256"
+    android:viewportHeight="256">
+    <!-- Phosphor Shield Slash (256x256) -->
+    <path
+        android:fillColor="@color/sub"
+        android:pathData="M208,40H86.29l16,16H192v58.78c0,27.42 -8.76,50.73 -22.38,69.5l12.44,12.45C198.81,174.45 208,147.2 208,114.78V56A16,16 0,0 0,208 40z" />
+    <path
+        android:fillColor="@color/sub"
+        android:pathData="M48,74.57V114.78c0,77.34 63.78,103.54 80,106.84 13,-2.64 54,-19 72.33,-65.41l13.56,13.56C197.87,204.09 133.09,233.79 128,235.47 122.91,233.79 48,204.39 48,114.78V56a16,16 0,0 1,1.76,-7.3l12.67,12.67A15.93,15.93 0,0 0,48 74.57z" />
+    <path
+        android:fillColor="@color/sub"
+        android:pathData="M53.92,34.62a8,8 0,1 0,-11.84 10.76l160,176a8,8 0,0 0,11.84,-10.76z" />
+</vector>

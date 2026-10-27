@@ -1,0 +1,10 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="256"
+    android:viewportHeight="256">
+    <!-- Phosphor Megaphone Regular (256x256) -->
+    <path
+        android:fillColor="@color/ink"
+        android:pathData="M239.5,124.2a8,8 0,0 0,-7.5,-5.2H200V80a16,16 0,0 0,-16,-16H80A56.06,56.06 0,0 0,24 120v16a56.06,56.06 0,0 0,56 56h8.21l13.68,43.34A8,8 0,0 0,109.52,240a7.83,7.83 0,0 0,2.48,-0.4,8,8 0,0 0,5.12,-10.08L104.75,192H184a16,16 0,0 0,16,-16V137h32a8,8 0,0 0,7.5,-12.8zM80,176A40,40 0,0 1,40 136V120a40,40 0,0 1,40,-40h104v96H80z" />
+</vector>

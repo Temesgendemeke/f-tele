@@ -22,6 +22,7 @@ High-performance, ultra-low-size native Android app that hides ad SMS notificati
 - **Dual Filtering Modes**:
   - **Only blocked** (default): Mutes only senders and words on your block list. Everything else notifies normally.
   - **All except allowed**: Strict allowlist mode — every SMS is muted unless it matches an allow rule.
+- **Beginner-Friendly Home UI**: VPN-style master protection switch with plain-language status, plus 3 modern tabs (**Inbox**, **Shields**, **Rules**) for quick navigation.
 - **Pattern Packs**: One-tap starter presets:
   - OTP & verification codes (seeded by default)
   - Trusted senders (e.g. CBE, seeded by default)
@@ -57,6 +58,36 @@ High-performance, ultra-low-size native Android app that hides ad SMS notificati
 The compiled release APK is located at:
 `app/build/outputs/apk/release/app-release.apk`
 
+### Automatic debug refresh while developing
+
+Native Android does not have true Flutter/React-style hot reload. For the fastest
+feedback loop, Android Studio can use **Run > Apply Changes** after a Kotlin or
+layout edit. Changes to the manifest, dependencies, or app structure require a
+normal restart.
+
+On Windows, this project also includes a lightweight watcher that rebuilds,
+installs, and relaunches the debug app whenever source files change:
+
+```powershell
+.\scripts\watch-debug.ps1
+```
+
+Requirements:
+
+- A running emulator or a connected Android device
+- `adb` available on `PATH`
+- PowerShell execution of local scripts enabled
+
+To build and install without relaunching the activity:
+
+```powershell
+.\scripts\watch-debug.ps1 -NoLaunch
+```
+
+
+The watcher only observes project source/configuration files and ignores
+`app/build`, so generated build output cannot trigger an endless rebuild loop.
+
 ### Running on Emulator
 
 1. **Start your Android Emulator** (e.g. `Small_Phone`):
@@ -86,4 +117,3 @@ The compiled release APK is located at:
   - `ui/ActivityAdapter.kt`: RecyclerView adapter for log entries.
   - `ui/RuleAdapter.kt`: RecyclerView adapter for custom rules.
 - `app/src/test/java/com/example/ftele/PatternsTest.kt`: JUnit test suite verifying the matching engine.
-
