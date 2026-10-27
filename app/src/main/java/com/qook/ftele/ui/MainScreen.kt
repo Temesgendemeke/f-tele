@@ -39,6 +39,8 @@ fun MainScreen(
     isEnabled: Boolean,
     onToggleMaster: (Boolean) -> Unit,
     hasPermission: Boolean,
+    isIgnoringBattery: Boolean,
+    deviceTip: String,
     activeShieldCount: Int,
     currentMode: String,
     themeMode: String,
@@ -48,6 +50,8 @@ fun MainScreen(
     isCategoryEnabled: (String) -> Boolean,
     onToggleCategory: (String, Boolean) -> Unit,
     onOpenPermissionSettings: () -> Unit,
+    onOpenBatterySettings: () -> Unit,
+    onOpenAutostartSettings: () -> Unit,
     onSimulateSms: () -> Unit,
     onClearLogs: () -> Unit,
     onAllowSender: (String) -> Unit,
@@ -152,9 +156,13 @@ fun MainScreen(
                 )
                 3 -> SettingsScreen(
                     hasPermission = hasPermission,
+                    isIgnoringBattery = isIgnoringBattery,
+                    deviceTip = deviceTip,
                     currentMode = currentMode,
                     themeMode = themeMode,
                     onOpenPermissionSettings = onOpenPermissionSettings,
+                    onOpenBatterySettings = onOpenBatterySettings,
+                    onOpenAutostartSettings = onOpenAutostartSettings,
                     onChangeMode = onChangeMode,
                     onChangeTheme = onChangeTheme,
                     onClearLogs = onClearLogs

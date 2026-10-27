@@ -18,9 +18,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.BatteryAlert
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.DeleteSweep
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.LightMode
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.PhoneAndroid
@@ -44,9 +46,13 @@ import com.qook.ftele.ui.theme.FTeleTheme
 @Composable
 fun SettingsScreen(
     hasPermission: Boolean,
+    isIgnoringBattery: Boolean,
+    deviceTip: String,
     currentMode: String,
     themeMode: String,
     onOpenPermissionSettings: () -> Unit,
+    onOpenBatterySettings: () -> Unit,
+    onOpenAutostartSettings: () -> Unit,
     onChangeMode: (String) -> Unit,
     onChangeTheme: (String) -> Unit,
     onClearLogs: () -> Unit
@@ -141,7 +147,126 @@ fun SettingsScreen(
             }
         }
 
-        // --- 2. Filtering Mode Strategy ---
+        // --- 2. Background Reliability & Battery Optimization ---
+        item {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(14.dp),
+                colors = CardDefaults.cardColors(containerColor = colors.card),
+                border = CardDefaults.outlinedCardBorder().copy(
+                    brush = androidx.compose.ui.graphics.SolidColor(colors.line)
+                )
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(36.dp)
+                                .clip(CircleShape)
+                                .background(if (isIgnoringBattery) colors.accentSoft else colors.blockSoft),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = if (isIgnoringBattery) Icons.Outlined.Check else Icons.Outlined.BatteryAlert,
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp),
+                                tint = if (isIgnoringBattery) colors.accent else colors.block
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(12.dp))
+
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = "Battery & Autostart",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = colors.ink
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = if (isIgnoringBattery) "Battery unrestricted (Optimal)" else "Restricted by OS battery saver",
+                                fontSize = 11.sp,
+                                color = if (isIgnoringBattery) colors.sub else colors.block
+                            )
+                        }
+
+                        Button(
+                            onClick = onOpenBatterySettings,
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = if (isIgnoringBattery) colors.cardSoft else colors.ink,
+                                contentColor = if (isIgnoringBattery) colors.ink else colors.bg
+                            ),
+                            shape = RoundedCornerShape(8.dp),
+                            contentPadding = PaddingValues(horizontal = 10.dp, vertical = 5.dp)
+                        ) {
+                            Text(
+                                text = if (isIgnoringBattery) "Review" else "Unrestrict",
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    // OEM / Manufacturer specific advice box
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(colors.cardSoft)
+                            .padding(12.dp)
+                    ) {
+                        Column {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Info,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(14.dp),
+                                    tint = colors.sub
+                                )
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(
+                                    text = "Device Optimization Tip",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = colors.ink
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = deviceTip,
+                                fontSize = 11.sp,
+                                color = colors.sub,
+                                lineHeight = 16.sp
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Button(
+                                onClick = onOpenAutostartSettings,
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = colors.ink,
+                                    contentColor = colors.bg
+                                ),
+                                shape = RoundedCornerShape(6.dp),
+                                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp)
+                            ) {
+                                Text(text = "Open Autostart / App Settings", fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // --- 3. Filtering Mode Strategy ---
         item {
             Card(
                 modifier = Modifier.fillMaxWidth(),

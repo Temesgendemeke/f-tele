@@ -95,6 +95,17 @@ adb install -r app/build/outputs/apk/release/app-release.apk
 adb shell am start -n com.qook.ftele/.ui.MainActivity
 ```
 
+### Background Reliability for Specific Devices (Xiaomi / Samsung / Huawei / Vivo / Oppo)
+
+Certain phone manufacturers have aggressive proprietary battery managers. To guarantee 100% uninterrupted background operation:
+
+- **Battery Optimization (All Devices)**: Set F-Tele to **Unrestricted** (`Settings > Apps > F-Tele > Battery > Unrestricted`). You can also tap **Unrestrict** in F-Tele Settings.
+- **Xiaomi / MIUI / HyperOS**: Enable **Autostart** for F-Tele (`Security > Permissions > Autostart`), and set Battery Saver to **No restrictions**.
+- **Samsung**: Add F-Tele to **Never sleeping apps** (`Settings > Battery > Background usage limits > Never sleeping apps`).
+- **Huawei / Honor**: Set F-Tele to **Manage manually** (`Settings > Battery > App launch`) and enable **Auto-launch** and **Run in background**.
+- **Oppo / Realme**: Enable **Allow background activity** (`Settings > Battery > App battery management > F-Tele`).
+- **Vivo / iQOO**: Turn ON **High background power consumption** (`Settings > Battery > High background power consumption > F-Tele`).
+
 ---
 
 ## Building From Source

@@ -14,6 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.view.WindowCompat
 import com.qook.ftele.data.RuleStore
+import com.qook.ftele.engine.BackgroundHelper
 import com.qook.ftele.engine.PatternPacks
 import com.qook.ftele.engine.Patterns
 import com.qook.ftele.engine.Simulations
@@ -30,6 +31,8 @@ class MainActivity : ComponentActivity() {
     private var currentTab by mutableIntStateOf(0)
     private var isEnabled by mutableStateOf(true)
     private var hasPermission by mutableStateOf(false)
+    private var isIgnoringBattery by mutableStateOf(false)
+    private var deviceTip by mutableStateOf("")
     private var currentMode by mutableStateOf("blocklist")
     private var themeMode by mutableStateOf("system")
     private var logs by mutableStateOf<List<LogEntry>>(emptyList())
@@ -60,6 +63,8 @@ class MainActivity : ComponentActivity() {
                     isEnabled = isEnabled,
                     onToggleMaster = { setMasterEnabled(it) },
                     hasPermission = hasPermission,
+                    isIgnoringBattery = isIgnoringBattery,
+                    deviceTip = deviceTip,
                     activeShieldCount = activeShieldCount,
                     currentMode = currentMode,
                     themeMode = themeMode,
@@ -73,6 +78,12 @@ class MainActivity : ComponentActivity() {
                     },
                     onOpenPermissionSettings = {
                         startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
+                    },
+                    onOpenBatterySettings = {
+                        BackgroundHelper.openBatteryOptimizationSettings(this)
+                    },
+                    onOpenAutostartSettings = {
+                        BackgroundHelper.openAutostartSettings(this)
                     },
                     onSimulateSms = { runSimulation() },
                     onClearLogs = {
@@ -143,6 +154,8 @@ class MainActivity : ComponentActivity() {
         isEnabled = RuleStore.isEnabled(this)
         currentMode = RuleStore.getMode(this)
         themeMode = RuleStore.getThemeMode(this)
+        isIgnoringBattery = BackgroundHelper.isIgnoringBatteryOptimizations(this)
+        deviceTip = BackgroundHelper.getDeviceTip()
         syncRulesAndCategories()
         refreshLogs()
         checkNotificationPermission()
