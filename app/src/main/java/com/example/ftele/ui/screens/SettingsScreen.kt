@@ -21,13 +21,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.DeleteOutline
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.LightMode
-import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.PhoneAndroid
-import androidx.compose.material.icons.outlined.Security
 import androidx.compose.material.icons.outlined.Shield
-import androidx.compose.material.icons.outlined.Tune
-import androidx.compose.material.icons.outlined.WarningAmber
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -61,21 +58,25 @@ fun SettingsScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(colors.bg),
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 14.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+        verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
         // --- 1. Notification Permission Card ---
         item {
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(18.dp),
+                shape = RoundedCornerShape(14.dp),
                 colors = CardDefaults.cardColors(containerColor = colors.card),
-                border = CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(colors.line))
+                border = CardDefaults.outlinedCardBorder().copy(
+                    brush = androidx.compose.ui.graphics.SolidColor(
+                        if (hasPermission) colors.line else colors.block.copy(alpha = 0.35f)
+                    )
+                )
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(18.dp)
+                        .padding(16.dp)
                 ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -85,35 +86,35 @@ fun SettingsScreen(
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Box(
                                 modifier = Modifier
-                                    .size(38.dp)
+                                    .size(36.dp)
                                     .clip(CircleShape)
-                                    .background(if (hasPermission) colors.allowSoft else colors.warningSoft),
+                                    .background(if (hasPermission) colors.allowSoft else colors.blockSoft),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(
-                                    imageVector = if (hasPermission) Icons.Outlined.Check else Icons.Outlined.WarningAmber,
+                                    imageVector = if (hasPermission) Icons.Outlined.Check else Icons.Outlined.Info,
                                     contentDescription = null,
-                                    modifier = Modifier.size(20.dp),
-                                    tint = if (hasPermission) colors.allow else colors.warning
+                                    modifier = Modifier.size(18.dp),
+                                    tint = if (hasPermission) colors.allow else colors.block
                                 )
                             }
                             Spacer(modifier = Modifier.width(12.dp))
                             Column {
                                 Text(
                                     text = "Notification Access",
-                                    fontSize = 15.sp,
+                                    fontSize = 14.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = colors.ink
                                 )
                                 Text(
-                                    text = if (hasPermission) "Active & operational" else "Action required to mute SMS",
-                                    fontSize = 12.sp,
+                                    text = if (hasPermission) "Active & operational" else "Action required to mute spam SMS",
+                                    fontSize = 11.sp,
                                     color = colors.sub
                                 )
                             }
                         }
 
-                        // Badge
+                        // Badge: Shield Green vs Relative Red
                         Box(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(6.dp))
@@ -122,7 +123,7 @@ fun SettingsScreen(
                         ) {
                             Text(
                                 text = if (hasPermission) "ACTIVE" else "REQUIRED",
-                                fontSize = 11.sp,
+                                fontSize = 10.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = if (hasPermission) colors.allow else colors.block
                             )
@@ -130,17 +131,18 @@ fun SettingsScreen(
                     }
 
                     if (!hasPermission) {
-                        Spacer(modifier = Modifier.height(14.dp))
+                        Spacer(modifier = Modifier.height(12.dp))
                         Button(
                             onClick = onOpenPermissionSettings,
                             modifier = Modifier.fillMaxWidth(),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = colors.accent,
+                                containerColor = colors.block,
                                 contentColor = Color.White
                             ),
-                            shape = RoundedCornerShape(10.dp)
+                            shape = RoundedCornerShape(8.dp),
+                            contentPadding = PaddingValues(vertical = 8.dp)
                         ) {
-                            Text(text = "Grant Notification Access", fontWeight = FontWeight.Bold)
+                            Text(text = "Grant Notification Access", fontSize = 12.sp, fontWeight = FontWeight.Bold)
                         }
                     }
                 }
@@ -151,50 +153,48 @@ fun SettingsScreen(
         item {
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(18.dp),
+                shape = RoundedCornerShape(14.dp),
                 colors = CardDefaults.cardColors(containerColor = colors.card),
                 border = CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(colors.line))
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(18.dp)
+                        .padding(16.dp)
                 ) {
                     Text(
                         text = "Filtering Strategy",
-                        fontSize = 15.sp,
+                        fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
                         color = colors.ink
                     )
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
                         text = "Choose how strictly F-Tele handles non-categorized SMS.",
-                        fontSize = 12.sp,
+                        fontSize = 11.sp,
                         color = colors.sub
                     )
 
-                    Spacer(modifier = Modifier.height(14.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
 
-                    // Segmented Button: Blocklist vs Allowlist
+                    // Clean Monochrome Segmented Control
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clip(RoundedCornerShape(10.dp))
+                            .clip(RoundedCornerShape(8.dp))
                             .background(colors.cardSoft)
-                            .padding(4.dp),
+                            .padding(3.dp),
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        ModePill(
+                        MonochromeSegmentPill(
                             label = "Normal (Blocklist)",
                             selected = currentMode == "blocklist",
-                            activeColor = colors.accent,
                             modifier = Modifier.weight(1f),
                             onClick = { onSelectMode("blocklist") }
                         )
-                        ModePill(
+                        MonochromeSegmentPill(
                             label = "Strict (Allowlist)",
                             selected = currentMode == "allowlist",
-                            activeColor = colors.warning,
                             modifier = Modifier.weight(1f),
                             onClick = { onSelectMode("allowlist") }
                         )
@@ -208,9 +208,9 @@ fun SettingsScreen(
                         } else {
                             "Strict mode: every SMS is muted unless you explicitly allow it or it's protected."
                         },
-                        fontSize = 12.sp,
+                        fontSize = 11.sp,
                         color = colors.inkSoft,
-                        lineHeight = 16.sp
+                        lineHeight = 15.sp
                     )
                 }
             }
@@ -220,53 +220,54 @@ fun SettingsScreen(
         item {
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(18.dp),
+                shape = RoundedCornerShape(14.dp),
                 colors = CardDefaults.cardColors(containerColor = colors.card),
                 border = CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(colors.line))
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(18.dp)
+                        .padding(16.dp)
                 ) {
                     Text(
                         text = "Appearance",
-                        fontSize = 15.sp,
+                        fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
                         color = colors.ink
                     )
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
                         text = "Select application theme.",
-                        fontSize = 12.sp,
+                        fontSize = 11.sp,
                         color = colors.sub
                     )
 
-                    Spacer(modifier = Modifier.height(14.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
 
+                    // Clean Monochrome Theme Selector
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clip(RoundedCornerShape(10.dp))
+                            .clip(RoundedCornerShape(8.dp))
                             .background(colors.cardSoft)
-                            .padding(4.dp),
+                            .padding(3.dp),
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        ThemePill(
+                        ThemeSegmentPill(
                             label = "System",
                             icon = Icons.Outlined.PhoneAndroid,
                             selected = themeMode == "system",
                             modifier = Modifier.weight(1f),
                             onClick = { onSelectTheme("system") }
                         )
-                        ThemePill(
+                        ThemeSegmentPill(
                             label = "Light",
                             icon = Icons.Outlined.LightMode,
                             selected = themeMode == "light",
                             modifier = Modifier.weight(1f),
                             onClick = { onSelectTheme("light") }
                         )
-                        ThemePill(
+                        ThemeSegmentPill(
                             label = "Dark",
                             icon = Icons.Outlined.DarkMode,
                             selected = themeMode == "dark",
@@ -282,29 +283,29 @@ fun SettingsScreen(
         item {
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(18.dp),
+                shape = RoundedCornerShape(14.dp),
                 colors = CardDefaults.cardColors(containerColor = colors.card),
                 border = CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(colors.line))
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(18.dp)
+                        .padding(16.dp)
                 ) {
                     Text(
                         text = "Data Management",
-                        fontSize = 15.sp,
+                        fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
                         color = colors.ink
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(2.dp))
                     Text(
                         text = "Clear past activity logs. Your custom rules and shield settings are preserved.",
-                        fontSize = 12.sp,
+                        fontSize = 11.sp,
                         color = colors.sub
                     )
 
-                    Spacer(modifier = Modifier.height(14.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
 
                     Button(
                         onClick = onClearAllLogs,
@@ -312,12 +313,12 @@ fun SettingsScreen(
                             containerColor = colors.cardSoft,
                             contentColor = colors.block
                         ),
-                        shape = RoundedCornerShape(10.dp),
-                        contentPadding = PaddingValues(horizontal = 14.dp, vertical = 8.dp)
+                        shape = RoundedCornerShape(8.dp),
+                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
                     ) {
-                        Icon(imageVector = Icons.Outlined.DeleteOutline, contentDescription = null, modifier = Modifier.size(16.dp))
+                        Icon(imageVector = Icons.Outlined.DeleteOutline, contentDescription = null, modifier = Modifier.size(15.dp))
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text(text = "Clear Activity Log", fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                        Text(text = "Clear Activity Log", fontSize = 12.sp, fontWeight = FontWeight.Bold)
                     }
                 }
             }
@@ -327,36 +328,36 @@ fun SettingsScreen(
         item {
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(18.dp),
+                shape = RoundedCornerShape(14.dp),
                 colors = CardDefaults.cardColors(containerColor = colors.cardSoft),
                 border = CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(colors.line))
             ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
+                        .padding(14.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Shield,
                         contentDescription = null,
-                        modifier = Modifier.size(28.dp),
+                        modifier = Modifier.size(24.dp),
                         tint = colors.accent
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Column {
                         Text(
                             text = "100% Offline & Private",
-                            fontSize = 13.sp,
+                            fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
                             color = colors.ink
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
-                            text = "No internet permissions. Zero analytics. All evaluations run locally on your device.",
+                            text = "Zero network permissions. Evaluations run entirely on your device.",
                             fontSize = 11.sp,
                             color = colors.sub,
-                            lineHeight = 15.sp
+                            lineHeight = 14.sp
                         )
                     }
                 }
@@ -366,33 +367,32 @@ fun SettingsScreen(
 }
 
 @Composable
-private fun ModePill(
+private fun MonochromeSegmentPill(
     label: String,
     selected: Boolean,
-    activeColor: Color,
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
     val colors = FTeleTheme.colors
     Box(
         modifier = modifier
-            .clip(RoundedCornerShape(8.dp))
-            .background(if (selected) activeColor else Color.Transparent)
+            .clip(RoundedCornerShape(6.dp))
+            .background(if (selected) colors.ink else Color.Transparent)
             .clickable { onClick() }
-            .padding(vertical = 8.dp),
+            .padding(vertical = 7.dp),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = label,
             fontSize = 12.sp,
             fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
-            color = if (selected) Color.White else colors.inkSoft
+            color = if (selected) colors.bg else colors.inkSoft
         )
     }
 }
 
 @Composable
-private fun ThemePill(
+private fun ThemeSegmentPill(
     label: String,
     icon: ImageVector,
     selected: Boolean,
@@ -402,10 +402,10 @@ private fun ThemePill(
     val colors = FTeleTheme.colors
     Box(
         modifier = modifier
-            .clip(RoundedCornerShape(8.dp))
-            .background(if (selected) colors.accent else Color.Transparent)
+            .clip(RoundedCornerShape(6.dp))
+            .background(if (selected) colors.ink else Color.Transparent)
             .clickable { onClick() }
-            .padding(vertical = 8.dp),
+            .padding(vertical = 7.dp),
         contentAlignment = Alignment.Center
     ) {
         Row(
@@ -415,14 +415,14 @@ private fun ThemePill(
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                modifier = Modifier.size(14.dp),
-                tint = if (selected) Color.White else colors.inkSoft
+                modifier = Modifier.size(13.dp),
+                tint = if (selected) colors.bg else colors.inkSoft
             )
             Text(
                 text = label,
                 fontSize = 12.sp,
                 fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
-                color = if (selected) Color.White else colors.inkSoft
+                color = if (selected) colors.bg else colors.inkSoft
             )
         }
     }

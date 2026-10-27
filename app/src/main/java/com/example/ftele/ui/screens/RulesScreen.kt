@@ -21,15 +21,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material.icons.outlined.Check
-import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.DeleteOutline
-import androidx.compose.material.icons.outlined.Rule
-import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -51,7 +45,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ftele.engine.PatternPacks
@@ -95,21 +88,21 @@ fun RulesScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(colors.bg),
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 14.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+        verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
         // --- 1. Live Tester Card ---
         item {
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(18.dp),
+                shape = RoundedCornerShape(14.dp),
                 colors = CardDefaults.cardColors(containerColor = colors.card),
                 border = CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(colors.line))
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(18.dp)
+                        .padding(16.dp)
                 ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -117,50 +110,52 @@ fun RulesScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Live Rule Tester",
-                            fontSize = 16.sp,
+                            text = "Live Tester",
+                            fontSize = 15.sp,
                             fontWeight = FontWeight.Bold,
                             color = colors.ink
                         )
 
-                        // Live verdict chip
+                        // Live verdict chip (Shield green vs Relative red)
                         Box(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(6.dp))
                                 .background(if (liveDecision.mute) colors.blockSoft else colors.allowSoft)
-                                .padding(horizontal = 10.dp, vertical = 4.dp)
+                                .padding(horizontal = 8.dp, vertical = 3.dp)
                         ) {
                             Text(
                                 text = if (liveDecision.mute) "Would mute" else "Would show",
-                                fontSize = 12.sp,
+                                fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = if (liveDecision.mute) colors.block else colors.allow
                             )
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(2.dp))
                     Text(
                         text = liveDecision.reason,
-                        fontSize = 12.sp,
+                        fontSize = 11.sp,
                         color = colors.sub
                     )
 
-                    Spacer(modifier = Modifier.height(14.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
 
                     OutlinedTextField(
                         value = testSender,
                         onValueChange = { testSender = it },
                         modifier = Modifier.fillMaxWidth(),
-                        placeholder = { Text("Sender (e.g. 127, Telebirr, CBE)", fontSize = 13.sp) },
+                        placeholder = { Text("Sender ID (e.g. 127, Telebirr, CBE)", fontSize = 12.sp, color = colors.sub) },
                         singleLine = true,
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = colors.accent,
+                            focusedBorderColor = colors.ink,
                             unfocusedBorderColor = colors.line,
                             focusedContainerColor = colors.cardSoft,
-                            unfocusedContainerColor = colors.cardSoft
+                            unfocusedContainerColor = colors.cardSoft,
+                            focusedTextColor = colors.ink,
+                            unfocusedTextColor = colors.ink
                         ),
-                        shape = RoundedCornerShape(10.dp)
+                        shape = RoundedCornerShape(8.dp)
                     )
 
                     Spacer(modifier = Modifier.height(8.dp))
@@ -169,115 +164,110 @@ fun RulesScreen(
                         value = testText,
                         onValueChange = { testText = it },
                         modifier = Modifier.fillMaxWidth(),
-                        placeholder = { Text("SMS Message text to test...", fontSize = 13.sp) },
+                        placeholder = { Text("SMS Message text to evaluate live...", fontSize = 12.sp, color = colors.sub) },
                         minLines = 2,
-                        maxLines = 4,
+                        maxLines = 3,
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = colors.accent,
+                            focusedBorderColor = colors.ink,
                             unfocusedBorderColor = colors.line,
                             focusedContainerColor = colors.cardSoft,
-                            unfocusedContainerColor = colors.cardSoft
+                            unfocusedContainerColor = colors.cardSoft,
+                            focusedTextColor = colors.ink,
+                            unfocusedTextColor = colors.ink
                         ),
-                        shape = RoundedCornerShape(10.dp)
+                        shape = RoundedCornerShape(8.dp)
                     )
                 }
             }
         }
 
-        // --- 2. Add Rule Card ---
+        // --- 2. Add Custom Rule Form ---
         item {
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(18.dp),
+                shape = RoundedCornerShape(14.dp),
                 colors = CardDefaults.cardColors(containerColor = colors.card),
                 border = CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(colors.line))
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(18.dp)
+                        .padding(16.dp)
                 ) {
                     Text(
                         text = "Add Custom Rule",
-                        fontSize = 16.sp,
+                        fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
                         color = colors.ink
                     )
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        text = "Filter specific keywords, sender numbers, or regular expressions.",
-                        fontSize = 12.sp,
+                        text = "Filter specific keywords, sender IDs, or regex patterns.",
+                        fontSize = 11.sp,
                         color = colors.sub
                     )
 
-                    Spacer(modifier = Modifier.height(14.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
 
-                    // Action Selector: Block / Allow
-                    Text(text = "Action", fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = colors.inkSoft)
-                    Spacer(modifier = Modifier.height(6.dp))
+                    // Action Selector: Block (Relative Red) / Allow (Shield Green)
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clip(RoundedCornerShape(10.dp))
+                            .clip(RoundedCornerShape(8.dp))
                             .background(colors.cardSoft)
-                            .padding(4.dp),
+                            .padding(3.dp),
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        SegmentPill(
+                        ActionPill(
                             label = "Block",
                             selected = draftAction == RuleAction.BLOCK,
                             activeColor = colors.block,
                             modifier = Modifier.weight(1f),
                             onClick = { draftAction = RuleAction.BLOCK }
                         )
-                        SegmentPill(
+                        ActionPill(
                             label = "Allow",
                             selected = draftAction == RuleAction.ALLOW,
-                            activeColor = colors.allow,
+                            activeColor = colors.accent,
                             modifier = Modifier.weight(1f),
                             onClick = { draftAction = RuleAction.ALLOW }
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
 
-                    // Target Selector: Body / Sender / Both
-                    Text(text = "Target Field", fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = colors.inkSoft)
-                    Spacer(modifier = Modifier.height(6.dp))
+                    // Target Selector: Body / Sender / Both (Clean Monochrome)
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clip(RoundedCornerShape(10.dp))
+                            .clip(RoundedCornerShape(8.dp))
                             .background(colors.cardSoft)
-                            .padding(4.dp),
+                            .padding(3.dp),
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        SegmentPill(
+                        MonochromePill(
                             label = "Body",
                             selected = draftTarget == RuleTarget.BODY,
-                            activeColor = colors.accent,
                             modifier = Modifier.weight(1f),
                             onClick = { draftTarget = RuleTarget.BODY }
                         )
-                        SegmentPill(
+                        MonochromePill(
                             label = "Sender",
                             selected = draftTarget == RuleTarget.SENDER,
-                            activeColor = colors.accent,
                             modifier = Modifier.weight(1f),
                             onClick = { draftTarget = RuleTarget.SENDER }
                         )
-                        SegmentPill(
+                        MonochromePill(
                             label = "Both",
                             selected = draftTarget == RuleTarget.BOTH,
-                            activeColor = colors.accent,
                             modifier = Modifier.weight(1f),
                             onClick = { draftTarget = RuleTarget.BOTH }
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
 
-                    // Keyword / Pattern value
+                    // Value input
                     OutlinedTextField(
                         value = draftValue,
                         onValueChange = {
@@ -285,21 +275,23 @@ fun RulesScreen(
                             regexError = false
                         },
                         modifier = Modifier.fillMaxWidth(),
-                        placeholder = { Text("Word, phrase, or pattern...", fontSize = 13.sp) },
+                        placeholder = { Text("Keyword, phrase, or pattern...", fontSize = 12.sp, color = colors.sub) },
                         singleLine = true,
                         isError = regexError,
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = colors.accent,
+                            focusedBorderColor = colors.ink,
                             unfocusedBorderColor = colors.line,
                             focusedContainerColor = colors.cardSoft,
-                            unfocusedContainerColor = colors.cardSoft
+                            unfocusedContainerColor = colors.cardSoft,
+                            focusedTextColor = colors.ink,
+                            unfocusedTextColor = colors.ink
                         ),
-                        shape = RoundedCornerShape(10.dp)
+                        shape = RoundedCornerShape(8.dp)
                     )
 
                     AnimatedVisibility(visible = regexError) {
                         Text(
-                            text = "Invalid regular expression pattern",
+                            text = "Invalid regex syntax",
                             fontSize = 11.sp,
                             color = colors.block,
                             modifier = Modifier.padding(start = 4.dp, top = 2.dp)
@@ -313,23 +305,22 @@ fun RulesScreen(
                         value = draftSender,
                         onValueChange = { draftSender = it },
                         modifier = Modifier.fillMaxWidth(),
-                        placeholder = { Text("From Sender (Optional, e.g. 6060)", fontSize = 13.sp) },
+                        placeholder = { Text("From Sender ID (Optional, e.g. 6060)", fontSize = 12.sp, color = colors.sub) },
                         singleLine = true,
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = colors.accent,
+                            focusedBorderColor = colors.ink,
                             unfocusedBorderColor = colors.line,
                             focusedContainerColor = colors.cardSoft,
-                            unfocusedContainerColor = colors.cardSoft
+                            unfocusedContainerColor = colors.cardSoft,
+                            focusedTextColor = colors.ink,
+                            unfocusedTextColor = colors.ink
                         ),
-                        shape = RoundedCornerShape(10.dp)
+                        shape = RoundedCornerShape(8.dp)
                     )
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
 
-                    // Match Mode Selector Chips
-                    Text(text = "Match Mode", fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = colors.inkSoft)
-                    Spacer(modifier = Modifier.height(6.dp))
-
+                    // Match Mode Selector Chips (Clean Monochrome)
                     FlowRow(
                         horizontalArrangement = Arrangement.spacedBy(6.dp),
                         verticalArrangement = Arrangement.spacedBy(6.dp)
@@ -338,24 +329,24 @@ fun RulesScreen(
                             val isSelected = draftMode == mode
                             Box(
                                 modifier = Modifier
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .background(if (isSelected) colors.accent else colors.cardSoft)
+                                    .clip(RoundedCornerShape(6.dp))
+                                    .background(if (isSelected) colors.ink else colors.cardSoft)
                                     .clickable { draftMode = mode }
-                                    .padding(horizontal = 10.dp, vertical = 6.dp)
+                                    .padding(horizontal = 9.dp, vertical = 5.dp)
                             ) {
                                 Text(
                                     text = mode.label,
-                                    fontSize = 12.sp,
+                                    fontSize = 11.sp,
                                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                                    color = if (isSelected) Color.White else colors.ink
+                                    color = if (isSelected) colors.bg else colors.inkSoft
                                 )
                             }
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(18.dp))
+                    Spacer(modifier = Modifier.height(14.dp))
 
-                    // Add Rule Button
+                    // Save Rule Button (Clean Monochrome Primary)
                     Button(
                         onClick = {
                             val trimmedValue = draftValue.trim()
@@ -389,15 +380,15 @@ fun RulesScreen(
                         },
                         modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = colors.accent,
-                            contentColor = Color.White
+                            containerColor = colors.ink,
+                            contentColor = colors.bg
                         ),
-                        shape = RoundedCornerShape(12.dp),
-                        contentPadding = PaddingValues(vertical = 12.dp)
+                        shape = RoundedCornerShape(10.dp),
+                        contentPadding = PaddingValues(vertical = 10.dp)
                     ) {
-                        Icon(imageVector = Icons.Outlined.Add, contentDescription = null, modifier = Modifier.size(18.dp))
+                        Icon(imageVector = Icons.Outlined.Add, contentDescription = null, modifier = Modifier.size(16.dp))
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text(text = "Save Rule", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                        Text(text = "Save Rule", fontSize = 13.sp, fontWeight = FontWeight.Bold)
                     }
                 }
             }
@@ -407,10 +398,10 @@ fun RulesScreen(
         item {
             Text(
                 text = "Custom Rules (${customRules.size})",
-                fontSize = 16.sp,
+                fontSize = 15.sp,
                 fontWeight = FontWeight.Bold,
                 color = colors.ink,
-                modifier = Modifier.padding(top = 4.dp)
+                modifier = Modifier.padding(top = 2.dp)
             )
         }
 
@@ -419,26 +410,20 @@ fun RulesScreen(
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp),
+                    shape = RoundedCornerShape(12.dp),
                     colors = CardDefaults.cardColors(containerColor = colors.card),
                     border = CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(colors.line))
                 ) {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(24.dp),
+                            .padding(20.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "No custom rules added",
-                            fontSize = 14.sp,
+                            text = "No custom rules yet",
+                            fontSize = 13.sp,
                             fontWeight = FontWeight.Medium,
-                            color = colors.sub
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = "Rules you add above will appear here.",
-                            fontSize = 12.sp,
                             color = colors.sub
                         )
                     }
@@ -457,7 +442,7 @@ fun RulesScreen(
 }
 
 @Composable
-private fun SegmentPill(
+private fun ActionPill(
     label: String,
     selected: Boolean,
     activeColor: Color,
@@ -467,17 +452,42 @@ private fun SegmentPill(
     val colors = FTeleTheme.colors
     Box(
         modifier = modifier
-            .clip(RoundedCornerShape(8.dp))
+            .clip(RoundedCornerShape(6.dp))
             .background(if (selected) activeColor else Color.Transparent)
             .clickable { onClick() }
-            .padding(vertical = 8.dp),
+            .padding(vertical = 6.dp),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = label,
-            fontSize = 13.sp,
+            fontSize = 12.sp,
             fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
             color = if (selected) Color.White else colors.inkSoft
+        )
+    }
+}
+
+@Composable
+private fun MonochromePill(
+    label: String,
+    selected: Boolean,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    val colors = FTeleTheme.colors
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(6.dp))
+            .background(if (selected) colors.ink else Color.Transparent)
+            .clickable { onClick() }
+            .padding(vertical = 6.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = label,
+            fontSize = 12.sp,
+            fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
+            color = if (selected) colors.bg else colors.inkSoft
         )
     }
 }
@@ -493,14 +503,14 @@ private fun CustomRuleCard(
 
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(14.dp),
+        shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = colors.card),
         border = CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(colors.line))
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(14.dp),
+                .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
@@ -508,16 +518,16 @@ private fun CustomRuleCard(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    // Action chip
+                    // Action chip: Shield green vs Relative red
                     Box(
                         modifier = Modifier
-                            .clip(RoundedCornerShape(6.dp))
+                            .clip(RoundedCornerShape(5.dp))
                             .background(if (isAllow) colors.allowSoft else colors.blockSoft)
-                            .padding(horizontal = 8.dp, vertical = 2.dp)
+                            .padding(horizontal = 7.dp, vertical = 2.dp)
                     ) {
                         Text(
                             text = if (isAllow) "Allow" else "Block",
-                            fontSize = 11.sp,
+                            fontSize = 10.sp,
                             fontWeight = FontWeight.Bold,
                             color = if (isAllow) colors.allow else colors.block
                         )
@@ -525,19 +535,19 @@ private fun CustomRuleCard(
 
                     Text(
                         text = rule.value,
-                        fontSize = 15.sp,
+                        fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
                         color = colors.ink
                     )
                 }
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(3.dp))
 
                 // Target & mode metadata
                 val senderPart = if (!rule.senderFilter.isNullOrBlank()) "From [${rule.senderFilter}] · " else ""
                 Text(
                     text = "$senderPart${rule.target.label} · ${rule.mode.label}",
-                    fontSize = 12.sp,
+                    fontSize = 11.sp,
                     color = colors.sub
                 )
             }
@@ -554,12 +564,12 @@ private fun CustomRuleCard(
                 )
             )
 
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(6.dp))
 
             // Delete button
             Box(
                 modifier = Modifier
-                    .size(36.dp)
+                    .size(32.dp)
                     .clip(CircleShape)
                     .clickable { onDelete() },
                 contentAlignment = Alignment.Center
@@ -567,7 +577,7 @@ private fun CustomRuleCard(
                 Icon(
                     imageVector = Icons.Outlined.DeleteOutline,
                     contentDescription = "Remove rule",
-                    modifier = Modifier.size(20.dp),
+                    modifier = Modifier.size(18.dp),
                     tint = colors.sub
                 )
             }

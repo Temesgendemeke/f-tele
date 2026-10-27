@@ -31,9 +31,7 @@ data class FTeleColors(
     val allow: Color,
     val allowSoft: Color,
     val block: Color,
-    val blockSoft: Color,
-    val warning: Color,
-    val warningSoft: Color
+    val blockSoft: Color
 )
 
 val LightFTeleColors = FTeleColors(
@@ -45,15 +43,13 @@ val LightFTeleColors = FTeleColors(
     sub = SubLight,
     line = LineLight,
     lineSoft = LineSoftLight,
-    accent = AccentLight,
-    accentSoft = AccentSoftLight,
+    accent = ShieldGreenLight,
+    accentSoft = ShieldGreenSoftLight,
     accentText = Color.White,
-    allow = AllowLight,
-    allowSoft = AllowSoftLight,
-    block = BlockLight,
-    blockSoft = BlockSoftLight,
-    warning = WarningLight,
-    warningSoft = WarningSoftLight
+    allow = ShieldGreenLight,
+    allowSoft = ShieldGreenSoftLight,
+    block = StateRedLight,
+    blockSoft = StateRedSoftLight
 )
 
 val DarkFTeleColors = FTeleColors(
@@ -65,21 +61,19 @@ val DarkFTeleColors = FTeleColors(
     sub = SubDark,
     line = LineDark,
     lineSoft = LineSoftDark,
-    accent = AccentDark,
-    accentSoft = AccentSoftDark,
+    accent = ShieldGreenDark,
+    accentSoft = ShieldGreenSoftDark,
     accentText = Color.White,
-    allow = AllowDark,
-    allowSoft = AllowSoftDark,
-    block = BlockDark,
-    blockSoft = BlockSoftDark,
-    warning = WarningDark,
-    warningSoft = WarningSoftDark
+    allow = ShieldGreenDark,
+    allowSoft = ShieldGreenSoftDark,
+    block = StateRedDark,
+    blockSoft = StateRedSoftDark
 )
 
 val LocalFTeleColors = staticCompositionLocalOf { LightFTeleColors }
 
 private val LightColorScheme = lightColorScheme(
-    primary = AccentLight,
+    primary = ShieldGreenLight,
     background = BgLight,
     surface = CardLight,
     onBackground = InkLight,
@@ -87,7 +81,7 @@ private val LightColorScheme = lightColorScheme(
 )
 
 private val DarkColorScheme = darkColorScheme(
-    primary = AccentDark,
+    primary = ShieldGreenDark,
     background = BgDark,
     surface = CardDark,
     onBackground = InkDark,

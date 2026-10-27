@@ -148,14 +148,14 @@ fun MainScreen(
                                     contentDescription = item.title,
                                     modifier = Modifier.size(22.dp)
                                 )
-                                // Warning indicator dot on Settings if attention needed
+                                // Attention dot on Settings if attention needed
                                 if (item == ScreenTab.Settings && needsAttention) {
                                     Box(
                                         modifier = Modifier
                                             .align(Alignment.TopEnd)
-                                            .size(8.dp)
+                                            .size(7.dp)
                                             .clip(CircleShape)
-                                            .background(colors.warning)
+                                            .background(colors.block)
                                     )
                                 }
                             }

@@ -59,66 +59,64 @@ fun ShieldsScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(colors.bg),
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 14.dp),
-        verticalArrangement = Arrangement.spacedBy(14.dp)
+        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        // Explanatory Banner
+        // --- 1. Explanatory Header ---
         item {
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(18.dp),
+                shape = RoundedCornerShape(14.dp),
                 colors = CardDefaults.cardColors(containerColor = colors.card),
                 border = CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(colors.line))
             ) {
-                Column(
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(18.dp)
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = "Behavioral Shields",
-                                fontSize = 17.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = colors.ink
-                            )
-                            Spacer(modifier = Modifier.height(2.dp))
-                            Text(
-                                text = "Hand-crafted offline rules for telecom spam, scams & banking protection.",
-                                fontSize = 13.sp,
-                                color = colors.sub
-                            )
-                        }
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "Behavioral Shields",
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = colors.ink
+                        )
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            text = "Pre-configured offline rules for telecom promos, scams, and banking protection.",
+                            fontSize = 12.sp,
+                            color = colors.sub
+                        )
+                    }
 
-                        Button(
-                            onClick = onSimulateSms,
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = colors.cardSoft,
-                                contentColor = colors.ink
-                            ),
-                            shape = RoundedCornerShape(10.dp),
-                            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Outlined.PlayArrow,
-                                contentDescription = null,
-                                modifier = Modifier.size(16.dp),
-                                tint = colors.accent
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text(text = "Simulate", fontSize = 12.sp, fontWeight = FontWeight.Medium)
-                        }
+                    Spacer(modifier = Modifier.width(12.dp))
+
+                    Button(
+                        onClick = onSimulateSms,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = colors.cardSoft,
+                            contentColor = colors.ink
+                        ),
+                        shape = RoundedCornerShape(8.dp),
+                        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.PlayArrow,
+                            contentDescription = null,
+                            modifier = Modifier.size(15.dp),
+                            tint = colors.ink
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(text = "Simulate", fontSize = 12.sp, fontWeight = FontWeight.Medium)
                     }
                 }
             }
         }
 
-        // List of Shields
+        // --- 2. List of Shields ---
         items(PatternPacks.CATEGORIES, key = { it.id }) { category ->
             ShieldCategoryCard(
                 category = category,
@@ -140,18 +138,14 @@ private fun ShieldCategoryCard(
 
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(14.dp),
         colors = CardDefaults.cardColors(containerColor = colors.card),
-        border = CardDefaults.outlinedCardBorder().copy(
-            brush = androidx.compose.ui.graphics.SolidColor(
-                if (category.isProtection) colors.accent.copy(alpha = 0.5f) else colors.line
-            )
-        )
+        border = CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(colors.line))
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(14.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -160,7 +154,7 @@ private fun ShieldCategoryCard(
                 // Category Icon
                 Box(
                     modifier = Modifier
-                        .size(44.dp)
+                        .size(40.dp)
                         .clip(CircleShape)
                         .background(if (category.isProtection) colors.accentSoft else colors.cardSoft),
                     contentAlignment = Alignment.Center
@@ -168,7 +162,7 @@ private fun ShieldCategoryCard(
                     Icon(
                         imageVector = icon,
                         contentDescription = null,
-                        modifier = Modifier.size(24.dp),
+                        modifier = Modifier.size(20.dp),
                         tint = if (category.isProtection) colors.accent else colors.ink
                     )
                 }
@@ -179,14 +173,14 @@ private fun ShieldCategoryCard(
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = category.title,
-                        fontSize = 15.sp,
+                        fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
                         color = colors.ink
                     )
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        text = "${category.rules.size} behavioral rules",
-                        fontSize = 12.sp,
+                        text = "${category.rules.size} rules",
+                        fontSize = 11.sp,
                         color = colors.sub
                     )
                 }
@@ -197,12 +191,12 @@ private fun ShieldCategoryCard(
                         modifier = Modifier
                             .clip(RoundedCornerShape(6.dp))
                             .background(colors.accentSoft)
-                            .padding(horizontal = 10.dp, vertical = 5.dp)
+                            .padding(horizontal = 8.dp, vertical = 4.dp)
                     ) {
                         Text(
-                            text = "ALWAYS ACTIVE",
+                            text = "CORE SHIELD",
                             fontSize = 10.sp,
-                            fontWeight = FontWeight.ExtraBold,
+                            fontWeight = FontWeight.Bold,
                             color = colors.accent,
                             letterSpacing = 0.5.sp
                         )
@@ -221,14 +215,14 @@ private fun ShieldCategoryCard(
                 }
             }
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             // Description
             Text(
                 text = category.description,
-                fontSize = 13.sp,
+                fontSize = 12.sp,
                 color = colors.inkSoft,
-                lineHeight = 18.sp
+                lineHeight = 16.sp
             )
         }
     }
@@ -243,5 +237,17 @@ private fun getCategoryIcon(categoryId: String): ImageVector {
         "cat_loans" -> Icons.Outlined.CreditCard
         "cat_pure_spam_senders" -> Icons.Outlined.NotificationsOff
         else -> Icons.Outlined.Shield
+    }
+}
+
+@androidx.compose.ui.tooling.preview.Preview(showBackground = true, name = "Shields Screen Dark")
+@Composable
+fun ShieldsScreenPreview() {
+    FTeleTheme(themeSetting = "dark") {
+        ShieldsScreen(
+            isCategoryEnabled = { it != "cat_loans" },
+            onToggleCategory = { _, _ -> },
+            onSimulateSms = {}
+        )
     }
 }

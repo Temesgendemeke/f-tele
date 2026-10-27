@@ -21,21 +21,19 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.InsertDriveFile
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material.icons.outlined.GppBad
 import androidx.compose.material.icons.outlined.GppGood
 import androidx.compose.material.icons.outlined.Inbox
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.PlayArrow
-import androidx.compose.material.icons.outlined.WarningAmber
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -73,10 +71,10 @@ fun ActivityScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(colors.bg),
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 14.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+        verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
-        // Hero Shield Card
+        // --- 1. Hero Shield Status Card ---
         item {
             HeroShieldCard(
                 isEnabled = isEnabled,
@@ -87,25 +85,25 @@ fun ActivityScreen(
             )
         }
 
-        // Notification Permission Warning Banner
+        // --- 2. Permission Banner (Clean Monochrome / Relative Red Attention) ---
         item {
             AnimatedVisibility(visible = !hasPermission) {
                 PermissionBanner(onOpenPermissionSettings = onOpenPermissionSettings)
             }
         }
 
-        // Section Header: Activity Log Controls
+        // --- 3. Section Header: Activity Logs & Controls ---
         item {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 4.dp),
+                    .padding(top = 4.dp, bottom = 2.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Recent Activity (${logs.size})",
-                    fontSize = 17.sp,
+                    text = "Activity (${logs.size})",
+                    fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
                     color = colors.ink
                 )
@@ -117,17 +115,17 @@ fun ActivityScreen(
                             containerColor = colors.cardSoft,
                             contentColor = colors.ink
                         ),
-                        shape = RoundedCornerShape(10.dp),
-                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
+                        shape = RoundedCornerShape(8.dp),
+                        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.PlayArrow,
                             contentDescription = null,
-                            modifier = Modifier.size(16.dp),
-                            tint = colors.accent
+                            modifier = Modifier.size(15.dp),
+                            tint = colors.ink
                         )
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text(text = "Simulate", fontSize = 13.sp, fontWeight = FontWeight.Medium)
+                        Text(text = "Simulate", fontSize = 12.sp, fontWeight = FontWeight.Medium)
                     }
 
                     if (logs.isNotEmpty()) {
@@ -137,13 +135,13 @@ fun ActivityScreen(
                                 containerColor = colors.cardSoft,
                                 contentColor = colors.sub
                             ),
-                            shape = RoundedCornerShape(10.dp),
-                            contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp)
+                            shape = RoundedCornerShape(8.dp),
+                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
                         ) {
                             Icon(
                                 imageVector = Icons.Outlined.DeleteOutline,
                                 contentDescription = "Clear activity log",
-                                modifier = Modifier.size(16.dp)
+                                modifier = Modifier.size(15.dp)
                             )
                         }
                     }
@@ -151,24 +149,24 @@ fun ActivityScreen(
             }
         }
 
-        // Empty state or list of logs
+        // --- 4. Logs List or Clean Empty State ---
         if (logs.isEmpty()) {
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp),
+                    shape = RoundedCornerShape(14.dp),
                     colors = CardDefaults.cardColors(containerColor = colors.card),
                     border = CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(colors.line))
                 ) {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(32.dp),
+                            .padding(28.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Box(
                             modifier = Modifier
-                                .size(64.dp)
+                                .size(56.dp)
                                 .clip(CircleShape)
                                 .background(colors.cardSoft),
                             contentAlignment = Alignment.Center
@@ -176,41 +174,42 @@ fun ActivityScreen(
                             Icon(
                                 imageVector = Icons.Outlined.Inbox,
                                 contentDescription = null,
-                                modifier = Modifier.size(32.dp),
+                                modifier = Modifier.size(28.dp),
                                 tint = colors.sub
                             )
                         }
 
-                        Spacer(modifier = Modifier.height(14.dp))
+                        Spacer(modifier = Modifier.height(12.dp))
                         Text(
                             text = "No SMS processed yet",
-                            fontSize = 17.sp,
-                            fontWeight = FontWeight.Bold,
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.SemiBold,
                             color = colors.ink
                         )
-                        Spacer(modifier = Modifier.height(6.dp))
+                        Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "When incoming SMS notifications arrive, F-Tele will evaluate them and record decisions here.",
-                            fontSize = 13.sp,
+                            text = "Incoming SMS will be evaluated offline against active shields and custom rules.",
+                            fontSize = 12.sp,
                             color = colors.sub,
                             textAlign = androidx.compose.ui.text.style.TextAlign.Center
                         )
-                        Spacer(modifier = Modifier.height(18.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
                         Button(
                             onClick = onSimulateSms,
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = colors.accent,
-                                contentColor = Color.White
+                                containerColor = colors.ink,
+                                contentColor = colors.bg
                             ),
-                            shape = RoundedCornerShape(12.dp)
+                            shape = RoundedCornerShape(10.dp),
+                            contentPadding = PaddingValues(horizontal = 14.dp, vertical = 8.dp)
                         ) {
                             Icon(
                                 imageVector = Icons.Outlined.PlayArrow,
                                 contentDescription = null,
-                                modifier = Modifier.size(16.dp)
+                                modifier = Modifier.size(14.dp)
                             )
                             Spacer(modifier = Modifier.width(6.dp))
-                            Text(text = "Simulate Sample SMS", fontWeight = FontWeight.SemiBold)
+                            Text(text = "Simulate Sample SMS", fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
                         }
                     }
                 }
@@ -245,7 +244,7 @@ private fun HeroShieldCard(
 
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(20.dp),
+        shape = RoundedCornerShape(18.dp),
         colors = CardDefaults.cardColors(containerColor = colors.card),
         border = CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(colors.line))
     ) {
@@ -255,14 +254,14 @@ private fun HeroShieldCard(
                 .padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Clickable Ring & Icon
+            // Minimalist Central Shield Ring (Green when ON, Monochrome slate when OFF)
             Box(
                 modifier = Modifier
-                    .size(96.dp)
+                    .size(88.dp)
                     .clip(CircleShape)
                     .background(if (isEnabled) colors.accentSoft else colors.cardSoft)
                     .border(
-                        width = 3.dp,
+                        width = 2.dp,
                         color = if (isEnabled) colors.accent else colors.line,
                         shape = CircleShape
                     )
@@ -272,48 +271,49 @@ private fun HeroShieldCard(
                 Icon(
                     imageVector = if (isEnabled) Icons.Outlined.GppGood else Icons.Outlined.GppBad,
                     contentDescription = if (isEnabled) "Protection Active" else "Protection Paused",
-                    modifier = Modifier.size(52.dp),
+                    modifier = Modifier.size(46.dp),
                     tint = if (isEnabled) colors.accent else colors.sub
                 )
             }
 
-            Spacer(modifier = Modifier.height(14.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             Text(
                 text = if (isEnabled) "PROTECTION ACTIVE" else "PROTECTION PAUSED",
-                fontSize = 17.sp,
-                fontWeight = FontWeight.ExtraBold,
-                letterSpacing = 1.sp,
-                color = if (isEnabled) colors.ink else colors.warning
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 0.8.sp,
+                color = colors.ink
             )
 
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(2.dp))
 
             Text(
-                text = if (isEnabled) "F-Tele is quietly guarding your notifications" else "Spam SMS notifications will not be muted",
-                fontSize = 13.sp,
+                text = if (isEnabled) "Quietly filtering spam notifications" else "SMS filtering is temporarily paused",
+                fontSize = 12.sp,
                 color = colors.sub
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
-            // Action chip
+            // Tap toggle prompt (clean monochrome pill)
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(20.dp))
-                    .background(if (isEnabled) colors.allowSoft else colors.warningSoft)
+                    .background(if (isEnabled) colors.accentSoft else colors.cardSoft)
                     .clickable { onToggleProtection() }
-                    .padding(horizontal = 14.dp, vertical = 6.dp)
+                    .padding(horizontal = 12.dp, vertical = 5.dp)
             ) {
                 Text(
                     text = if (isEnabled) "TAP TO PAUSE" else "TAP TO RESUME",
-                    fontSize = 11.sp,
+                    fontSize = 10.sp,
                     fontWeight = FontWeight.Bold,
-                    color = if (isEnabled) colors.allow else colors.warning
+                    letterSpacing = 0.5.sp,
+                    color = if (isEnabled) colors.accent else colors.inkSoft
                 )
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(18.dp))
 
             // Divider
             Box(
@@ -323,28 +323,28 @@ private fun HeroShieldCard(
                     .background(colors.lineSoft)
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(14.dp))
 
-            // Quick Stats Row
+            // Clean Monochrome Quick Stats
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                StatColumn(label = "Shields", value = "$activeShieldCount Packs", valueColor = colors.ink)
-                StatColumn(label = "Mode", value = if (isStrict) "Strict" else "Normal", valueColor = if (isStrict) colors.warning else colors.accent)
-                StatColumn(label = "Decisions", value = "$decisionsCount", valueColor = colors.ink)
+                StatColumn(label = "Shields", value = "$activeShieldCount Packs")
+                StatColumn(label = "Mode", value = if (isStrict) "Strict" else "Normal")
+                StatColumn(label = "Decisions", value = "$decisionsCount")
             }
         }
     }
 }
 
 @Composable
-private fun StatColumn(label: String, value: String, valueColor: Color) {
+private fun StatColumn(label: String, value: String) {
     val colors = FTeleTheme.colors
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = value, fontSize = 16.sp, fontWeight = FontWeight.Bold, color = valueColor)
+        Text(text = value, fontSize = 15.sp, fontWeight = FontWeight.Bold, color = colors.ink)
         Spacer(modifier = Modifier.height(2.dp))
-        Text(text = label, fontSize = 12.sp, color = colors.sub)
+        Text(text = label, fontSize = 11.sp, color = colors.sub)
     }
 }
 
@@ -354,48 +354,56 @@ private fun PermissionBanner(onOpenPermissionSettings: () -> Unit) {
 
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = colors.warningSoft),
-        border = CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(colors.warning.copy(alpha = 0.4f)))
+        shape = RoundedCornerShape(14.dp),
+        colors = CardDefaults.cardColors(containerColor = colors.card),
+        border = CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(colors.block.copy(alpha = 0.4f)))
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                imageVector = Icons.Outlined.WarningAmber,
-                contentDescription = null,
-                modifier = Modifier.size(28.dp),
-                tint = colors.warning
-            )
+            Box(
+                modifier = Modifier
+                    .size(36.dp)
+                    .clip(CircleShape)
+                    .background(colors.blockSoft),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Info,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp),
+                    tint = colors.block
+                )
+            }
 
             Spacer(modifier = Modifier.width(12.dp))
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = "Permission Required",
-                    fontSize = 15.sp,
+                    fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
                     color = colors.ink
                 )
                 Text(
-                    text = "Enable notification access so F-Tele can filter spam.",
-                    fontSize = 12.sp,
-                    color = colors.inkSoft
+                    text = "Notification access is needed to mute spam SMS.",
+                    fontSize = 11.sp,
+                    color = colors.sub
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(6.dp))
                 Button(
                     onClick = onOpenPermissionSettings,
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = colors.warning,
+                        containerColor = colors.block,
                         contentColor = Color.White
                     ),
-                    shape = RoundedCornerShape(8.dp),
-                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
+                    shape = RoundedCornerShape(6.dp),
+                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp)
                 ) {
-                    Text(text = "Grant Access", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                    Text(text = "Grant Access", fontSize = 11.sp, fontWeight = FontWeight.Bold)
                 }
             }
         }
@@ -410,10 +418,12 @@ private fun LogItemCard(
     onBlockSender: () -> Unit
 ) {
     val colors = FTeleTheme.colors
+    val isAllowed = senderRule?.action == RuleAction.ALLOW
+    val isBlocked = senderRule?.action == RuleAction.BLOCK
 
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(14.dp),
+        shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = colors.card),
         border = CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(colors.line))
     ) {
@@ -422,7 +432,7 @@ private fun LogItemCard(
                 .fillMaxWidth()
                 .padding(14.dp)
         ) {
-            // Header Row: Sender, Time ago, and Status Chip
+            // Header Row: Sender, Time ago, and Status Chip (Shield green vs Relative red)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -434,19 +444,19 @@ private fun LogItemCard(
                 ) {
                     Text(
                         text = if (log.sender.isBlank()) "Unknown Sender" else log.sender,
-                        fontSize = 15.sp,
+                        fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
                         color = colors.ink
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = formatTimeAgo(log.time),
-                        fontSize = 12.sp,
+                        fontSize = 11.sp,
                         color = colors.sub
                     )
                 }
 
-                // Verdict Chip
+                // Verdict Chip: Green (Shield) vs Red (Harmonized)
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(6.dp))
@@ -462,25 +472,25 @@ private fun LogItemCard(
                 }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(6.dp))
 
             // Body text
             Text(
                 text = log.text,
                 fontSize = 13.sp,
                 color = colors.inkSoft,
-                lineHeight = 18.sp
+                lineHeight = 17.sp
             )
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-            // Reason pill
+            // Reason pill (clean monochrome)
             if (log.reason.isNotBlank()) {
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(6.dp))
                         .background(colors.cardSoft)
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                        .padding(horizontal = 8.dp, vertical = 3.dp)
                 ) {
                     Text(
                         text = log.reason,
@@ -492,36 +502,33 @@ private fun LogItemCard(
                 Spacer(modifier = Modifier.height(10.dp))
             }
 
-            // Quick Action Buttons
+            // Quick Actions: Monochrome by default, highlighting in Shield Green or Relative Red when selected
             if (log.sender.isNotBlank()) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    val isAllowed = senderRule?.action == RuleAction.ALLOW
-                    val isBlocked = senderRule?.action == RuleAction.BLOCK
-
                     // Allow sender button
                     Button(
                         onClick = onAllowSender,
                         modifier = Modifier.weight(1f),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = if (isAllowed) colors.allowSoft else colors.cardSoft,
-                            contentColor = colors.allow
+                            contentColor = if (isAllowed) colors.allow else colors.inkSoft
                         ),
                         shape = RoundedCornerShape(8.dp),
-                        contentPadding = PaddingValues(vertical = 6.dp)
+                        contentPadding = PaddingValues(vertical = 5.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.Check,
                             contentDescription = null,
-                            modifier = Modifier.size(14.dp),
-                            tint = colors.allow
+                            modifier = Modifier.size(13.dp),
+                            tint = if (isAllowed) colors.allow else colors.sub
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
                             text = if (isAllowed) "Allowed" else "Allow sender",
-                            fontSize = 12.sp,
+                            fontSize = 11.sp,
                             fontWeight = if (isAllowed) FontWeight.Bold else FontWeight.Medium
                         )
                     }
@@ -532,21 +539,21 @@ private fun LogItemCard(
                         modifier = Modifier.weight(1f),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = if (isBlocked) colors.blockSoft else colors.cardSoft,
-                            contentColor = colors.block
+                            contentColor = if (isBlocked) colors.block else colors.inkSoft
                         ),
                         shape = RoundedCornerShape(8.dp),
-                        contentPadding = PaddingValues(vertical = 6.dp)
+                        contentPadding = PaddingValues(vertical = 5.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.Close,
                             contentDescription = null,
-                            modifier = Modifier.size(14.dp),
-                            tint = colors.block
+                            modifier = Modifier.size(13.dp),
+                            tint = if (isBlocked) colors.block else colors.sub
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
                             text = if (isBlocked) "Blocked" else "Block sender",
-                            fontSize = 12.sp,
+                            fontSize = 11.sp,
                             fontWeight = if (isBlocked) FontWeight.Bold else FontWeight.Medium
                         )
                     }
@@ -563,5 +570,29 @@ private fun formatTimeAgo(timeMs: Long): String {
         s < 3600 -> "${s / 60}m ago"
         s < 86400 -> "${s / 3600}h ago"
         else -> "${s / 86400}d ago"
+    }
+}
+
+@androidx.compose.ui.tooling.preview.Preview(showBackground = true, name = "Activity Screen Light")
+@Composable
+fun ActivityScreenPreviewLight() {
+    FTeleTheme(themeSetting = "light") {
+        ActivityScreen(
+            isEnabled = true,
+            hasPermission = true,
+            activeShieldCount = 6,
+            isStrict = false,
+            logs = listOf(
+                LogEntry("1", "telebirr", "You received ETB 100.00 from 0911...", System.currentTimeMillis() - 60000, false, "Protected: OTP & Security"),
+                LogEntry("2", "6060", "Enkwan des alot! You won 10,000 ETB in lottery. Call 994", System.currentTimeMillis() - 120000, true, "Matched lottery shield")
+            ),
+            currentRules = emptyList(),
+            onToggleProtection = {},
+            onOpenPermissionSettings = {},
+            onSimulateSms = {},
+            onClearLogs = {},
+            onAllowSender = {},
+            onBlockSender = {}
+        )
     }
 }

@@ -113,7 +113,11 @@ The watcher only observes project source/configuration files and ignores
   - `engine/Simulations.kt`: Authentic Ethiopian carrier & bank SMS samples for in-app testing.
   - `data/RuleStore.kt`: SharedPreferences store for rules, category states, settings, and activity logs.
   - `service/SmsMuterService.kt`: `NotificationListenerService` that intercepts and dismisses spam notifications in the background.
-  - `ui/MainActivity.kt`: Ultra-lightweight native interface with Activity feed, Shields toggles, Custom Rules editor, and live Try-It preview.
-  - `ui/ActivityAdapter.kt`: RecyclerView adapter for log entries.
-  - `ui/RuleAdapter.kt`: RecyclerView adapter for custom rules.
+  - `ui/MainActivity.kt`: ComponentActivity hosting the Jetpack Compose interface.
+  - `ui/MainScreen.kt`: Navigation bar, top header, and tab routing.
+  - `ui/screens/ActivityScreen.kt`: Real-time protection status, Hero Shield card, and live SMS activity feed.
+  - `ui/screens/ShieldsScreen.kt`: Preconfigured behavioral shielding packs (OTP & Financial protection, lottery, promos, VAS, loans, pure spam).
+  - `ui/screens/RulesScreen.kt`: Interactive rule tester, keyword/regex rule builder, and custom rules manager.
+  - `ui/screens/SettingsScreen.kt`: Notification listener permission setup, filter strategy (Normal vs Strict), and theme controls.
+  - `ui/theme/`: FTeleTheme design tokens, colors, and Material 3 palettes.
 - `app/src/test/java/com/example/ftele/PatternsTest.kt`: JUnit test suite verifying the matching engine.

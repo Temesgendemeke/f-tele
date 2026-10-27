@@ -2,38 +2,38 @@ package com.example.ftele.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Light Colors
-val BgLight = Color(0xFFF7F6F2)
-val CardLight = Color(0xFFFFFFFF)
-val CardSoftLight = Color(0xFFF4F3EE)
-val InkLight = Color(0xFF1A1A18)
-val InkSoftLight = Color(0xFF4A4A45)
-val SubLight = Color(0xFF7A7A74)
-val LineLight = Color(0xFFE8E7E0)
-val LineSoftLight = Color(0xFFF0EFE8)
-val AccentLight = Color(0xFF0F6E56)
-val AccentSoftLight = Color(0xFFE2F1EA)
-val AllowLight = Color(0xFF15803D)
-val AllowSoftLight = Color(0xFFDCF3E3)
-val BlockLight = Color(0xFFB42318)
-val BlockSoftLight = Color(0xFFFBE4E1)
-val WarningLight = Color(0xFFB45309)
-val WarningSoftLight = Color(0xFFFEF3C7)
+// --- Shield Green ---
+// The ONLY green used in the entire app, taken directly from the shield app icon
+val ShieldGreenLight = Color(0xFF0F6E56)
+val ShieldGreenSoftLight = Color(0xFFE6F3EE)
 
-// Dark Colors
-val BgDark = Color(0xFF111315)
-val CardDark = Color(0xFF1A1D20)
-val CardSoftDark = Color(0xFF22262B)
-val InkDark = Color(0xFFF2F4F7)
-val InkSoftDark = Color(0xFFD0D5DD)
-val SubDark = Color(0xFF98A2B3)
-val LineDark = Color(0xFF292E35)
-val LineSoftDark = Color(0xFF1F242A)
-val AccentDark = Color(0xFF14B8A6)
-val AccentSoftDark = Color(0xFF133834)
-val AllowDark = Color(0xFF34D399)
-val AllowSoftDark = Color(0xFF133928)
-val BlockDark = Color(0xFFF87171)
-val BlockSoftDark = Color(0xFF3B1E22)
-val WarningDark = Color(0xFFFBBF24)
-val WarningSoftDark = Color(0xFF382C13)
+val ShieldGreenDark = Color(0xFF14B8A6)
+val ShieldGreenSoftDark = Color(0xFF122E28)
+
+// --- Relative Harmonized Reds ---
+// Sophisticated, relative shades of red for state indication (block / muted / action needed)
+val StateRedLight = Color(0xFFBA3B34)
+val StateRedSoftLight = Color(0xFFFBECEB)
+
+val StateRedDark = Color(0xFFE55D55)
+val StateRedSoftDark = Color(0xFF2C191B)
+
+// --- Pure Monochrome Light Palette ---
+val BgLight = Color(0xFFF8F8F7)
+val CardLight = Color(0xFFFFFFFF)
+val CardSoftLight = Color(0xFFF0F0EE)
+val InkLight = Color(0xFF111214)
+val InkSoftLight = Color(0xFF424449)
+val SubLight = Color(0xFF767982)
+val LineLight = Color(0xFFE2E3E6)
+val LineSoftLight = Color(0xFFEEEEF0)
+
+// --- Pure Monochrome Dark Palette ---
+val BgDark = Color(0xFF0D0E10)
+val CardDark = Color(0xFF15171A)
+val CardSoftDark = Color(0xFF1E2024)
+val InkDark = Color(0xFFF2F3F5)
+val InkSoftDark = Color(0xFFC4C8CE)
+val SubDark = Color(0xFF828791)
+val LineDark = Color(0xFF24272D)
+val LineSoftDark = Color(0xFF1A1C20)
