@@ -17,14 +17,12 @@ import com.qook.ftele.data.RuleStore
 import com.qook.ftele.engine.BackgroundHelper
 import com.qook.ftele.engine.PatternPacks
 import com.qook.ftele.engine.Patterns
-import com.qook.ftele.engine.Simulations
 import com.qook.ftele.model.LogEntry
 import com.qook.ftele.model.MatchMode
 import com.qook.ftele.model.Rule
 import com.qook.ftele.model.RuleAction
 import com.qook.ftele.model.RuleTarget
 import com.qook.ftele.ui.theme.FTeleTheme
-import kotlin.random.Random
 
 class MainActivity : ComponentActivity() {
 
@@ -38,6 +36,7 @@ class MainActivity : ComponentActivity() {
     private var logs by mutableStateOf<List<LogEntry>>(emptyList())
     private var customRules by mutableStateOf<List<Rule>>(emptyList())
     private var effectiveRules by mutableStateOf<List<Rule>>(emptyList())
+    private var categoryStates by mutableStateOf<Map<String, Boolean>>(emptyMap())
     private var activeShieldCount by mutableIntStateOf(0)
 
     private val refreshHandler = Handler(Looper.getMainLooper())
@@ -71,9 +70,10 @@ class MainActivity : ComponentActivity() {
                     logs = logs,
                     customRules = customRules,
                     effectiveRules = effectiveRules,
-                    isCategoryEnabled = { catId -> RuleStore.isCategoryEnabled(this, catId) },
+                    categoryStates = categoryStates,
                     onToggleCategory = { catId, enabled ->
                         RuleStore.setCategoryEnabled(this, catId, enabled)
+                        categoryStates = categoryStates.toMutableMap().apply { put(catId, enabled) }
                         syncRulesAndCategories()
                     },
                     onOpenPermissionSettings = {
@@ -85,7 +85,6 @@ class MainActivity : ComponentActivity() {
                     onOpenAutostartSettings = {
                         BackgroundHelper.openAutostartSettings(this)
                     },
-                    onSimulateSms = { runSimulation() },
                     onClearLogs = {
                         RuleStore.clearLog(this)
                         refreshLogs()
@@ -162,9 +161,10 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun syncRulesAndCategories() {
+        categoryStates = PatternPacks.CATEGORIES.associate { it.id to RuleStore.isCategoryEnabled(this, it.id) }
         customRules = RuleStore.getCustomRules(this)
         effectiveRules = RuleStore.getAllEffectiveRules(this)
-        activeShieldCount = PatternPacks.CATEGORIES.count { RuleStore.isCategoryEnabled(this, it.id) }
+        activeShieldCount = PatternPacks.CATEGORIES.count { categoryStates[it.id] == true }
     }
 
     private fun refreshLogs() {
@@ -211,28 +211,5 @@ class MainActivity : ComponentActivity() {
         Toast.makeText(this, "Rule added for sender: $cleanSender", Toast.LENGTH_SHORT).show()
     }
 
-    private fun runSimulation() {
-        val sample = Simulations.SAMPLES.random(Random(System.currentTimeMillis()))
-        val rules = RuleStore.getAllEffectiveRules(this)
-        val mode = RuleStore.getMode(this)
-        val decision = Patterns.decide(rules, mode, sample.sender, sample.text)
-
-        RuleStore.appendLog(
-            this,
-            LogEntry(
-                id = "${System.currentTimeMillis()}",
-                sender = sample.sender,
-                text = sample.text,
-                time = System.currentTimeMillis(),
-                muted = decision.mute,
-                reason = decision.reason
-            )
-        )
-        refreshLogs()
-        Toast.makeText(
-            this,
-            if (decision.mute) "Simulated: SMS Muted" else "Simulated: SMS Allowed",
-            Toast.LENGTH_SHORT
-        ).show()
     }
 }

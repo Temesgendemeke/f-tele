@@ -1,6 +1,7 @@
 package com.qook.ftele.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,13 +25,10 @@ import androidx.compose.material.icons.outlined.ConfirmationNumber
 import androidx.compose.material.icons.outlined.CreditCard
 import androidx.compose.material.icons.outlined.NotificationsActive
 import androidx.compose.material.icons.outlined.NotificationsOff
-import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material.icons.outlined.QueryStats
 import androidx.compose.material.icons.outlined.Shield
 import androidx.compose.material.icons.outlined.SwapHoriz
 import androidx.compose.material.icons.outlined.VerifiedUser
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -53,9 +51,8 @@ import com.qook.ftele.ui.theme.FTeleTheme
 
 @Composable
 fun ShieldsScreen(
-    isCategoryEnabled: (String) -> Boolean,
-    onToggleCategory: (String, Boolean) -> Unit,
-    onSimulateSms: () -> Unit
+    categoryStates: Map<String, Boolean>,
+    onToggleCategory: (String, Boolean) -> Unit
 ) {
     val colors = FTeleTheme.colors
 
@@ -77,48 +74,23 @@ fun ShieldsScreen(
                 colors = CardDefaults.cardColors(containerColor = colors.card),
                 border = CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(colors.line))
             ) {
-                Row(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                        .padding(16.dp)
                 ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = "Behavioral Protection",
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = colors.ink
-                        )
-                        Spacer(modifier = Modifier.height(2.dp))
-                        Text(
-                            text = "Pre-configured offline rules for telecom promos, scams, and banking protection.",
-                            fontSize = 12.sp,
-                            color = colors.sub
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.width(12.dp))
-
-                    Button(
-                        onClick = onSimulateSms,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = colors.cardSoft,
-                            contentColor = colors.ink
-                        ),
-                        shape = RoundedCornerShape(8.dp),
-                        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.PlayArrow,
-                            contentDescription = null,
-                            modifier = Modifier.size(14.dp),
-                            tint = colors.ink
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(text = "Simulate", fontSize = 12.sp, fontWeight = FontWeight.Medium)
-                    }
+                    Text(
+                        text = "Behavioral Protection",
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = colors.ink
+                    )
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = "Pre-configured offline rules for telecom promos, scams, and banking protection.",
+                        fontSize = 12.sp,
+                        color = colors.sub
+                    )
                 }
             }
         }
@@ -135,9 +107,10 @@ fun ShieldsScreen(
         }
 
         items(protectionCategories, key = { it.id }) { category ->
+            val isEnabled = categoryStates[category.id] ?: category.defaultEnabled
             ShieldCategoryCard(
                 category = category,
-                isEnabled = isCategoryEnabled(category.id),
+                isEnabled = isEnabled,
                 onToggle = { enabled -> onToggleCategory(category.id, enabled) }
             )
         }
@@ -162,9 +135,10 @@ fun ShieldsScreen(
         }
 
         items(preferenceCategories, key = { it.id }) { category ->
+            val isEnabled = categoryStates[category.id] ?: category.defaultEnabled
             ShieldCategoryCard(
                 category = category,
-                isEnabled = isCategoryEnabled(category.id),
+                isEnabled = isEnabled,
                 onToggle = { enabled -> onToggleCategory(category.id, enabled) }
             )
         }
@@ -181,7 +155,13 @@ private fun ShieldCategoryCard(
     val icon = getCategoryIcon(category.id)
 
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .then(
+                if (!category.isProtection) {
+                    Modifier.clickable { onToggle(!isEnabled) }
+                } else Modifier
+            ),
         shape = RoundedCornerShape(14.dp),
         colors = CardDefaults.cardColors(containerColor = colors.card),
         border = CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(colors.line))

@@ -47,12 +47,11 @@ fun MainScreen(
     logs: List<LogEntry>,
     customRules: List<Rule>,
     effectiveRules: List<Rule>,
-    isCategoryEnabled: (String) -> Boolean,
+    categoryStates: Map<String, Boolean>,
     onToggleCategory: (String, Boolean) -> Unit,
     onOpenPermissionSettings: () -> Unit,
     onOpenBatterySettings: () -> Unit,
     onOpenAutostartSettings: () -> Unit,
-    onSimulateSms: () -> Unit,
     onClearLogs: () -> Unit,
     onAllowSender: (String) -> Unit,
     onBlockSender: (String) -> Unit,
@@ -136,15 +135,13 @@ fun MainScreen(
                     currentRules = effectiveRules,
                     onToggleProtection = { onToggleMaster(!isEnabled) },
                     onOpenPermissionSettings = onOpenPermissionSettings,
-                    onSimulateSms = onSimulateSms,
                     onClearLogs = onClearLogs,
                     onAllowSender = onAllowSender,
                     onBlockSender = onBlockSender
                 )
                 1 -> ShieldsScreen(
-                    isCategoryEnabled = isCategoryEnabled,
-                    onToggleCategory = onToggleCategory,
-                    onSimulateSms = onSimulateSms
+                    categoryStates = categoryStates,
+                    onToggleCategory = onToggleCategory
                 )
                 2 -> RulesScreen(
                     customRules = customRules,

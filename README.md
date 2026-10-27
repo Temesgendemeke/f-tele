@@ -35,8 +35,7 @@
 - **Custom Rule Engine**: Create your own rules with `Contains`, `Exact`, `Starts With`, `Ends With`, `Wildcards (*, ?)`, and full regular expressions (`Regex`).
 - **Dual Filtering Strategies**:
   - **Blocklist Mode (Default)**: Normal behavior — only senders and keywords matching your enabled shields or block rules are muted. Everything else notifies normally.
-  - **Strict Allowlist Mode**: Extreme privacy mode — every incoming message is silenced unless it matches an explicit allow rule or verified financial shield.
-- **Live In-App Rule Tester & SMS Simulator**: Test your keyword/regex patterns against sample text in real time, and simulate regional carrier and banking messages with a single tap.
+- **Live In-App Rule Tester**: Test your keyword/regex patterns against sample text in real time.
 - **Modern Material 3 Design**: Built 100% in Jetpack Compose with custom chiseled 3D shield graphics, subtle micro-interactions, full system dark/light theme support, and a high-contrast UI.
 
 ---

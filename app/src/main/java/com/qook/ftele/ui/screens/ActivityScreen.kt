@@ -26,7 +26,6 @@ import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material.icons.outlined.Inbox
 import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -58,7 +57,6 @@ fun ActivityScreen(
     currentRules: List<Rule>,
     onToggleProtection: () -> Unit,
     onOpenPermissionSettings: () -> Unit,
-    onSimulateSms: () -> Unit,
     onClearLogs: () -> Unit,
     onAllowSender: (String) -> Unit,
     onBlockSender: (String) -> Unit
@@ -106,43 +104,22 @@ fun ActivityScreen(
                     color = colors.ink
                 )
 
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                if (logs.isNotEmpty()) {
                     Button(
-                        onClick = onSimulateSms,
+                        onClick = onClearLogs,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = colors.cardSoft,
-                            contentColor = colors.ink
+                            contentColor = colors.sub
                         ),
                         shape = RoundedCornerShape(8.dp),
-                        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp)
+                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
                     ) {
                         Icon(
-                            imageVector = Icons.Outlined.PlayArrow,
-                            contentDescription = null,
+                            imageVector = Icons.Outlined.DeleteOutline,
+                            contentDescription = "Clear",
                             modifier = Modifier.size(15.dp),
-                            tint = colors.ink
+                            tint = colors.sub
                         )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(text = "Simulate", fontSize = 12.sp, fontWeight = FontWeight.Medium)
-                    }
-
-                    if (logs.isNotEmpty()) {
-                        Button(
-                            onClick = onClearLogs,
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = colors.cardSoft,
-                                contentColor = colors.sub
-                            ),
-                            shape = RoundedCornerShape(8.dp),
-                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Outlined.DeleteOutline,
-                                contentDescription = "Clear",
-                                modifier = Modifier.size(15.dp),
-                                tint = colors.sub
-                            )
-                        }
                     }
                 }
             }
@@ -192,24 +169,6 @@ fun ActivityScreen(
                             color = colors.sub,
                             textAlign = androidx.compose.ui.text.style.TextAlign.Center
                         )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Button(
-                            onClick = onSimulateSms,
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = colors.ink,
-                                contentColor = colors.bg
-                            ),
-                            shape = RoundedCornerShape(10.dp),
-                            contentPadding = PaddingValues(horizontal = 14.dp, vertical = 8.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Outlined.PlayArrow,
-                                contentDescription = null,
-                                modifier = Modifier.size(14.dp)
-                            )
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text(text = "Simulate Sample SMS", fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
-                        }
                     }
                 }
             }
