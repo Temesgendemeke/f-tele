@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ReceiptLong
 import androidx.compose.material.icons.outlined.Campaign
 import androidx.compose.material.icons.outlined.ConfirmationNumber
 import androidx.compose.material.icons.outlined.CreditCard
@@ -25,7 +26,6 @@ import androidx.compose.material.icons.outlined.NotificationsActive
 import androidx.compose.material.icons.outlined.NotificationsOff
 import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material.icons.outlined.QueryStats
-import androidx.compose.material.icons.outlined.ReceiptLong
 import androidx.compose.material.icons.outlined.Shield
 import androidx.compose.material.icons.outlined.SwapHoriz
 import androidx.compose.material.icons.outlined.VerifiedUser
@@ -280,7 +280,7 @@ private fun getCategoryIcon(id: String): ImageVector {
         "cat_vas" -> Icons.Outlined.NotificationsActive
         "cat_loans" -> Icons.Outlined.CreditCard
         "cat_pure_spam_senders" -> Icons.Outlined.NotificationsOff
-        "cat_pref_recharge" -> Icons.Outlined.ReceiptLong
+        "cat_pref_recharge" -> Icons.AutoMirrored.Outlined.ReceiptLong
         "cat_pref_balance" -> Icons.Outlined.QueryStats
         "cat_pref_transfers" -> Icons.Outlined.SwapHoriz
         else -> Icons.Outlined.Shield

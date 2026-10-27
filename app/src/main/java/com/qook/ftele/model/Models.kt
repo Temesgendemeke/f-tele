@@ -75,14 +75,6 @@ data class BehaviorCategory(
     val rules: List<PresetRule>
 )
 
-data class PatternPack(
-    val id: String,
-    val name: String,
-    val description: String,
-    val seed: Boolean = false,
-    val rules: List<PresetRule>
-)
-
 data class LogEntry(
     val id: String,
     val sender: String,

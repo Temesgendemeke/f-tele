@@ -43,6 +43,7 @@ class SmsMuterService : NotificationListenerService() {
 
         // Handle MessagingStyle notifications (Google Messages, etc.)
         if (text.isEmpty() || text.contains("Sensitive", ignoreCase = true)) {
+            @Suppress("DEPRECATION")
             val messages = extras.getParcelableArray(Notification.EXTRA_MESSAGES)
             if (messages != null && messages.isNotEmpty()) {
                 val last = messages.last()

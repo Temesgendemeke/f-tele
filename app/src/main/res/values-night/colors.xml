@@ -1,38 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Base Dark Surface -->
+    <!-- Base Theme Colors used by AppTheme in Night Mode -->
     <color name="bg">#111315</color>
     <color name="card">#1A1D20</color>
-    <color name="cardSoft">#22262B</color>
-    <color name="ink">#F2F4F7</color>
-    <color name="inkSoft">#D0D5DD</color>
-    <color name="sub">#98A2B3</color>
-    <color name="line">#292E35</color>
-    <color name="lineSoft">#1F242A</color>
-
-    <!-- Brand Teal Accent (Vibrant in Dark Theme) -->
     <color name="accent">#14B8A6</color>
-    <color name="accentDark">#0D9488</color>
-    <color name="accentSoft">#133834</color>
-    <color name="accentText">#FFFFFF</color>
-
-    <!-- Semantic Dark -->
-    <color name="allow">#34D399</color>
-    <color name="allowSoft">#133928</color>
-    <color name="block">#F87171</color>
-    <color name="blockSoft">#3B1E22</color>
-    <color name="info">#60A5FA</color>
-    <color name="infoSoft">#17283E</color>
-    <color name="warning">#FBBF24</color>
-    <color name="warningSoft">#382C13</color>
-
-    <!-- Legacy theme attrs -->
-    <color name="colorPrimary">#14B8A6</color>
-    <color name="colorPrimaryDark">#0D9488</color>
-    <color name="colorAccent">#14B8A6</color>
-    <color name="splashscreen_background">#111315</color>
-
-    <!-- Segmented / radio text -->
-    <color name="segment_on">#111315</color>
-    <color name="segment_off">#D0D5DD</color>
 </resources>

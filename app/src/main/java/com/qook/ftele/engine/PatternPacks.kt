@@ -3,7 +3,6 @@ package com.qook.ftele.engine
 import com.qook.ftele.model.BehaviorCategory
 import com.qook.ftele.model.CategoryType
 import com.qook.ftele.model.MatchMode
-import com.qook.ftele.model.PatternPack
 import com.qook.ftele.model.PresetRule
 import com.qook.ftele.model.Rule
 import com.qook.ftele.model.RuleAction
@@ -241,21 +240,4 @@ object PatternPacks {
             category = preset.category,
             enabled = true
         )
-
-    fun categoryToRules(category: BehaviorCategory): List<Rule> =
-        category.rules.map { presetToRule(it) }
-
-    fun seedRules(): List<Rule> =
-        CATEGORIES.filter { it.defaultEnabled }.flatMap { categoryToRules(it) }
-
-    // Legacy packs compatibility
-    val ALL: List<PatternPack> = CATEGORIES.map { cat ->
-        PatternPack(
-            id = cat.id,
-            name = cat.title,
-            description = cat.description,
-            seed = cat.defaultEnabled,
-            rules = cat.rules
-        )
-    }
 }

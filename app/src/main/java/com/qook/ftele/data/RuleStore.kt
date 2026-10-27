@@ -111,10 +111,6 @@ object RuleStore {
             .apply()
     }
 
-    // Backward-compatible alias for custom rules
-    fun getRules(c: Context): List<Rule> = getCustomRules(c)
-    fun saveRules(c: Context, rules: List<Rule>) = saveCustomRules(c, rules)
-
     /**
      * All effective rules: Active behavioral category rules + user custom rules.
      */
