@@ -1,10 +1,10 @@
 <div align="center">
 
-# 🛡️ F-Tele
+# F-Tele
 
 **High-Performance, Zero-Permission Native Android SMS Spam Muter**
 
-[![Release](https://img.shields.io/badge/Release-v1.0.1-emerald?style=for-the-badge&logo=android)](https://github.com/Temesgendemeke/f-tele/releases)
+[![Release](https://img.shields.io/badge/Release-v1.0.0-emerald?style=for-the-badge&logo=android)](https://github.com/Temesgendemeke/f-tele/releases)
 [![APK Size](https://img.shields.io/badge/APK%20Size-~1.4%20MB-blue?style=for-the-badge)](https://github.com/Temesgendemeke/f-tele/releases)
 [![Android](https://img.shields.io/badge/Android-8.0%2B%20(API%2026%2B)-brightgreen?style=for-the-badge&logo=android)](https://developer.android.com)
 [![Kotlin](https://img.shields.io/badge/Kotlin-100%25-purple?style=for-the-badge&logo=kotlin)](https://kotlinlang.org)
@@ -27,63 +27,63 @@
 
 </div>
 
-## 🌟 Key Features
+## Key Features
 
-- **🔕 Non-Destructive Notification Silencing**: Intercepts spam notifications at the Android system level (`NotificationListenerService`). Unwanted notifications vanish instantly; **zero SMS messages are ever deleted or lost**.
-- **🛡️ Behavioral Protection Shields**: Built-in category packs specifically tuned for regional telecom and marketing patterns (Ethio Telecom, Safaricom, telebirr, CBE, Awash, BOA, Dashen, loan apps, VAS subscriptions, and spam shortcodes).
-- **🔑 Unconditional Allow-First Rule**: OTPs, bank transaction confirmations, airtime top-ups, and verification codes have absolute top priority and are never silenced.
-- **⚡ Custom Rule Engine**: Create your own rules with `Contains`, `Exact`, `Starts With`, `Ends With`, `Wildcards (*, ?)`, and full regular expressions (`Regex`).
-- **🎛️ Dual Filtering Strategies**:
+- **Non-Destructive Notification Silencing**: Intercepts spam notifications at the Android system level (`NotificationListenerService`). Unwanted notifications vanish instantly; zero SMS messages are ever deleted or lost.
+- **Behavioral Protection Shields**: Built-in category packs specifically tuned for regional telecom and marketing patterns (Ethio Telecom, Safaricom, telebirr, CBE, Awash, BOA, Dashen, loan apps, VAS subscriptions, and spam shortcodes).
+- **Unconditional Allow-First Rule**: OTPs, bank transaction confirmations, airtime top-ups, and verification codes have absolute top priority and are never silenced.
+- **Custom Rule Engine**: Create your own rules with `Contains`, `Exact`, `Starts With`, `Ends With`, `Wildcards (*, ?)`, and full regular expressions (`Regex`).
+- **Dual Filtering Strategies**:
   - **Blocklist Mode (Default)**: Normal behavior — only senders and keywords matching your enabled shields or block rules are muted. Everything else notifies normally.
   - **Strict Allowlist Mode**: Extreme privacy mode — every incoming message is silenced unless it matches an explicit allow rule or verified financial shield.
-- **🧪 Live In-App Rule Tester & SMS Simulator**: Test your keyword/regex patterns against sample text in real time, and simulate real Ethiopian carrier and banking messages with a single tap.
-- **🎨 Modern Material 3 Design**: Built 100% in Jetpack Compose with custom chiseled 3D shield graphics, subtle micro-interactions, full system dark/light theme support, and a high-contrast UI.
+- **Live In-App Rule Tester & SMS Simulator**: Test your keyword/regex patterns against sample text in real time, and simulate regional carrier and banking messages with a single tap.
+- **Modern Material 3 Design**: Built 100% in Jetpack Compose with custom chiseled 3D shield graphics, subtle micro-interactions, full system dark/light theme support, and a high-contrast UI.
 
 ---
 
-## ⚡ Why F-Tele?
+## Why F-Tele?
 
 | Feature | F-Tele (Native Kotlin) | Typical SMS Blocker Apps | Default SMS Client |
 | :--- | :---: | :---: | :---: |
-| **Internet Permission** | ❌ **None (`0` network calls)** | ⚠️ Yes (ad trackers, cloud sync) | ⚠️ Yes (RCS, telemetry) |
-| **App Size** | 🚀 **~1.4 MB** | 🐌 30 MB – 80 MB | 📦 50 MB+ |
-| **Background RAM** | ⚡ **~15 MB** | 🐢 80 MB – 150 MB | 📱 System-managed |
-| **Inbox Preservation** | ✅ **100% intact** | ❌ Quarantines / deletes | ❌ Displays all spam |
-| **Telemetry & Ads** | 🛡️ **Zero** | ⚠️ In-app banner / video ads | ⚠️ Marketing promotions |
-| **Open Source** | 🌐 **Verifiable Codebase** | 🔒 Proprietary black-box | 🔒 Proprietary |
+| **Internet Permission** | None (0 network calls) | Yes (ad trackers, cloud sync) | Yes (RCS, telemetry) |
+| **App Size** | ~1.4 MB | 30 MB – 80 MB | 50 MB+ |
+| **Background RAM** | ~15 MB | 80 MB – 150 MB | System-managed |
+| **Inbox Preservation** | 100% intact | Quarantines / deletes | Displays all spam |
+| **Telemetry & Ads** | Zero | In-app banner / video ads | Marketing promotions |
+| **Open Source** | Verifiable Codebase | Proprietary black-box | Proprietary |
 
 ---
 
-## 📱 Screens & UI Overview
+## Screens & UI Overview
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                       F-Tele Guard                          │
 ├─────────────┬─────────────┬─────────────┬───────────────────┤
-│ 📥 Activity │ 🛡️ Shields  │ ⚙️ Rules    │ 🎛️ Settings       │
+│  Activity   │   Shields   │    Rules    │   Settings        │
 └─────────────┴─────────────┴─────────────┴───────────────────┘
 ```
 
 1. **Activity Feed**: Interactive master protection card featuring a dynamic 3D status crest, one-tap notification access permission status, live SMS activity stream, and quick-action **Allow sender** / **Block sender** buttons.
 2. **Shields**: Behavioral protection presets:
-   - 🛡️ **Financial & OTP Shield** (Always active): Protects bank credits/debits, 2FA, OTPs, and login codes.
-   - 🚫 **Telecom Promos & Packages**: Silences bulk package offers, internet discounts, and marketing campaigns.
-   - 🎰 **Lottery & Teleplay Contests**: Mutes car/cash prize draws, quizzes, and shortcode games.
-   - 📱 **VAS & Third-Party Subscriptions**: Filters out ringtone clubs, horoscopes, and subscription popups.
-   - 💸 **Unsolicited Loan Promos**: Blocks aggressive micro-lending and uncollateralized loan invitations.
-   - 🛑 **Pure Spam Shortcodes**: Known promotional bulk-sender numbers (`605`, `127` promo variants, etc.).
+   - **Financial & OTP Shield** (Always active): Protects bank credits/debits, 2FA, OTPs, and login codes.
+   - **Telecom Promos & Packages**: Silences bulk package offers, internet discounts, and marketing campaigns.
+   - **Lottery & Teleplay Contests**: Mutes prize draws, quizzes, and shortcode games.
+   - **VAS & Third-Party Subscriptions**: Filters out ringtone clubs, horoscopes, and subscription popups.
+   - **Unsolicited Loan Promos**: Blocks aggressive micro-lending and uncollateralized loan invitations.
+   - **Pure Spam Shortcodes**: Known promotional bulk-sender numbers (`605`, `127` promo variants, etc.).
 3. **Custom Rules**: Powerful filter builder with mode selection (Sender / Body / Both), pattern tester, and rule list management.
 4. **Settings**: Strategy configuration (Blocklist vs Strict Allowlist), theme selector (System / Dark / Light), and notification listener diagnostics.
 
 ---
 
-## 📥 Installation
+## Installation
 
 ### Method 1: Download Release APK (Recommended)
 
 1. Grab the latest APK from the [Releases](https://github.com/Temesgendemeke/f-tele/releases) page (`app-release.apk` ~1.4 MB).
 2. Install the APK on your Android device (Android 8.0+ / API 26+).
-3. Open **F-Tele**, tap the red warning banner, and toggle **F-Tele** ON under **Device & app notifications** (Notification Listener Access).
+3. Open **F-Tele**, tap the attention banner, and toggle **F-Tele** ON under **Device & app notifications** (Notification Listener Access).
 
 ### Method 2: Install via ADB
 
@@ -97,7 +97,7 @@ adb shell am start -n com.qook.ftele/.ui.MainActivity
 
 ---
 
-## 🛠️ Building From Source
+## Building From Source
 
 ### Prerequisites
 - **JDK 17** or higher
@@ -131,7 +131,7 @@ app/build/outputs/apk/release/app-release.apk
 
 ---
 
-## 🔒 Privacy Guarantee
+## Privacy Guarantee
 
 F-Tele was built from day one as a verifiable offline privacy tool:
 
@@ -141,7 +141,7 @@ F-Tele was built from day one as a verifiable offline privacy tool:
 
 ---
 
-## 🏛️ Project Architecture
+## Project Architecture
 
 ```
 app/src/main/
@@ -152,10 +152,10 @@ app/src/main/
     ├── engine/
     │   ├── Patterns.kt           # Normalized matching engine (Exact, Prefix, Wildcard, Regex)
     │   ├── PatternPacks.kt       # Behavioral shields and starter pattern rules
-    │   └── Simulations.kt        # Realistic carrier and banking SMS test cases
+    │   └── Simulations.kt        # Regional carrier and banking SMS test cases
     ├── model/
     │   └── Models.kt             # Data classes (Rule, LogEntry, Decision, Category)
-    ├── service/
+    │── service/
     │   └── SmsMuterService.kt    # Android NotificationListenerService for intercepting SMS
     └── ui/
         ├── MainActivity.kt       # Single-activity host with reactive state management
@@ -167,7 +167,7 @@ app/src/main/
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are very welcome! If you want to add new regional carrier pattern presets, improve matching performance, or report a bug:
 
@@ -179,6 +179,6 @@ Contributions are very welcome! If you want to add new regional carrier pattern 
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.

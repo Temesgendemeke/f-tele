@@ -97,7 +97,7 @@ class PatternsTest {
             rules,
             "blocklist",
             "127",
-            "<#> 9098 is your verification code. NEVER share your M-PESA Safaricom verification code."
+            "<#> 1234 is your verification code. NEVER share your M-PESA Safaricom verification code."
         )
         assertFalse("OTP must never be muted", otpDecision.mute)
     }
@@ -111,7 +111,7 @@ class PatternsTest {
             rules,
             "blocklist",
             "CBE",
-            "Dear Temesgen your Account 1*********7169 has been Credited with ETB 2,000.00 from Meron Demeke"
+            "Dear Customer your Account 1*********0000 has been Credited with ETB 1,500.00 from Abebe Kebede"
         )
         assertFalse("Bank transaction must not be muted", cbeDecision.mute)
     }

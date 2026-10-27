@@ -10,7 +10,7 @@ object Simulations {
     val SAMPLES = listOf(
         SampleSms(
             sender = "127",
-            text = "Dear Temesgen You have received ETB 243.75 from CHAPA FINANCIAL TECHNOLOGY SHARE COMPANY - short code 500423 on 02/12/2025 22:05:23. Your transaction number is CF16M70KJI. Thank you for using telebirr",
+            text = "Dear Customer You have received ETB 250.00 from ABC SERVICES SHARE COMPANY - short code 100000 on 15/01/2026 14:30:00. Your transaction number is TX99A12B34. Thank you for using telebirr",
             expectedDecision = "Allowed (Transaction)"
         ),
         SampleSms(
@@ -20,7 +20,7 @@ object Simulations {
         ),
         SampleSms(
             sender = "Safaricom",
-            text = "<#> 9098 is your verification code. NEVER share your M-PESA Safaricom verification code. oeJMZxkqPJq",
+            text = "<#> 1234 is your verification code. NEVER share your M-PESA Safaricom verification code. abCD12efGH3",
             expectedDecision = "Allowed (OTP)"
         ),
         SampleSms(
@@ -35,7 +35,7 @@ object Simulations {
         ),
         SampleSms(
             sender = "CBE",
-            text = "Dear Temesgen your Account 1*********7169 has been Credited with ETB 2,000.00 from Meron Demeke, on 12/12/2025 with Ref No FT253464TYJV. Your Current Balance is ETB 3,450.00.",
+            text = "Dear Customer your Account 1*********0000 has been Credited with ETB 1,500.00 from Abebe Kebede, on 15/01/2026 with Ref No FT1234567890. Your Current Balance is ETB 4,200.00.",
             expectedDecision = "Allowed (Bank Credit)"
         ),
         SampleSms(
@@ -55,17 +55,17 @@ object Simulations {
         ),
         SampleSms(
             sender = "Awash",
-            text = "your account 0132*****98 has been debited with ETB 500.00. Your current balance is ETB 1,230.50. Receipt: https://awashpay.com/tx/A78932",
+            text = "your account 0123*****00 has been debited with ETB 500.00. Your current balance is ETB 1,230.50. Receipt: https://awashpay.com/tx/A12345",
             expectedDecision = "Allowed (Awash Bank Debit)"
         ),
         SampleSms(
             sender = "BOA",
-            text = "your account 5*****42 was debited with ETB 1,200.00. Available Balance: ETB 8,500.25. Receipt: https://boa.et/r?trx=B99214",
+            text = "your account 1*****00 was debited with ETB 1,200.00. Available Balance: ETB 8,500.25. Receipt: https://boa.et/r?trx=B12345",
             expectedDecision = "Allowed (BOA Bank Debit)"
         ),
         SampleSms(
             sender = "Dashen",
-            text = "your account '0021*****1201' is credited with ETB 3,500.00 on 14/10/2026. current balance is ETB 12,400.00",
+            text = "your account '0000*****0000' is credited with ETB 3,500.00 on 14/01/2026. current balance is ETB 12,400.00",
             expectedDecision = "Allowed (Dashen Bank Credit)"
         )
     )

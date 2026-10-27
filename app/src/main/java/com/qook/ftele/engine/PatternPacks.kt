@@ -26,7 +26,7 @@ object PatternPacks {
             id = "cat_protection",
             title = "Financial & OTP Shield",
             description = "Guaranteed Safe. Never mutes OTPs, verification codes, bank transactions (CBE, Awash, BOA, Dashen, telebirr, MPESA, Zemen, Hibret, etc.), or missed call alerts.",
-            icon = "🛡️",
+            icon = "shield",
             type = CategoryType.CORE_PROTECTION,
             rules = listOf(
                 // OTP & Security
@@ -86,7 +86,7 @@ object PatternPacks {
             id = "cat_lottery",
             title = "Lottery & Lucky Draws",
             description = "Mutes lottery promotions, raffle draws, EV car sweepstakes, weekly draw tickets, silver coins, and teleplay games.",
-            icon = "🎰",
+            icon = "lottery",
             type = CategoryType.SPAM_SHIELD,
             rules = listOf(
                 PresetRule(RuleAction.BLOCK, RuleTarget.BODY, MatchMode.CONTAINS, "ሎተሪ", category = "Lottery & Lucky Draws"),
@@ -114,7 +114,7 @@ object PatternPacks {
             id = "cat_telecom_promos",
             title = "Telecom Marketing & Offers",
             description = "Mutes aggressive data package pushes, SuperApp promo incentives, and corporate festival marketing.",
-            icon = "📢",
+            icon = "promos",
             type = CategoryType.SPAM_SHIELD,
             rules = listOf(
                 PresetRule(RuleAction.BLOCK, RuleTarget.BODY, MatchMode.CONTAINS, "ነፃ 1 ጂቢ", category = "Telecom Marketing & Offers"),
@@ -134,7 +134,7 @@ object PatternPacks {
             id = "cat_vas",
             title = "VAS & Ringtone Subscriptions",
             description = "Mutes annoying Caller Ring Back Tone (CallSign/CRBT) subscriptions, daily horoscope, and value-added services.",
-            icon = "🎵",
+            icon = "vas",
             type = CategoryType.SPAM_SHIELD,
             rules = listOf(
                 PresetRule(RuleAction.BLOCK, RuleTarget.BODY, MatchMode.CONTAINS, "ጥሪ ፊርማ", category = "VAS & Ringtone"),
@@ -149,7 +149,7 @@ object PatternPacks {
             id = "cat_loans",
             title = "Loan & Credit Advertisements",
             description = "Mutes unsolicited bank loan pushes, instant micro-credit ads, and loan offers.",
-            icon = "💳",
+            icon = "loans",
             type = CategoryType.SPAM_SHIELD,
             rules = listOf(
                 PresetRule(RuleAction.BLOCK, RuleTarget.BODY, MatchMode.CONTAINS, "ያለማስያዣ ይበደሩ", category = "Loan & Credit Ads"),
@@ -164,7 +164,7 @@ object PatternPacks {
             id = "cat_pure_spam_senders",
             title = "Pure Spam Shortcodes (Whole Senders)",
             description = "Mutes entire senders that send 100% advertising junk and never send personal or critical messages.",
-            icon = "🔕",
+            icon = "spam",
             type = CategoryType.SPAM_SHIELD,
             rules = listOf(
                 PresetRule(RuleAction.BLOCK, RuleTarget.SENDER, MatchMode.EXACT, "605", category = "Pure Spam Sender"),
@@ -181,7 +181,7 @@ object PatternPacks {
             id = "cat_pref_recharge",
             title = "Airtime & Recharge Confirmations",
             description = "Optional preference (NOT spam). Mutes confirmation alerts when you recharge airtime or successfully purchase voice/data packages. Default: Allowed.",
-            icon = "⚡",
+            icon = "recharge",
             type = CategoryType.USER_PREFERENCE,
             rules = listOf(
                 PresetRule(RuleAction.BLOCK, RuleTarget.BODY, MatchMode.CONTAINS, "recharged successfully", category = "Airtime Recharge"),
@@ -200,7 +200,7 @@ object PatternPacks {
             id = "cat_pref_balance",
             title = "Balance & Package Inquiries",
             description = "Optional preference (NOT spam). Mutes responses when querying your account balance or remaining data/minutes (*804#, *705#, etc.). Default: Allowed.",
-            icon = "📊",
+            icon = "balance",
             type = CategoryType.USER_PREFERENCE,
             rules = listOf(
                 PresetRule(RuleAction.BLOCK, RuleTarget.BODY, MatchMode.CONTAINS, "your account balance is", category = "Balance Query"),
@@ -218,7 +218,7 @@ object PatternPacks {
             id = "cat_pref_transfers",
             title = "Credit Transfer & Sharing Receipts",
             description = "Optional preference (NOT spam). Mutes confirmation messages when sharing airtime or sending balance to another person. Default: Allowed.",
-            icon = "🔄",
+            icon = "transfers",
             type = CategoryType.USER_PREFERENCE,
             rules = listOf(
                 PresetRule(RuleAction.BLOCK, RuleTarget.BODY, MatchMode.CONTAINS, "transferred airtime", category = "Airtime Transfer"),
