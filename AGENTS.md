@@ -6,12 +6,12 @@ This is a standard modern Android Gradle project:
 
 ```
 ├── app/
-│   ├── src/main/java/com/example/ftele/
+│   ├── src/main/java/com/qook/ftele/
 │   │   ├── data/       # Persistence (RuleStore, SharedPreferences)
 │   │   ├── engine/     # Core pattern matching, packs, and simulations
-│   │   ├── model/      # Data models (Rule, LogEntry, Decision)
+│   │   ├── model/      # Data models (Rule, LogEntry, Decision, BehaviorCategory)
 │   │   ├── service/    # SmsMuterService (NotificationListenerService)
-│   │   └── ui/         # MainActivity, MainScreen, and Jetpack Compose screens
+│   │   └── ui/         # MainActivity, MainScreen, components, and screens
 │   ├── src/main/res/   # Drawables, styles, and values
 │   ├── src/test/       # Unit tests (JUnit 4)
 │   └── build.gradle    # Module build configuration

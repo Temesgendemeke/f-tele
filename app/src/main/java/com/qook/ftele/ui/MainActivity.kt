@@ -1,11 +1,10 @@
-package com.example.ftele.ui
+package com.qook.ftele.ui
 
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
-import android.view.HapticFeedbackConstants
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,16 +13,16 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.view.WindowCompat
-import com.example.ftele.data.RuleStore
-import com.example.ftele.engine.PatternPacks
-import com.example.ftele.engine.Patterns
-import com.example.ftele.engine.Simulations
-import com.example.ftele.model.LogEntry
-import com.example.ftele.model.MatchMode
-import com.example.ftele.model.Rule
-import com.example.ftele.model.RuleAction
-import com.example.ftele.model.RuleTarget
-import com.example.ftele.ui.theme.FTeleTheme
+import com.qook.ftele.data.RuleStore
+import com.qook.ftele.engine.PatternPacks
+import com.qook.ftele.engine.Patterns
+import com.qook.ftele.engine.Simulations
+import com.qook.ftele.model.LogEntry
+import com.qook.ftele.model.MatchMode
+import com.qook.ftele.model.Rule
+import com.qook.ftele.model.RuleAction
+import com.qook.ftele.model.RuleTarget
+import com.qook.ftele.ui.theme.FTeleTheme
 import kotlin.random.Random
 
 class MainActivity : ComponentActivity() {
@@ -110,11 +109,11 @@ class MainActivity : ComponentActivity() {
                         syncRulesAndCategories()
                         Toast.makeText(this, "Rule removed.", Toast.LENGTH_SHORT).show()
                     },
-                    onSelectMode = { mode ->
+                    onChangeMode = { mode ->
                         RuleStore.setMode(this, mode)
                         currentMode = mode
                     },
-                    onSelectTheme = { theme ->
+                    onChangeTheme = { theme ->
                         RuleStore.setThemeMode(this, theme)
                         themeMode = theme
                     }
@@ -123,13 +122,9 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putInt("current_tab", currentTab)
-    }
-
     override fun onResume() {
         super.onResume()
+        checkNotificationPermission()
         syncAllData()
         refreshHandler.post(refreshRunnable)
     }
@@ -139,75 +134,92 @@ class MainActivity : ComponentActivity() {
         refreshHandler.removeCallbacks(refreshRunnable)
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt("current_tab", currentTab)
+    }
+
     private fun syncAllData() {
         isEnabled = RuleStore.isEnabled(this)
         currentMode = RuleStore.getMode(this)
         themeMode = RuleStore.getThemeMode(this)
-        hasPermission = checkPermission()
         syncRulesAndCategories()
         refreshLogs()
+        checkNotificationPermission()
     }
 
     private fun syncRulesAndCategories() {
         customRules = RuleStore.getCustomRules(this)
         effectiveRules = RuleStore.getAllEffectiveRules(this)
-
-        var count = 0
-        for (c in PatternPacks.CATEGORIES) {
-            if (RuleStore.isCategoryEnabled(this, c.id)) count++
-        }
-        activeShieldCount = count
+        activeShieldCount = PatternPacks.CATEGORIES.count { RuleStore.isCategoryEnabled(this, it.id) }
     }
 
     private fun refreshLogs() {
-        logs = RuleStore.getLog(this)
+        logs = RuleStore.getLogs(this)
     }
 
     private fun setMasterEnabled(enabled: Boolean) {
         RuleStore.setEnabled(this, enabled)
         isEnabled = enabled
-        window.decorView.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK)
-        val msg = if (enabled) "Protection active" else "Protection paused"
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+        Toast.makeText(
+            this,
+            if (enabled) "Protection active" else "Protection paused",
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
-    private fun checkPermission(): Boolean {
+    private fun checkNotificationPermission() {
         val flat = Settings.Secure.getString(contentResolver, "enabled_notification_listeners") ?: ""
-        return flat.contains(packageName)
+        hasPermission = flat.contains(packageName)
     }
 
     private fun toggleSenderRule(sender: String, action: RuleAction) {
-        val looseSender = Patterns.loose(sender)
+        val cleanSender = sender.trim()
+        val rule = Rule(
+            id = PatternPacks.newRuleId(),
+            action = action,
+            target = RuleTarget.SENDER,
+            mode = MatchMode.EXACT,
+            value = cleanSender,
+            category = "Quick Action: $cleanSender",
+            enabled = true
+        )
         val updated = customRules.toMutableList()
-        val existing = updated.find {
-            it.target == RuleTarget.SENDER && Patterns.loose(it.value) == looseSender
+        val existingIdx = updated.indexOfFirst {
+            it.target == RuleTarget.SENDER && Patterns.loose(it.value) == Patterns.loose(cleanSender)
         }
-
-        if (existing != null && existing.action == action) {
-            updated.remove(existing)
+        if (existingIdx != -1) {
+            updated[existingIdx] = rule
         } else {
-            if (existing != null) updated.remove(existing)
-            val newRule = Rule(
-                id = PatternPacks.newRuleId(),
-                action = action,
-                target = RuleTarget.SENDER,
-                mode = MatchMode.EXACT,
-                value = sender,
-                category = "Sender Rule",
-                enabled = true
-            )
-            updated.add(0, newRule)
+            updated.add(0, rule)
         }
-
         RuleStore.saveCustomRules(this, updated)
         syncRulesAndCategories()
+        Toast.makeText(this, "Rule added for sender: $cleanSender", Toast.LENGTH_SHORT).show()
     }
 
     private fun runSimulation() {
-        val sample = Simulations.SAMPLES[Random.nextInt(Simulations.SAMPLES.size)]
-        val decision = RuleStore.decide(this, sample.sender, sample.text)
-        RuleStore.addLog(this, sample.sender, sample.text, decision)
+        val sample = Simulations.SAMPLES.random(Random(System.currentTimeMillis()))
+        val rules = RuleStore.getAllEffectiveRules(this)
+        val mode = RuleStore.getMode(this)
+        val decision = Patterns.decide(rules, mode, sample.sender, sample.text)
+
+        RuleStore.appendLog(
+            this,
+            LogEntry(
+                id = "${System.currentTimeMillis()}",
+                sender = sample.sender,
+                text = sample.text,
+                time = System.currentTimeMillis(),
+                muted = decision.mute,
+                reason = decision.reason
+            )
+        )
         refreshLogs()
-        Toast.makeText(this, "Simulated SMS! Check Activity log.", Toast.LENGTH_SHORT).show()
+        Toast.makeText(
+            this,
+            if (decision.mute) "Simulated: SMS Muted" else "Simulated: SMS Allowed",
+            Toast.LENGTH_SHORT
+        ).show()
     }
 }

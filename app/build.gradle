@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.ftele'
+    namespace 'com.qook.ftele'
     compileSdk 36
 
     defaultConfig {
-        applicationId 'com.example.ftele'
+        applicationId 'com.qook.ftele'
         minSdk 26
         targetSdk 36
         versionCode 1

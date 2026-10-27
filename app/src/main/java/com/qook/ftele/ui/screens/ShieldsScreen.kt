@@ -1,4 +1,4 @@
-package com.example.ftele.ui.screens
+package com.qook.ftele.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -24,7 +24,10 @@ import androidx.compose.material.icons.outlined.CreditCard
 import androidx.compose.material.icons.outlined.NotificationsActive
 import androidx.compose.material.icons.outlined.NotificationsOff
 import androidx.compose.material.icons.outlined.PlayArrow
+import androidx.compose.material.icons.outlined.QueryStats
+import androidx.compose.material.icons.outlined.ReceiptLong
 import androidx.compose.material.icons.outlined.Shield
+import androidx.compose.material.icons.outlined.SwapHoriz
 import androidx.compose.material.icons.outlined.VerifiedUser
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -43,9 +46,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.ftele.engine.PatternPacks
-import com.example.ftele.model.BehaviorCategory
-import com.example.ftele.ui.theme.FTeleTheme
+import com.qook.ftele.engine.PatternPacks
+import com.qook.ftele.model.BehaviorCategory
+import com.qook.ftele.model.CategoryType
+import com.qook.ftele.ui.theme.FTeleTheme
 
 @Composable
 fun ShieldsScreen(
@@ -55,12 +59,15 @@ fun ShieldsScreen(
 ) {
     val colors = FTeleTheme.colors
 
+    val protectionCategories = PatternPacks.CATEGORIES.filter { it.type != CategoryType.USER_PREFERENCE }
+    val preferenceCategories = PatternPacks.CATEGORIES.filter { it.type == CategoryType.USER_PREFERENCE }
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .background(colors.bg),
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
         // --- 1. Explanatory Header ---
         item {
@@ -79,7 +86,7 @@ fun ShieldsScreen(
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Behavioral Shields",
+                            text = "Behavioral Protection",
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Bold,
                             color = colors.ink
@@ -101,12 +108,12 @@ fun ShieldsScreen(
                             contentColor = colors.ink
                         ),
                         shape = RoundedCornerShape(8.dp),
-                        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp)
+                        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.PlayArrow,
                             contentDescription = null,
-                            modifier = Modifier.size(15.dp),
+                            modifier = Modifier.size(14.dp),
                             tint = colors.ink
                         )
                         Spacer(modifier = Modifier.width(4.dp))
@@ -116,8 +123,45 @@ fun ShieldsScreen(
             }
         }
 
-        // --- 2. List of Shields ---
-        items(PatternPacks.CATEGORIES, key = { it.id }) { category ->
+        // --- 2. Core & Spam Protection Shields ---
+        item {
+            Text(
+                text = "Spam & Advertising Shields",
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold,
+                color = colors.sub,
+                modifier = Modifier.padding(start = 4.dp, top = 4.dp)
+            )
+        }
+
+        items(protectionCategories, key = { it.id }) { category ->
+            ShieldCategoryCard(
+                category = category,
+                isEnabled = isCategoryEnabled(category.id),
+                onToggle = { enabled -> onToggleCategory(category.id, enabled) }
+            )
+        }
+
+        // --- 3. User Preference Filters (Optional / Off by Default) ---
+        item {
+            Spacer(modifier = Modifier.height(8.dp))
+            Column(modifier = Modifier.padding(horizontal = 4.dp)) {
+                Text(
+                    text = "User Preferences (Utility Alerts)",
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = colors.sub
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = "These are not spam. Kept allowed by default so you still receive receipts & balance queries. Toggle ON only if you prefer total silence.",
+                    fontSize = 11.sp,
+                    color = colors.sub
+                )
+            }
+        }
+
+        items(preferenceCategories, key = { it.id }) { category ->
             ShieldCategoryCard(
                 category = category,
                 isEnabled = isCategoryEnabled(category.id),
@@ -179,13 +223,13 @@ private fun ShieldCategoryCard(
                     )
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        text = "${category.rules.size} rules",
+                        text = "${category.rules.size} rules" + if (category.type == CategoryType.USER_PREFERENCE) " · Preference" else "",
                         fontSize = 11.sp,
                         color = colors.sub
                     )
                 }
 
-                // Switch or Always ON Badge
+                // Switch or Badge
                 if (category.isProtection) {
                     Box(
                         modifier = Modifier
@@ -197,8 +241,8 @@ private fun ShieldCategoryCard(
                             text = "CORE SHIELD",
                             fontSize = 10.sp,
                             fontWeight = FontWeight.Bold,
-                            color = colors.accent,
-                            letterSpacing = 0.5.sp
+                            letterSpacing = 0.5.sp,
+                            color = colors.accent
                         )
                     }
                 } else {
@@ -215,39 +259,30 @@ private fun ShieldCategoryCard(
                 }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
             // Description
             Text(
                 text = category.description,
                 fontSize = 12.sp,
-                color = colors.inkSoft,
-                lineHeight = 16.sp
+                lineHeight = 17.sp,
+                color = colors.sub
             )
         }
     }
 }
 
-private fun getCategoryIcon(categoryId: String): ImageVector {
-    return when (categoryId) {
+private fun getCategoryIcon(id: String): ImageVector {
+    return when (id) {
         "cat_protection" -> Icons.Outlined.VerifiedUser
         "cat_lottery" -> Icons.Outlined.ConfirmationNumber
         "cat_telecom_promos" -> Icons.Outlined.Campaign
         "cat_vas" -> Icons.Outlined.NotificationsActive
         "cat_loans" -> Icons.Outlined.CreditCard
         "cat_pure_spam_senders" -> Icons.Outlined.NotificationsOff
+        "cat_pref_recharge" -> Icons.Outlined.ReceiptLong
+        "cat_pref_balance" -> Icons.Outlined.QueryStats
+        "cat_pref_transfers" -> Icons.Outlined.SwapHoriz
         else -> Icons.Outlined.Shield
-    }
-}
-
-@androidx.compose.ui.tooling.preview.Preview(showBackground = true, name = "Shields Screen Dark")
-@Composable
-fun ShieldsScreenPreview() {
-    FTeleTheme(themeSetting = "dark") {
-        ShieldsScreen(
-            isCategoryEnabled = { it != "cat_loans" },
-            onToggleCategory = { _, _ -> },
-            onSimulateSms = {}
-        )
     }
 }
