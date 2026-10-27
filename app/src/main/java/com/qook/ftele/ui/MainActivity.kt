@@ -210,6 +210,4 @@ class MainActivity : ComponentActivity() {
         syncRulesAndCategories()
         Toast.makeText(this, "Rule added for sender: $cleanSender", Toast.LENGTH_SHORT).show()
     }
-
-    }
 }
