@@ -24,6 +24,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.DeleteOutline
+import androidx.compose.material.icons.outlined.ExpandLess
+import androidx.compose.material.icons.outlined.ExpandMore
+import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -36,6 +39,7 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -69,16 +73,14 @@ fun RulesScreen(
     val focusManager = LocalFocusManager.current
 
     // Live test state
-    var testSender by remember { mutableStateOf("") }
-    var testText by remember { mutableStateOf("") }
+    var testSender by remember { mutableStateOf("ethiotel") }
+    var testText by remember { mutableStateOf("ውድ ደንበኛችን ልዩ ቅናሽ! የ 50% ቦነስ የኢንተርኔት ጥቅል ይግዙ") }
 
-    // Draft rule state
-    var draftValue by remember { mutableStateOf("") }
-    var draftSender by remember { mutableStateOf("") }
-    var draftTarget by remember { mutableStateOf(RuleTarget.BODY) }
-    var draftMode by remember { mutableStateOf(MatchMode.CONTAINS) }
-    var draftAction by remember { mutableStateOf(RuleAction.BLOCK) }
-    var regexError by remember { mutableStateOf(false) }
+    // Simple rule creation state: 0 = Block Sender, 1 = Block Word, 2 = Always Allow
+    var selectedTab by remember { mutableIntStateOf(0) }
+    var simpleValue by remember { mutableStateOf("") }
+    var showAdvanced by remember { mutableStateOf(false) }
+    var advancedMode by remember { mutableStateOf(MatchMode.CONTAINS) }
 
     val liveDecision = remember(testSender, testText, effectiveRules, currentMode) {
         Patterns.decide(effectiveRules, currentMode, testSender, testText)
@@ -91,102 +93,7 @@ fun RulesScreen(
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
-        // --- 1. Live Tester Card ---
-        item {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(14.dp),
-                colors = CardDefaults.cardColors(containerColor = colors.card),
-                border = CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(colors.line))
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Live Tester",
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = colors.ink
-                        )
-
-                        if (testSender.isNotBlank() || testText.isNotBlank()) {
-                            Box(
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(6.dp))
-                                    .background(if (liveDecision.mute) colors.blockSoft else colors.accentSoft)
-                                    .padding(horizontal = 8.dp, vertical = 3.dp)
-                            ) {
-                                Text(
-                                    text = if (liveDecision.mute) "Would mute" else "Would show",
-                                    fontSize = 11.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = if (liveDecision.mute) colors.block else colors.accent
-                                )
-                            }
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = if (testSender.isBlank() && testText.isBlank()) {
-                            "Type a sender ID or message to preview decisions live."
-                        } else {
-                            liveDecision.reason
-                        },
-                        fontSize = 12.sp,
-                        color = colors.sub
-                    )
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    OutlinedTextField(
-                        value = testSender,
-                        onValueChange = { testSender = it },
-                        placeholder = { Text("Sender ID (e.g. 127, Telebirr, CBE)", fontSize = 13.sp, color = colors.sub) },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true,
-                        shape = RoundedCornerShape(10.dp),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedContainerColor = colors.cardSoft,
-                            unfocusedContainerColor = colors.cardSoft,
-                            focusedBorderColor = colors.line,
-                            unfocusedBorderColor = Color.Transparent,
-                            focusedTextColor = colors.ink,
-                            unfocusedTextColor = colors.ink
-                        )
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    OutlinedTextField(
-                        value = testText,
-                        onValueChange = { testText = it },
-                        placeholder = { Text("SMS Message text to evaluate live...", fontSize = 13.sp, color = colors.sub) },
-                        modifier = Modifier.fillMaxWidth(),
-                        minLines = 2,
-                        maxLines = 4,
-                        shape = RoundedCornerShape(10.dp),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedContainerColor = colors.cardSoft,
-                            unfocusedContainerColor = colors.cardSoft,
-                            focusedBorderColor = colors.line,
-                            unfocusedBorderColor = Color.Transparent,
-                            focusedTextColor = colors.ink,
-                            unfocusedTextColor = colors.ink
-                        )
-                    )
-                }
-            }
-        }
-
-        // --- 2. Add Custom Rule Form ---
+        // --- 2. Simple Rule Creator Card ---
         item {
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -205,16 +112,16 @@ fun RulesScreen(
                         fontWeight = FontWeight.Bold,
                         color = colors.ink
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(3.dp))
                     Text(
-                        text = "Filter specific keywords, sender IDs, or regex patterns.",
+                        text = "Block a specific spam sender or phrase in 1 tap.",
                         fontSize = 12.sp,
                         color = colors.sub
                     )
 
-                    Spacer(modifier = Modifier.height(14.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
 
-                    // Action Segment: Block (Relative Red) vs Allow (Shield Green)
+                    // Simple 3-Option Segment
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -222,67 +129,31 @@ fun RulesScreen(
                             .background(colors.cardSoft)
                             .padding(2.dp)
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .clip(RoundedCornerShape(6.dp))
-                                .background(if (draftAction == RuleAction.BLOCK) colors.block else Color.Transparent)
-                                .clickable { draftAction = RuleAction.BLOCK }
-                                .padding(vertical = 8.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "Block",
-                                fontSize = 13.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = if (draftAction == RuleAction.BLOCK) Color.White else colors.inkSoft
-                            )
-                        }
-
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .clip(RoundedCornerShape(6.dp))
-                                .background(if (draftAction == RuleAction.ALLOW) colors.accent else Color.Transparent)
-                                .clickable { draftAction = RuleAction.ALLOW }
-                                .padding(vertical = 8.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "Allow",
-                                fontSize = 13.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = if (draftAction == RuleAction.ALLOW) Color.White else colors.inkSoft
-                            )
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                    // Target Segment: Body vs Sender vs Both
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(colors.cardSoft)
-                            .padding(2.dp)
-                    ) {
-                        listOf(RuleTarget.BODY, RuleTarget.SENDER, RuleTarget.BOTH).forEach { target ->
-                            val isSelected = draftTarget == target
+                        listOf(
+                            "Block Sender",
+                            "Block Word",
+                            "Always Allow"
+                        ).forEachIndexed { idx, label ->
+                            val isSelected = selectedTab == idx
+                            val bgColor = when {
+                                !isSelected -> Color.Transparent
+                                idx == 0 || idx == 1 -> colors.block
+                                else -> colors.accent
+                            }
                             Box(
                                 modifier = Modifier
                                     .weight(1f)
                                     .clip(RoundedCornerShape(6.dp))
-                                    .background(if (isSelected) colors.ink else Color.Transparent)
-                                    .clickable { draftTarget = target }
-                                    .padding(vertical = 6.dp),
+                                    .background(bgColor)
+                                    .clickable { selectedTab = idx }
+                                    .padding(vertical = 7.dp),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = target.label,
-                                    fontSize = 12.sp,
-                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                                    color = if (isSelected) colors.bg else colors.inkSoft
+                                    text = label,
+                                    fontSize = 11.sp,
+                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                                    color = if (isSelected) Color.White else colors.inkSoft
                                 )
                             }
                         }
@@ -290,23 +161,24 @@ fun RulesScreen(
 
                     Spacer(modifier = Modifier.height(10.dp))
 
-                    // Value Input
+                    // Input Box
                     OutlinedTextField(
-                        value = draftValue,
-                        onValueChange = {
-                            draftValue = it
-                            regexError = false
-                        },
+                        value = simpleValue,
+                        onValueChange = { simpleValue = it },
                         placeholder = {
                             Text(
-                                text = if (draftTarget == RuleTarget.SENDER) "Sender ID (e.g. 605, Safaricom)" else "Keyword, phrase, or pattern...",
-                                fontSize = 13.sp,
+                                text = when (selectedTab) {
+                                    0 -> "Sender name or number (e.g. 444, 605)"
+                                    1 -> "Word or phrase (e.g. loan, ቅናሽ, discount)"
+                                    else -> "Sender or phrase to always allow (e.g. CBE, School)"
+                                },
+                                fontSize = 12.sp,
                                 color = colors.sub
                             )
                         },
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true,
-                        shape = RoundedCornerShape(10.dp),
+                        shape = RoundedCornerShape(8.dp),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedContainerColor = colors.cardSoft,
                             unfocusedContainerColor = colors.cardSoft,
@@ -317,89 +189,88 @@ fun RulesScreen(
                         )
                     )
 
-                    // Optional Sender Filter if target != SENDER
-                    if (draftTarget != RuleTarget.SENDER) {
-                        Spacer(modifier = Modifier.height(8.dp))
-                        OutlinedTextField(
-                            value = draftSender,
-                            onValueChange = { draftSender = it },
-                            placeholder = { Text("From Sender ID (Optional, e.g. 6060)", fontSize = 13.sp, color = colors.sub) },
-                            modifier = Modifier.fillMaxWidth(),
-                            singleLine = true,
-                            shape = RoundedCornerShape(10.dp),
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedContainerColor = colors.cardSoft,
-                                unfocusedContainerColor = colors.cardSoft,
-                                focusedBorderColor = colors.line,
-                                unfocusedBorderColor = Color.Transparent,
-                                focusedTextColor = colors.ink,
-                                unfocusedTextColor = colors.ink
-                            )
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    // Advanced Options Toggle (Kept hidden unless wanted)
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { showAdvanced = !showAdvanced }
+                            .padding(vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = if (showAdvanced) "Hide Advanced Options" else "Show Advanced Options (Regex, Prefix)",
+                            fontSize = 11.sp,
+                            color = colors.sub,
+                            fontWeight = FontWeight.Medium
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Icon(
+                            imageVector = if (showAdvanced) Icons.Outlined.ExpandLess else Icons.Outlined.ExpandMore,
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp),
+                            tint = colors.sub
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                    // Match Mode Selector Chips
-                    FlowRow(
-                        horizontalArrangement = Arrangement.spacedBy(6.dp),
-                        verticalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        MatchMode.entries.forEach { mode ->
-                            val isSelected = draftMode == mode
-                            Box(
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(6.dp))
-                                    .background(if (isSelected) colors.ink else colors.cardSoft)
-                                    .clickable { draftMode = mode }
-                                    .padding(horizontal = 10.dp, vertical = 6.dp)
+                    AnimatedVisibility(visible = showAdvanced) {
+                        Column(modifier = Modifier.padding(top = 8.dp)) {
+                            Text(
+                                text = "Match Type:",
+                                fontSize = 11.sp,
+                                color = colors.sub,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            FlowRow(
+                                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                                verticalArrangement = Arrangement.spacedBy(6.dp)
                             ) {
-                                Text(
-                                    text = mode.label,
-                                    fontSize = 11.sp,
-                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                                    color = if (isSelected) colors.bg else colors.inkSoft
-                                )
+                                MatchMode.entries.forEach { mode ->
+                                    val isSelected = advancedMode == mode
+                                    Box(
+                                        modifier = Modifier
+                                            .clip(RoundedCornerShape(6.dp))
+                                            .background(if (isSelected) colors.ink else colors.cardSoft)
+                                            .clickable { advancedMode = mode }
+                                            .padding(horizontal = 8.dp, vertical = 5.dp)
+                                    ) {
+                                        Text(
+                                            text = mode.label,
+                                            fontSize = 11.sp,
+                                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                                            color = if (isSelected) colors.bg else colors.inkSoft
+                                        )
+                                    }
+                                }
                             }
                         }
-                    }
-
-                    if (regexError) {
-                        Spacer(modifier = Modifier.height(6.dp))
-                        Text(text = "Invalid regular expression pattern", fontSize = 11.sp, color = colors.block)
                     }
 
                     Spacer(modifier = Modifier.height(14.dp))
 
                     Button(
                         onClick = {
-                            if (draftValue.isBlank()) return@Button
-                            if (draftMode == MatchMode.REGEX) {
-                                try {
-                                    Regex(draftValue)
-                                } catch (_: Exception) {
-                                    regexError = true
-                                    return@Button
-                                }
-                            }
-
-                            onSaveRule(
-                                Rule(
-                                    id = PatternPacks.newRuleId(),
-                                    action = draftAction,
-                                    target = draftTarget,
-                                    mode = draftMode,
-                                    value = draftValue.trim(),
-                                    senderFilter = draftSender.trim().ifBlank { null },
-                                    category = "Custom",
-                                    enabled = true
-                                )
+                            if (simpleValue.isBlank()) return@Button
+                            val rule = Rule(
+                                id = PatternPacks.newRuleId(),
+                                action = if (selectedTab == 2) RuleAction.ALLOW else RuleAction.BLOCK,
+                                target = if (selectedTab == 0) RuleTarget.SENDER else RuleTarget.BODY,
+                                mode = if (showAdvanced) advancedMode else MatchMode.CONTAINS,
+                                value = simpleValue.trim(),
+                                category = when (selectedTab) {
+                                    0 -> "Block Sender: ${simpleValue.trim()}"
+                                    1 -> "Block Keyword: ${simpleValue.trim()}"
+                                    else -> "Always Allow: ${simpleValue.trim()}"
+                                },
+                                enabled = true
                             )
-                            draftValue = ""
-                            draftSender = ""
+                            onSaveRule(rule)
+                            simpleValue = ""
                             focusManager.clearFocus()
                         },
-                        enabled = draftValue.isNotBlank(),
+                        enabled = simpleValue.isNotBlank(),
                         modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = colors.ink,
@@ -407,12 +278,20 @@ fun RulesScreen(
                             disabledContainerColor = colors.cardSoft,
                             disabledContentColor = colors.sub
                         ),
-                        shape = RoundedCornerShape(10.dp),
-                        contentPadding = PaddingValues(vertical = 12.dp)
+                        shape = RoundedCornerShape(8.dp),
+                        contentPadding = PaddingValues(vertical = 11.dp)
                     ) {
                         Icon(imageVector = Icons.Outlined.Add, contentDescription = null, modifier = Modifier.size(16.dp))
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text(text = "Save Rule", fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
+                        Text(
+                            text = when (selectedTab) {
+                                0 -> "Block This Sender"
+                                1 -> "Block This Keyword"
+                                else -> "Always Allow This"
+                            },
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Bold
+                        )
                     }
                 }
             }
@@ -444,7 +323,7 @@ fun RulesScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "No custom rules yet. Rules you add above will appear here.",
+                            text = "No custom rules yet. Rules you add above or via 'Block Sender' in Activity will appear here.",
                             fontSize = 12.sp,
                             color = colors.sub
                         )
@@ -453,7 +332,7 @@ fun RulesScreen(
             }
         } else {
             items(customRules, key = { it.id }) { rule ->
-                CustomRuleItem(
+                RuleCard(
                     rule = rule,
                     onToggle = { onToggleRule(rule) },
                     onDelete = { onRemoveRule(rule) }
@@ -464,7 +343,7 @@ fun RulesScreen(
 }
 
 @Composable
-private fun CustomRuleItem(
+private fun RuleCard(
     rule: Rule,
     onToggle: () -> Unit,
     onDelete: () -> Unit
@@ -473,26 +352,26 @@ private fun CustomRuleItem(
 
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(10.dp),
         colors = CardDefaults.cardColors(containerColor = colors.card),
         border = CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(colors.line))
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(14.dp),
+                .padding(horizontal = 14.dp, vertical = 10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Action pill: Block (Red) or Allow (Green)
+            // Action Badge (BLOCK in red, ALLOW in green)
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(6.dp))
                     .background(if (rule.action == RuleAction.BLOCK) colors.blockSoft else colors.accentSoft)
-                    .padding(horizontal = 7.dp, vertical = 3.dp)
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
             ) {
                 Text(
-                    text = rule.action.label,
-                    fontSize = 11.sp,
+                    text = rule.action.value.uppercase(),
+                    fontSize = 10.sp,
                     fontWeight = FontWeight.Bold,
                     color = if (rule.action == RuleAction.BLOCK) colors.block else colors.accent
                 )
@@ -504,24 +383,14 @@ private fun CustomRuleItem(
                 Text(
                     text = rule.value,
                     fontSize = 13.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = colors.ink
+                    fontWeight = FontWeight.Bold,
+                    color = if (rule.enabled) colors.ink else colors.sub
                 )
-                Spacer(modifier = Modifier.height(2.dp))
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = "${rule.target.label} · ${rule.mode.label}",
-                        fontSize = 11.sp,
-                        color = colors.sub
-                    )
-                    if (!rule.senderFilter.isNullOrBlank()) {
-                        Text(
-                            text = " · Sender: ${rule.senderFilter}",
-                            fontSize = 11.sp,
-                            color = colors.sub
-                        )
-                    }
-                }
+                Text(
+                    text = "${rule.target.label} • ${rule.category ?: "Custom"}",
+                    fontSize = 11.sp,
+                    color = colors.sub
+                )
             }
 
             Switch(
@@ -529,13 +398,13 @@ private fun CustomRuleItem(
                 onCheckedChange = { onToggle() },
                 colors = SwitchDefaults.colors(
                     checkedThumbColor = Color.White,
-                    checkedTrackColor = colors.accent,
+                    checkedTrackColor = if (rule.action == RuleAction.BLOCK) colors.block else colors.accent,
                     uncheckedThumbColor = colors.sub,
                     uncheckedTrackColor = colors.cardSoft
                 )
             )
 
-            Spacer(modifier = Modifier.width(4.dp))
+            Spacer(modifier = Modifier.width(6.dp))
 
             Box(
                 modifier = Modifier
@@ -547,7 +416,7 @@ private fun CustomRuleItem(
                 Icon(
                     imageVector = Icons.Outlined.DeleteOutline,
                     contentDescription = "Delete",
-                    modifier = Modifier.size(16.dp),
+                    modifier = Modifier.size(18.dp),
                     tint = colors.sub
                 )
             }

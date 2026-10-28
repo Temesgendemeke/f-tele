@@ -170,6 +170,20 @@ object RuleStore {
 
     // --- Activity Log History ---
 
+    fun isBackgroundNoise(sender: String, text: String): Boolean {
+        val t = text.lowercase().trim()
+        val s = sender.lowercase().trim()
+        return t.isBlank() ||
+                t.contains("doing work in the background") ||
+                t.contains("running in the background") ||
+                t.contains("syncing messages") ||
+                t.contains("chat features") ||
+                t.contains("connected to chat") ||
+                t.contains("setting up chat") ||
+                s.contains("doing work in the background") ||
+                s.contains("running in the background")
+    }
+
     fun getLogs(c: Context): List<LogEntry> {
         val raw = prefs(c).getString("logs", null) ?: return emptyList()
         val list = mutableListOf<LogEntry>()
@@ -177,11 +191,14 @@ object RuleStore {
             val array = JSONArray(raw)
             for (i in 0 until array.length()) {
                 val obj = array.optJSONObject(i) ?: continue
+                val sender = obj.optString("sender", "Unknown")
+                val text = obj.optString("text", "")
+                if (isBackgroundNoise(sender, text)) continue
                 list.add(
                     LogEntry(
                         id = obj.optString("id", i.toString()),
-                        sender = obj.optString("sender", "Unknown"),
-                        text = obj.optString("text", ""),
+                        sender = sender,
+                        text = text,
                         time = obj.optLong("time", 0L),
                         muted = obj.optBoolean("muted", false),
                         reason = obj.optString("reason", "")
@@ -190,10 +207,11 @@ object RuleStore {
             }
         } catch (_: Exception) {
         }
-        return list
+        return list.sortedByDescending { it.time }
     }
 
     fun appendLog(c: Context, entry: LogEntry) {
+        if (isBackgroundNoise(entry.sender, entry.text)) return
         val existing = getLogs(c).toMutableList()
         existing.add(0, entry)
         while (existing.size > MAX_LOGS) {

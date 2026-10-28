@@ -47,6 +47,8 @@ import com.qook.ftele.ui.theme.FTeleTheme
 fun SettingsScreen(
     hasPermission: Boolean,
     isIgnoringBattery: Boolean,
+    hasContactPermission: Boolean,
+    onRequestContactPermission: () -> Unit,
     deviceTip: String,
     currentMode: String,
     themeMode: String,
@@ -66,7 +68,7 @@ fun SettingsScreen(
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
-        // --- 1. Notification Permission Status ---
+        // --- 1. Notification Permission Card ---
         item {
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -76,85 +78,6 @@ fun SettingsScreen(
                     brush = androidx.compose.ui.graphics.SolidColor(
                         if (hasPermission) colors.line else colors.block.copy(alpha = 0.5f)
                     )
-                )
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(36.dp)
-                            .clip(CircleShape)
-                            .background(if (hasPermission) colors.accentSoft else colors.blockSoft),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = if (hasPermission) Icons.Outlined.Check else Icons.Outlined.WarningAmber,
-                            contentDescription = null,
-                            modifier = Modifier.size(18.dp),
-                            tint = if (hasPermission) colors.accent else colors.block
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.width(12.dp))
-
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = "Notification Access",
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = colors.ink
-                        )
-                        Spacer(modifier = Modifier.height(2.dp))
-                        Text(
-                            text = if (hasPermission) "Active & operational" else "Missing listener permission",
-                            fontSize = 11.sp,
-                            color = if (hasPermission) colors.sub else colors.block
-                        )
-                    }
-
-                    if (!hasPermission) {
-                        Button(
-                            onClick = onOpenPermissionSettings,
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = colors.block,
-                                contentColor = Color.White
-                            ),
-                            shape = RoundedCornerShape(8.dp),
-                            contentPadding = PaddingValues(horizontal = 10.dp, vertical = 5.dp)
-                        ) {
-                            Text(text = "Grant", fontSize = 11.sp, fontWeight = FontWeight.Bold)
-                        }
-                    } else {
-                        Box(
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(6.dp))
-                                .background(colors.accentSoft)
-                                .padding(horizontal = 8.dp, vertical = 4.dp)
-                        ) {
-                            Text(
-                                text = "ACTIVE",
-                                fontSize = 10.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = colors.accent
-                            )
-                        }
-                    }
-                }
-            }
-        }
-
-        // --- 2. Background Reliability & Battery Optimization ---
-        item {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(14.dp),
-                colors = CardDefaults.cardColors(containerColor = colors.card),
-                border = CardDefaults.outlinedCardBorder().copy(
-                    brush = androidx.compose.ui.graphics.SolidColor(colors.line)
                 )
             ) {
                 Column(
@@ -170,14 +93,14 @@ fun SettingsScreen(
                             modifier = Modifier
                                 .size(36.dp)
                                 .clip(CircleShape)
-                                .background(if (isIgnoringBattery) colors.accentSoft else colors.blockSoft),
+                                .background(if (hasPermission) colors.accentSoft else colors.blockSoft),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
-                                imageVector = if (isIgnoringBattery) Icons.Outlined.Check else Icons.Outlined.BatteryAlert,
+                                imageVector = if (hasPermission) Icons.Outlined.Check else Icons.Outlined.WarningAmber,
                                 contentDescription = null,
                                 modifier = Modifier.size(18.dp),
-                                tint = if (isIgnoringBattery) colors.accent else colors.block
+                                tint = if (hasPermission) colors.accent else colors.block
                             )
                         }
 
@@ -185,16 +108,126 @@ fun SettingsScreen(
 
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "Battery & Autostart",
+                                text = "Notification Access",
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = colors.ink
                             )
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(
-                                text = if (isIgnoringBattery) "Battery unrestricted (Optimal)" else "Restricted by OS battery saver",
+                                text = if (hasPermission) "Active Watching for spam" else "Action needed to block SMS",
                                 fontSize = 11.sp,
-                                color = if (isIgnoringBattery) colors.sub else colors.block
+                                color = if (hasPermission) colors.sub else colors.block
+                            )
+                        }
+
+                        if (!hasPermission) {
+                            Button(
+                                onClick = onOpenPermissionSettings,
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = colors.block,
+                                    contentColor = Color.White
+                                ),
+                                shape = RoundedCornerShape(8.dp),
+                                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
+                            ) {
+                                Text(text = "Grant Access", fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                            }
+                        } else {
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(6.dp))
+                                    .background(colors.accentSoft)
+                                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                            ) {
+                                Text(
+                                    text = "ACTIVE",
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = colors.accent
+                                )
+                            }
+                        }
+                    }
+
+                    // Easy 3-step guide if permission is missing
+                    if (!hasPermission) {
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(colors.blockSoft.copy(alpha = 0.5f))
+                                .padding(10.dp)
+                        ) {
+                            Column {
+                                Text(
+                                    text = "How to enable:",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = colors.block
+                                )
+                                Spacer(modifier = Modifier.height(3.dp))
+                                Text(
+                                    text = "1. Tap 'Grant Access' above.\n2. Find 'F-Tele' and toggle it ON.\n(Android 13+: If switch says 'Restricted setting', open App Info > 3 dots ⋮ in top corner > tap 'Allow restricted settings' first)",
+                                    fontSize = 11.sp,
+                                    color = colors.ink,
+                                    lineHeight = 15.sp
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // --- 2. Keep Running in Background Card ---
+        item {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(14.dp),
+                colors = CardDefaults.cardColors(containerColor = colors.card),
+                border = CardDefaults.outlinedCardBorder()
+                    .copy(brush = androidx.compose.ui.graphics.SolidColor(colors.line))
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(36.dp)
+                                .clip(CircleShape)
+                                .background(if (isIgnoringBattery) colors.accentSoft else colors.cardSoft),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = if (isIgnoringBattery) Icons.Outlined.Check else Icons.Outlined.BatteryAlert,
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp),
+                                tint = if (isIgnoringBattery) colors.accent else colors.sub
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(12.dp))
+
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = "Background Protection",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = colors.ink
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = if (isIgnoringBattery) "Unrestricted (Safe from battery killer)" else "May sleep when screen is locked",
+                                fontSize = 11.sp,
+                                color = colors.sub
                             )
                         }
 
@@ -205,60 +238,64 @@ fun SettingsScreen(
                                 contentColor = if (isIgnoringBattery) colors.ink else colors.bg
                             ),
                             shape = RoundedCornerShape(8.dp),
-                            contentPadding = PaddingValues(horizontal = 10.dp, vertical = 5.dp)
+                            contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp)
                         ) {
                             Text(
-                                text = if (isIgnoringBattery) "Review" else "Unrestrict",
+                                text = if (isIgnoringBattery) "Review" else "Keep Running",
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold
                             )
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    // OEM / Manufacturer specific advice box
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(colors.cardSoft)
-                            .padding(12.dp)
-                    ) {
-                        Column {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(
-                                    imageVector = Icons.Outlined.Info,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(14.dp),
-                                    tint = colors.sub
-                                )
-                                Spacer(modifier = Modifier.width(6.dp))
+                    if (deviceTip.isNotBlank()) {
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(colors.cardSoft)
+                                .padding(10.dp)
+                        ) {
+                            Column {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.Info,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(13.dp),
+                                        tint = colors.sub
+                                    )
+                                    Spacer(modifier = Modifier.width(5.dp))
+                                    Text(
+                                        text = "Tip for your phone:",
+                                        fontSize = 11.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = colors.ink
+                                    )
+                                }
+                                Spacer(modifier = Modifier.height(3.dp))
                                 Text(
-                                    text = "Device Optimization Tip",
+                                    text = deviceTip,
                                     fontSize = 11.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = colors.ink
+                                    color = colors.sub,
+                                    lineHeight = 15.sp
                                 )
-                            }
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = deviceTip,
-                                fontSize = 11.sp,
-                                color = colors.sub,
-                                lineHeight = 16.sp
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Button(
-                                onClick = onOpenAutostartSettings,
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = colors.ink,
-                                    contentColor = colors.bg
-                                ),
-                                shape = RoundedCornerShape(6.dp),
-                                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp)
-                            ) {
-                                Text(text = "Open Autostart / App Settings", fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
+                                Spacer(modifier = Modifier.height(6.dp))
+                                Button(
+                                    onClick = onOpenAutostartSettings,
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = colors.ink,
+                                        contentColor = colors.bg
+                                    ),
+                                    shape = RoundedCornerShape(6.dp),
+                                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
+                                ) {
+                                    Text(
+                                        text = "Open Phone Autostart Settings",
+                                        fontSize = 11.sp,
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                }
                             }
                         }
                     }
@@ -266,13 +303,103 @@ fun SettingsScreen(
             }
         }
 
-        // --- 3. Filtering Mode Strategy ---
+        // --- Contacts Protection Card ---
         item {
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(14.dp),
                 colors = CardDefaults.cardColors(containerColor = colors.card),
-                border = CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(colors.line))
+                border = CardDefaults.outlinedCardBorder()
+                    .copy(brush = androidx.compose.ui.graphics.SolidColor(colors.line))
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(36.dp)
+                                .clip(CircleShape)
+                                .background(colors.accentSoft),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.Check,
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp),
+                                tint = colors.accent
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(12.dp))
+
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = "Contacts Protection",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = colors.ink
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = "All senders from your contacts are ALWAYS allowed",
+                                fontSize = 11.sp,
+                                color = colors.accent
+                            )
+                        }
+
+                        if (!hasContactPermission) {
+                            Button(
+                                onClick = onRequestContactPermission,
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = colors.ink,
+                                    contentColor = colors.bg
+                                ),
+                                shape = RoundedCornerShape(8.dp),
+                                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 5.dp)
+                            ) {
+                                Text(text = "Enable", fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                            }
+                        } else {
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(6.dp))
+                                    .background(colors.accentSoft)
+                                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                            ) {
+                                Text(
+                                    text = "ACTIVE",
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = colors.accent
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text(
+                        text = "F-Tele automatically allows any SMS from your phonebook contacts so you never miss messages from family, friends, or work.",
+                        fontSize = 11.sp,
+                        color = colors.sub
+                    )
+                }
+            }
+        }
+
+        // --- 3. Simple Protection Mode ---
+        item {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(14.dp),
+                colors = CardDefaults.cardColors(containerColor = colors.card),
+                border = CardDefaults.outlinedCardBorder()
+                    .copy(brush = androidx.compose.ui.graphics.SolidColor(colors.line))
             ) {
                 Column(
                     modifier = Modifier
@@ -280,21 +407,20 @@ fun SettingsScreen(
                         .padding(16.dp)
                 ) {
                     Text(
-                        text = "Filtering Strategy",
+                        text = "Protection Mode",
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
                         color = colors.ink
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(3.dp))
                     Text(
-                        text = "Choose how strictly F-Tele handles non-categorized SMS.",
+                        text = "Choose how strictly messages are filtered.",
                         fontSize = 11.sp,
                         color = colors.sub
                     )
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    // Strategy Selector (Clean Segmented Pill)
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -303,8 +429,8 @@ fun SettingsScreen(
                             .padding(2.dp)
                     ) {
                         listOf(
-                            "blocklist" to "Normal (Blocklist)",
-                            "allowlist" to "Strict (Allowlist)"
+                            "blocklist" to "Smart Protection (Recommended)",
+                            "allowlist" to "VIP Strict (All Muted)"
                         ).forEach { (mode, label) ->
                             val isSelected = currentMode == mode
                             Box(
@@ -318,7 +444,7 @@ fun SettingsScreen(
                             ) {
                                 Text(
                                     text = label,
-                                    fontSize = 12.sp,
+                                    fontSize = 11.sp,
                                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
                                     color = if (isSelected) colors.bg else colors.inkSoft
                                 )
@@ -330,9 +456,9 @@ fun SettingsScreen(
 
                     Text(
                         text = if (currentMode == "allowlist") {
-                            "Strict mode: every SMS is muted unless you explicitly allow it or it's protected."
+                            "VIP Mode: Mutes ALL incoming messages unless they are in your allow list or are critical bank OTPs."
                         } else {
-                            "Normal mode: only messages that match spam shields or block rules are muted."
+                            "Smart Mode: Only mutes known spam, promos, and lottery messages. Personal SMS and bank alerts always arrive normally."
                         },
                         fontSize = 11.sp,
                         color = colors.sub
@@ -341,13 +467,14 @@ fun SettingsScreen(
             }
         }
 
-        // --- 3. Appearance (Monochrome Theme Toggle) ---
+        // --- 4. Appearance (Light / Dark Theme) ---
         item {
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(14.dp),
                 colors = CardDefaults.cardColors(containerColor = colors.card),
-                border = CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(colors.line))
+                border = CardDefaults.outlinedCardBorder()
+                    .copy(brush = androidx.compose.ui.graphics.SolidColor(colors.line))
             ) {
                 Column(
                     modifier = Modifier
@@ -355,19 +482,13 @@ fun SettingsScreen(
                         .padding(16.dp)
                 ) {
                     Text(
-                        text = "Appearance",
+                        text = "App Theme",
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
                         color = colors.ink
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "Select application theme.",
-                        fontSize = 11.sp,
-                        color = colors.sub
-                    )
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
 
                     Row(
                         modifier = Modifier
@@ -377,7 +498,7 @@ fun SettingsScreen(
                             .padding(2.dp)
                     ) {
                         listOf(
-                            Triple("system", "System", Icons.Outlined.PhoneAndroid),
+                            Triple("system", "Auto", Icons.Outlined.PhoneAndroid),
                             Triple("light", "Light", Icons.Outlined.LightMode),
                             Triple("dark", "Dark", Icons.Outlined.DarkMode)
                         ).forEach { (theme, label, icon) ->
@@ -413,13 +534,14 @@ fun SettingsScreen(
             }
         }
 
-        // --- 4. Data Management ---
+        // --- 5. Data & Privacy ---
         item {
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(14.dp),
                 colors = CardDefaults.cardColors(containerColor = colors.card),
-                border = CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(colors.line))
+                border = CardDefaults.outlinedCardBorder()
+                    .copy(brush = androidx.compose.ui.graphics.SolidColor(colors.line))
             ) {
                 Column(
                     modifier = Modifier
@@ -427,19 +549,19 @@ fun SettingsScreen(
                         .padding(16.dp)
                 ) {
                     Text(
-                        text = "Data Management",
+                        text = "Activity History & Privacy",
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
                         color = colors.ink
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Clear past activity logs. Your custom rules and shield settings are preserved.",
+                        text = "Your messages never leave your phone. 100% offline with zero internet access.",
                         fontSize = 11.sp,
                         color = colors.sub
                     )
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
 
                     Button(
                         onClick = onClearLogs,
@@ -450,48 +572,13 @@ fun SettingsScreen(
                         shape = RoundedCornerShape(8.dp),
                         contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
                     ) {
-                        Icon(imageVector = Icons.Outlined.DeleteSweep, contentDescription = null, modifier = Modifier.size(15.dp))
+                        Icon(
+                            imageVector = Icons.Outlined.DeleteSweep,
+                            contentDescription = null,
+                            modifier = Modifier.size(15.dp)
+                        )
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text(text = "Clear Activity Log", fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
-                    }
-                }
-            }
-        }
-
-        // --- 5. Privacy Notice ---
-        item {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(14.dp),
-                colors = CardDefaults.cardColors(containerColor = colors.cardSoft),
-                border = CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(colors.lineSoft))
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(14.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Lock,
-                        contentDescription = null,
-                        modifier = Modifier.size(20.dp),
-                        tint = colors.sub
-                    )
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Column {
-                        Text(
-                            text = "100% Offline & Private",
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = colors.ink
-                        )
-                        Spacer(modifier = Modifier.height(2.dp))
-                        Text(
-                            text = "Zero network permissions. Evaluations run entirely on your device with no remote analytics.",
-                            fontSize = 11.sp,
-                            color = colors.sub
-                        )
+                        Text(text = "Clear Activity History", fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
                     }
                 }
             }

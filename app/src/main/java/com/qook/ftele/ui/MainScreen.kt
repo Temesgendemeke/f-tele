@@ -39,6 +39,8 @@ fun MainScreen(
     isEnabled: Boolean,
     onToggleMaster: (Boolean) -> Unit,
     hasPermission: Boolean,
+    hasContactPermission: Boolean,
+    onRequestContactPermission: () -> Unit,
     isIgnoringBattery: Boolean,
     deviceTip: String,
     activeShieldCount: Int,
@@ -53,8 +55,8 @@ fun MainScreen(
     onOpenBatterySettings: () -> Unit,
     onOpenAutostartSettings: () -> Unit,
     onClearLogs: () -> Unit,
-    onAllowSender: (String) -> Unit,
-    onBlockSender: (String) -> Unit,
+    onAllowPattern: (String) -> Unit,
+    onBlockPattern: (String) -> Unit,
     onSaveRule: (Rule) -> Unit,
     onToggleRule: (Rule) -> Unit,
     onRemoveRule: (Rule) -> Unit,
@@ -136,8 +138,8 @@ fun MainScreen(
                     onToggleProtection = { onToggleMaster(!isEnabled) },
                     onOpenPermissionSettings = onOpenPermissionSettings,
                     onClearLogs = onClearLogs,
-                    onAllowSender = onAllowSender,
-                    onBlockSender = onBlockSender
+                    onAllowPattern = onAllowPattern,
+                    onBlockPattern = onBlockPattern
                 )
                 1 -> ShieldsScreen(
                     categoryStates = categoryStates,
@@ -154,6 +156,8 @@ fun MainScreen(
                 3 -> SettingsScreen(
                     hasPermission = hasPermission,
                     isIgnoringBattery = isIgnoringBattery,
+                    hasContactPermission = hasContactPermission,
+                    onRequestContactPermission = onRequestContactPermission,
                     deviceTip = deviceTip,
                     currentMode = currentMode,
                     themeMode = themeMode,

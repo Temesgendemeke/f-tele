@@ -29,6 +29,7 @@ class MainActivity : ComponentActivity() {
     private var currentTab by mutableIntStateOf(0)
     private var isEnabled by mutableStateOf(true)
     private var hasPermission by mutableStateOf(false)
+    private var hasContactPermission by mutableStateOf(false)
     private var isIgnoringBattery by mutableStateOf(false)
     private var deviceTip by mutableStateOf("")
     private var currentMode by mutableStateOf("blocklist")
@@ -38,6 +39,15 @@ class MainActivity : ComponentActivity() {
     private var effectiveRules by mutableStateOf<List<Rule>>(emptyList())
     private var categoryStates by mutableStateOf<Map<String, Boolean>>(emptyMap())
     private var activeShieldCount by mutableIntStateOf(0)
+
+    private val contactPermissionLauncher = registerForActivityResult(
+        androidx.activity.result.contract.ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        hasContactPermission = granted
+        if (granted) {
+            Toast.makeText(this, "Contacts protection active.", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     private val refreshHandler = Handler(Looper.getMainLooper())
     private val refreshRunnable = object : Runnable {
@@ -62,6 +72,10 @@ class MainActivity : ComponentActivity() {
                     isEnabled = isEnabled,
                     onToggleMaster = { setMasterEnabled(it) },
                     hasPermission = hasPermission,
+                    hasContactPermission = hasContactPermission,
+                    onRequestContactPermission = {
+                        contactPermissionLauncher.launch(android.Manifest.permission.READ_CONTACTS)
+                    },
                     isIgnoringBattery = isIgnoringBattery,
                     deviceTip = deviceTip,
                     activeShieldCount = activeShieldCount,
@@ -90,8 +104,8 @@ class MainActivity : ComponentActivity() {
                         refreshLogs()
                         Toast.makeText(this, "Activity log cleared.", Toast.LENGTH_SHORT).show()
                     },
-                    onAllowSender = { toggleSenderRule(it, RuleAction.ALLOW) },
-                    onBlockSender = { toggleSenderRule(it, RuleAction.BLOCK) },
+                    onAllowPattern = { addPatternRule(it, RuleAction.ALLOW) },
+                    onBlockPattern = { addPatternRule(it, RuleAction.BLOCK) },
                     onSaveRule = { rule ->
                         val updated = customRules.toMutableList()
                         val existingIdx = updated.indexOfFirst { it.key == rule.key }
@@ -155,6 +169,7 @@ class MainActivity : ComponentActivity() {
         themeMode = RuleStore.getThemeMode(this)
         isIgnoringBattery = BackgroundHelper.isIgnoringBatteryOptimizations(this)
         deviceTip = BackgroundHelper.getDeviceTip()
+        hasContactPermission = com.qook.ftele.engine.ContactHelper.hasContactPermission(this)
         syncRulesAndCategories()
         refreshLogs()
         checkNotificationPermission()
@@ -186,20 +201,22 @@ class MainActivity : ComponentActivity() {
         hasPermission = flat.contains(packageName)
     }
 
-    private fun toggleSenderRule(sender: String, action: RuleAction) {
-        val cleanSender = sender.trim()
+    private fun addPatternRule(pattern: String, action: RuleAction) {
+        val clean = pattern.trim()
+        if (clean.isBlank()) return
+
         val rule = Rule(
             id = PatternPacks.newRuleId(),
             action = action,
-            target = RuleTarget.SENDER,
-            mode = MatchMode.EXACT,
-            value = cleanSender,
-            category = "Quick Action: $cleanSender",
+            target = RuleTarget.BODY,
+            mode = MatchMode.CONTAINS,
+            value = clean,
+            category = if (action == RuleAction.BLOCK) "Block Pattern: $clean" else "Allow Pattern: $clean",
             enabled = true
         )
         val updated = customRules.toMutableList()
         val existingIdx = updated.indexOfFirst {
-            it.target == RuleTarget.SENDER && Patterns.loose(it.value) == Patterns.loose(cleanSender)
+            it.target == RuleTarget.BODY && Patterns.loose(it.value) == Patterns.loose(clean)
         }
         if (existingIdx != -1) {
             updated[existingIdx] = rule
@@ -208,6 +225,7 @@ class MainActivity : ComponentActivity() {
         }
         RuleStore.saveCustomRules(this, updated)
         syncRulesAndCategories()
-        Toast.makeText(this, "Rule added for sender: $cleanSender", Toast.LENGTH_SHORT).show()
+        val actionText = if (action == RuleAction.BLOCK) "Blocked message pattern" else "Allowed message pattern"
+        Toast.makeText(this, "$actionText: \"$clean\"", Toast.LENGTH_SHORT).show()
     }
 }

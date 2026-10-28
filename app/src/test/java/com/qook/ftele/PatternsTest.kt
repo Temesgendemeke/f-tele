@@ -2,6 +2,7 @@ package com.qook.ftele
 
 import com.qook.ftele.engine.PatternPacks
 import com.qook.ftele.engine.Patterns
+import com.qook.ftele.engine.Simulations
 import com.qook.ftele.model.MatchMode
 import com.qook.ftele.model.Rule
 import com.qook.ftele.model.RuleAction
@@ -126,4 +127,44 @@ class PatternsTest {
             assertFalse("${cat.id} must be disabled by default", cat.defaultEnabled)
         }
     }
+
+    @Test
+    fun testTelecomPromoPatternsMuted() {
+        val rules = PatternPacks.CATEGORIES.first { it.id == "cat_telecom_promos" }.rules.map {
+            PatternPacks.presetToRule(it)
+        }
+        val promo1 = Patterns.decide(
+            rules,
+            "blocklist",
+            "ethiotel",
+            "ውድ ደንበኛችን ልዩ ቅናሽ! የ 50% ቦነስ የኢንተርኔት ጥቅል ይግዙ"
+        )
+        assertTrue("Promo message must be muted", promo1.mute)
+
+        val promo2 = Patterns.decide(
+            rules,
+            "blocklist",
+            "EthioTelecom",
+            "Download telebirr SuperApp and enjoy exclusive offer today!"
+        )
+        assertTrue("English promo offer must be muted", promo2.mute)
+    }
+
+    @Test
+    fun testAllSimulationSamples() {
+        val defaultRules = PatternPacks.CATEGORIES
+            .filter { it.defaultEnabled }
+            .flatMap { cat -> cat.rules.map { PatternPacks.presetToRule(it) } }
+
+        for (sample in Simulations.SAMPLES) {
+            val decision = Patterns.decide(defaultRules, "blocklist", sample.sender, sample.text)
+            val expectedMute = sample.expectedDecision.startsWith("Muted")
+            assertEquals(
+                "Sample from '${sample.sender}' expected ${sample.expectedDecision} but got mute=${decision.mute} (${decision.reason})",
+                expectedMute,
+                decision.mute
+            )
+        }
+    }
 }
+
