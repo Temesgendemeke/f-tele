@@ -118,7 +118,7 @@ fun SettingsScreen(
                                 fontWeight = FontWeight.Bold,
                                 color = colors.ink
                             )
-                            Spacer(modifier = Modifier.height(2.dp))
+                            Spacer(modifier = Modifier.height(1.dp))
                             Text(
                                 text = if (hasPermission) "Active Watching for spam" else "Action needed to block SMS",
                                 fontSize = 11.sp,
@@ -228,7 +228,7 @@ fun SettingsScreen(
                                 fontWeight = FontWeight.Bold,
                                 color = colors.ink
                             )
-                            Spacer(modifier = Modifier.height(2.dp))
+                            Spacer(modifier = Modifier.height(1.dp))
                             Text(
                                 text = if (isIgnoringBattery) "Unrestricted (Safe from battery killer)" else "May sleep when screen is locked",
                                 fontSize = 11.sp,
@@ -350,7 +350,7 @@ fun SettingsScreen(
                                 fontWeight = FontWeight.Bold,
                                 color = colors.ink
                             )
-                            Spacer(modifier = Modifier.height(2.dp))
+                            Spacer(modifier = Modifier.height(1.dp))
                             Text(
                                 text = "All senders from your contacts are ALWAYS allowed",
                                 fontSize = 11.sp,
@@ -479,81 +479,6 @@ fun SettingsScreen(
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
                         text = "Allows F-Tele to display and analyze promotional SMS received prior to app installation.",
-                        fontSize = 11.sp,
-                        color = colors.sub
-                    )
-                }
-            }
-        }
-
-        // --- 3. Simple Protection Mode ---
-        item {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(14.dp),
-                colors = CardDefaults.cardColors(containerColor = colors.card),
-                border = CardDefaults.outlinedCardBorder()
-                    .copy(brush = androidx.compose.ui.graphics.SolidColor(colors.line))
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                ) {
-                    Text(
-                        text = "Protection Mode",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = colors.ink
-                    )
-                    Spacer(modifier = Modifier.height(3.dp))
-                    Text(
-                        text = "Choose how strictly messages are filtered.",
-                        fontSize = 11.sp,
-                        color = colors.sub
-                    )
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(colors.cardSoft)
-                            .padding(2.dp)
-                    ) {
-                        listOf(
-                            "blocklist" to "Smart Protection (Recommended)",
-                            "allowlist" to "VIP Strict (All Muted)"
-                        ).forEach { (mode, label) ->
-                            val isSelected = currentMode == mode
-                            Box(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .clip(RoundedCornerShape(6.dp))
-                                    .background(if (isSelected) colors.ink else Color.Transparent)
-                                    .clickable { onChangeMode(mode) }
-                                    .padding(vertical = 8.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = label,
-                                    fontSize = 11.sp,
-                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                                    color = if (isSelected) colors.bg else colors.inkSoft
-                                )
-                            }
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Text(
-                        text = if (currentMode == "allowlist") {
-                            "VIP Mode: Mutes ALL incoming messages unless they are in your allow list or are critical bank OTPs."
-                        } else {
-                            "Smart Mode: Only mutes known spam, promos, and lottery messages. Personal SMS and bank alerts always arrive normally."
-                        },
                         fontSize = 11.sp,
                         color = colors.sub
                     )

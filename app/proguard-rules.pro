@@ -1,4 +1,4 @@
-# ProGuard / R8 rules for F*ck Tele native build
+# ProGuard / R8 rules for F-Tele native build
 -repackageclasses ''
 -allowaccessmodification
 

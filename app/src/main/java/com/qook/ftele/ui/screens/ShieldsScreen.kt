@@ -66,6 +66,7 @@ fun ShieldsScreen(
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
+
         // --- 2. Core & Spam Protection Shields ---
         item {
             Text(
@@ -151,14 +152,14 @@ private fun ShieldCategoryCard(
                     modifier = Modifier
                         .size(40.dp)
                         .clip(CircleShape)
-                        .background(if (category.isProtection) colors.accentSoft else colors.cardSoft),
+                        .background(colors.cardSoft),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = icon,
                         contentDescription = null,
                         modifier = Modifier.size(20.dp),
-                        tint = if (category.isProtection) colors.accent else colors.ink
+                        tint = colors.ink
                     )
                 }
 
@@ -172,7 +173,7 @@ private fun ShieldCategoryCard(
                         fontWeight = FontWeight.Bold,
                         color = colors.ink
                     )
-                    Spacer(modifier = Modifier.height(2.dp))
+                    Spacer(modifier = Modifier.height(1.dp))
                     Text(
                         text = "${category.rules.size} rules" + if (category.type == CategoryType.USER_PREFERENCE) " · Preference" else "",
                         fontSize = 11.sp,
@@ -181,22 +182,7 @@ private fun ShieldCategoryCard(
                 }
 
                 // Switch or Badge
-                if (category.isProtection) {
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(6.dp))
-                            .background(colors.accentSoft)
-                            .padding(horizontal = 8.dp, vertical = 4.dp)
-                    ) {
-                        Text(
-                            text = "CORE SHIELD",
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.Bold,
-                            letterSpacing = 0.5.sp,
-                            color = colors.accent
-                        )
-                    }
-                } else {
+                if (!category.isProtection) {
                     Switch(
                         checked = isEnabled,
                         onCheckedChange = onToggle,
