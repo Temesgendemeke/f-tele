@@ -66,35 +66,6 @@ fun ShieldsScreen(
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
-        // --- 1. Explanatory Header ---
-        item {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(14.dp),
-                colors = CardDefaults.cardColors(containerColor = colors.card),
-                border = CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(colors.line))
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                ) {
-                    Text(
-                        text = "Behavioral Protection",
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = colors.ink
-                    )
-                    Spacer(modifier = Modifier.height(2.dp))
-                    Text(
-                        text = "Pre-configured offline rules for telecom promos, scams, and banking protection.",
-                        fontSize = 12.sp,
-                        color = colors.sub
-                    )
-                }
-            }
-        }
-
         // --- 2. Core & Spam Protection Shields ---
         item {
             Text(

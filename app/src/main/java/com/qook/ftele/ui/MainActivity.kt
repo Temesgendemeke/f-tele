@@ -30,6 +30,7 @@ class MainActivity : ComponentActivity() {
     private var isEnabled by mutableStateOf(true)
     private var hasPermission by mutableStateOf(false)
     private var hasContactPermission by mutableStateOf(false)
+    private var hasSmsPermission by mutableStateOf(false)
     private var isIgnoringBattery by mutableStateOf(false)
     private var deviceTip by mutableStateOf("")
     private var currentMode by mutableStateOf("blocklist")
@@ -46,6 +47,17 @@ class MainActivity : ComponentActivity() {
         hasContactPermission = granted
         if (granted) {
             Toast.makeText(this, "Contacts protection active.", Toast.LENGTH_SHORT).show()
+            syncAllData()
+        }
+    }
+
+    private val smsPermissionLauncher = registerForActivityResult(
+        androidx.activity.result.contract.ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        hasSmsPermission = granted
+        if (granted) {
+            Toast.makeText(this, "SMS inbox history loaded.", Toast.LENGTH_SHORT).show()
+            syncAllData()
         }
     }
 
@@ -64,6 +76,10 @@ class MainActivity : ComponentActivity() {
         currentTab = savedInstanceState?.getInt("current_tab", 0) ?: 0
         syncAllData()
 
+        if (!com.qook.ftele.engine.SmsInboxHelper.hasSmsPermission(this)) {
+            smsPermissionLauncher.launch(android.Manifest.permission.READ_SMS)
+        }
+
         setContent {
             FTeleTheme(themeSetting = themeMode) {
                 MainScreen(
@@ -75,6 +91,10 @@ class MainActivity : ComponentActivity() {
                     hasContactPermission = hasContactPermission,
                     onRequestContactPermission = {
                         contactPermissionLauncher.launch(android.Manifest.permission.READ_CONTACTS)
+                    },
+                    hasSmsPermission = hasSmsPermission,
+                    onRequestSmsPermission = {
+                        smsPermissionLauncher.launch(android.Manifest.permission.READ_SMS)
                     },
                     isIgnoringBattery = isIgnoringBattery,
                     deviceTip = deviceTip,
@@ -170,6 +190,7 @@ class MainActivity : ComponentActivity() {
         isIgnoringBattery = BackgroundHelper.isIgnoringBatteryOptimizations(this)
         deviceTip = BackgroundHelper.getDeviceTip()
         hasContactPermission = com.qook.ftele.engine.ContactHelper.hasContactPermission(this)
+        hasSmsPermission = com.qook.ftele.engine.SmsInboxHelper.hasSmsPermission(this)
         syncRulesAndCategories()
         refreshLogs()
         checkNotificationPermission()
@@ -183,7 +204,25 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun refreshLogs() {
-        logs = RuleStore.getLogs(this)
+        val liveLogs = RuleStore.getLogs(this)
+        if (hasSmsPermission) {
+            Thread {
+                val inboxLogs = com.qook.ftele.engine.SmsInboxHelper.fetchInboxMessages(
+                    context = this,
+                    rules = effectiveRules,
+                    mode = currentMode,
+                    limit = 1000
+                )
+                val liveKeys = liveLogs.map { "${it.sender.trim().lowercase()}:::${Patterns.loose(it.text)}" }.toSet()
+                val uniqueInbox = inboxLogs.filter { "${it.sender.trim().lowercase()}:::${Patterns.loose(it.text)}" !in liveKeys }
+                val combined = (liveLogs + uniqueInbox).sortedByDescending { it.time }
+                runOnUiThread {
+                    logs = combined
+                }
+            }.start()
+        } else {
+            logs = liveLogs
+        }
     }
 
     private fun setMasterEnabled(enabled: Boolean) {

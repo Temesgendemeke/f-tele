@@ -41,6 +41,8 @@ fun MainScreen(
     hasPermission: Boolean,
     hasContactPermission: Boolean,
     onRequestContactPermission: () -> Unit,
+    hasSmsPermission: Boolean = true,
+    onRequestSmsPermission: () -> Unit = {},
     isIgnoringBattery: Boolean,
     deviceTip: String,
     activeShieldCount: Int,
@@ -84,7 +86,7 @@ fun MainScreen(
                 ) {
                     Column {
                         Text(
-                            text = if (currentTab == 0) "F-Tele Guard" else tab.title,
+                            text = if (currentTab == 0) "F-Tele" else tab.title,
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
                             color = colors.ink
@@ -131,6 +133,8 @@ fun MainScreen(
                 0 -> ActivityScreen(
                     isEnabled = isEnabled,
                     hasPermission = hasPermission,
+                    hasSmsPermission = hasSmsPermission,
+                    onRequestSmsPermission = onRequestSmsPermission,
                     activeShieldCount = activeShieldCount,
                     isStrict = currentMode == "allowlist",
                     logs = logs,
@@ -158,6 +162,8 @@ fun MainScreen(
                     isIgnoringBattery = isIgnoringBattery,
                     hasContactPermission = hasContactPermission,
                     onRequestContactPermission = onRequestContactPermission,
+                    hasSmsPermission = hasSmsPermission,
+                    onRequestSmsPermission = onRequestSmsPermission,
                     deviceTip = deviceTip,
                     currentMode = currentMode,
                     themeMode = themeMode,

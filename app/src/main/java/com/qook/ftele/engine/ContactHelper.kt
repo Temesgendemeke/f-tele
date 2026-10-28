@@ -65,13 +65,21 @@ object ContactHelper {
         ) == PackageManager.PERMISSION_GRANTED
     }
 
+    /**
+     * Checks if a phone number or sender display name exists in the user's saved contacts.
+     */
+    fun isContact(context: Context, sender: String): Boolean {
+        if (!hasContactPermission(context) || sender.isBlank()) return false
+        return isSavedInPhonebook(context, sender)
+    }
+
     private fun isContactUri(uriStr: String): Boolean {
         return uriStr.startsWith("content://com.android.contacts") ||
                uriStr.contains("contacts/lookup") ||
                uriStr.contains("contacts/people")
     }
 
-    private fun isSavedInPhonebook(context: Context, sender: String): Boolean {
+    fun isSavedInPhonebook(context: Context, sender: String): Boolean {
         val clean = sender.trim()
         if (clean.isBlank()) return false
 

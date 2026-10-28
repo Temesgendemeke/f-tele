@@ -74,6 +74,8 @@ data class AggregatedLogEntry(
 fun ActivityScreen(
     isEnabled: Boolean,
     hasPermission: Boolean,
+    hasSmsPermission: Boolean = true,
+    onRequestSmsPermission: () -> Unit = {},
     activeShieldCount: Int,
     isStrict: Boolean,
     logs: List<LogEntry>,
@@ -142,6 +144,13 @@ fun ActivityScreen(
         item {
             AnimatedVisibility(visible = !hasPermission) {
                 PermissionBanner(onOpenPermissionSettings = onOpenPermissionSettings)
+            }
+        }
+
+        // --- 2b. SMS Inbox History Permission Banner (if SMS permission missing) ---
+        item {
+            AnimatedVisibility(visible = !hasSmsPermission) {
+                SmsInboxPermissionBanner(onRequestSmsPermission = onRequestSmsPermission)
             }
         }
 
@@ -649,6 +658,69 @@ private fun PermissionBanner(onOpenPermissionSettings: () -> Unit) {
                 contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp)
             ) {
                 Text(text = "Grant", fontSize = 11.sp, fontWeight = FontWeight.Bold)
+            }
+        }
+    }
+}
+
+@Composable
+private fun SmsInboxPermissionBanner(onRequestSmsPermission: () -> Unit) {
+    val colors = FTeleTheme.colors
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(14.dp),
+        colors = CardDefaults.cardColors(containerColor = colors.card),
+        border = CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(colors.accent.copy(alpha = 0.4f)))
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(14.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(36.dp)
+                    .clip(CircleShape)
+                    .background(colors.accentSoft),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Inbox,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp),
+                    tint = colors.accent
+                )
+            }
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = "Load Pre-Install SMS History",
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = colors.ink
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = "Fetch and filter all messages received before installing F-Tele.",
+                    fontSize = 11.sp,
+                    color = colors.sub
+                )
+            }
+
+            Button(
+                onClick = onRequestSmsPermission,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = colors.accent,
+                    contentColor = Color.White
+                ),
+                shape = RoundedCornerShape(8.dp),
+                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp)
+            ) {
+                Text(text = "Fetch", fontSize = 11.sp, fontWeight = FontWeight.Bold)
             }
         }
     }

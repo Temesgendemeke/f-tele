@@ -23,6 +23,7 @@ import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.DeleteSweep
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Inbox
 import androidx.compose.material.icons.outlined.LightMode
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.PhoneAndroid
@@ -39,6 +40,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.qook.ftele.ui.theme.FTeleTheme
@@ -49,6 +52,8 @@ fun SettingsScreen(
     isIgnoringBattery: Boolean,
     hasContactPermission: Boolean,
     onRequestContactPermission: () -> Unit,
+    hasSmsPermission: Boolean = true,
+    onRequestSmsPermission: () -> Unit = {},
     deviceTip: String,
     currentMode: String,
     themeMode: String,
@@ -349,7 +354,7 @@ fun SettingsScreen(
                             Text(
                                 text = "All senders from your contacts are ALWAYS allowed",
                                 fontSize = 11.sp,
-                                color = colors.accent
+                                color = colors.sub
                             )
                         }
 
@@ -385,6 +390,95 @@ fun SettingsScreen(
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
                         text = "F-Tele automatically allows any SMS from your phonebook contacts so you never miss messages from family, friends, or work.",
+                        fontSize = 11.sp,
+                        color = colors.sub
+                    )
+                }
+            }
+        }
+
+        // --- SMS Inbox History Card ---
+        item {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(14.dp),
+                colors = CardDefaults.cardColors(containerColor = colors.card),
+                border = CardDefaults.outlinedCardBorder()
+                    .copy(brush = androidx.compose.ui.graphics.SolidColor(colors.line))
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(36.dp)
+                                .clip(CircleShape)
+                                .background(if (hasSmsPermission) colors.accentSoft else colors.cardSoft),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = if (hasSmsPermission) Icons.Outlined.Check else Icons.Outlined.Inbox,
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp),
+                                tint = if (hasSmsPermission) colors.accent else colors.sub
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(12.dp))
+
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = "SMS Inbox History",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = colors.ink
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = if (hasSmsPermission) "Past SMS before installation loaded" else "Grant SMS access to analyze past inbox messages",
+                                fontSize = 11.sp,
+                                color = colors.sub
+                            )
+                        }
+
+                        if (!hasSmsPermission) {
+                            Button(
+                                onClick = onRequestSmsPermission,
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = colors.ink,
+                                    contentColor = colors.bg
+                                ),
+                                shape = RoundedCornerShape(8.dp),
+                                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 5.dp)
+                            ) {
+                                Text(text = "Grant", fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                            }
+                        } else {
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(6.dp))
+                                    .background(colors.accentSoft)
+                                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                            ) {
+                                Text(
+                                    text = "LOADED",
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = colors.accent
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text(
+                        text = "Allows F-Tele to display and analyze promotional SMS received prior to app installation.",
                         fontSize = 11.sp,
                         color = colors.sub
                     )
