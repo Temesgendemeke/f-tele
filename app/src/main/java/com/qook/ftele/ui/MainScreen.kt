@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -80,27 +81,33 @@ fun MainScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 20.dp, vertical = 14.dp),
+                        .padding(horizontal = 20.dp, vertical = 12.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column {
+                    Column(
+                        modifier = Modifier.weight(1f, fill = false),
+                        verticalArrangement = Arrangement.Center
+                    ) {
                         Text(
                             text = if (currentTab == 0) "F-Tele" else tab.title,
                             fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
+                            fontWeight = FontWeight.ExtraBold,
+                            letterSpacing = (-0.3).sp,
                             color = colors.ink
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
                             text = if (currentTab == 0) "Offline SMS spam protection" else tab.subtitle,
                             fontSize = 12.sp,
+                            fontWeight = FontWeight.Medium,
                             color = colors.sub
                         )
                     }
 
                     // Master Protection Switch on Tab 0 (Activity)
                     if (currentTab == 0) {
+                        Spacer(modifier = Modifier.width(12.dp))
                         Switch(
                             checked = isEnabled,
                             onCheckedChange = onToggleMaster,

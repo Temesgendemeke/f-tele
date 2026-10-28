@@ -127,7 +127,7 @@ fun RulesScreen(
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(8.dp))
                             .background(colors.cardSoft)
-                            .padding(2.dp)
+                            .padding(3.dp)
                     ) {
                         listOf(
                             "Block Sender",
@@ -146,12 +146,12 @@ fun RulesScreen(
                                     .clip(RoundedCornerShape(6.dp))
                                     .background(bgColor)
                                     .clickable { selectedTab = idx }
-                                    .padding(vertical = 7.dp),
+                                    .padding(vertical = 8.dp),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
                                     text = label,
-                                    fontSize = 11.sp,
+                                    fontSize = 11.5.sp,
                                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
                                     color = if (isSelected) Color.White else colors.inkSoft
                                 )
@@ -323,9 +323,11 @@ fun RulesScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "No custom rules yet. Rules you add above or via 'Block Sender' in Activity will appear here.",
+                            text = "No custom rules yet. Rules you add above or via 'Block Pattern' in Activity will appear here.",
                             fontSize = 12.sp,
-                            color = colors.sub
+                            lineHeight = 17.sp,
+                            color = colors.sub,
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
                         )
                     }
                 }

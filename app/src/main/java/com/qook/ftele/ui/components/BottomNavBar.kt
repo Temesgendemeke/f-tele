@@ -45,7 +45,7 @@ sealed class ScreenTab(
 ) {
     data object Activity : ScreenTab(0, "Activity", "Live SMS notifications", Icons.Outlined.Inbox)
     data object Shields : ScreenTab(1, "Shields", "Behavioral protection packs", Icons.Outlined.Security)
-    data object Rules : ScreenTab(2, "Rules", "Custom keyword & regex filters", Icons.Outlined.Tune)
+    data object Rules : ScreenTab(2, "Rules", "Custom keyword and pattern filters", Icons.Outlined.Tune)
     data object Settings : ScreenTab(3, "Settings", "Strategy & notification access", Icons.Outlined.Settings)
 
     companion object {

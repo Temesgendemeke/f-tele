@@ -221,17 +221,22 @@ fun SettingsScreen(
 
                         Spacer(modifier = Modifier.width(12.dp))
 
-                        Column(modifier = Modifier.weight(1f)) {
+                        Column(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(end = 8.dp)
+                        ) {
                             Text(
                                 text = "Background Protection",
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = colors.ink
                             )
-                            Spacer(modifier = Modifier.height(1.dp))
+                            Spacer(modifier = Modifier.height(2.dp))
                             Text(
                                 text = if (isIgnoringBattery) "Unrestricted (Safe from battery killer)" else "May sleep when screen is locked",
                                 fontSize = 11.sp,
+                                lineHeight = 15.sp,
                                 color = colors.sub
                             )
                         }
@@ -243,7 +248,7 @@ fun SettingsScreen(
                                 contentColor = if (isIgnoringBattery) colors.ink else colors.bg
                             ),
                             shape = RoundedCornerShape(8.dp),
-                            contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp)
+                            contentPadding = PaddingValues(horizontal = 11.dp, vertical = 6.dp)
                         ) {
                             Text(
                                 text = if (isIgnoringBattery) "Review" else "Keep Running",

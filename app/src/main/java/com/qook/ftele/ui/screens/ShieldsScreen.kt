@@ -166,17 +166,22 @@ private fun ShieldCategoryCard(
                 Spacer(modifier = Modifier.width(12.dp))
 
                 // Title & rule count
-                Column(modifier = Modifier.weight(1f)) {
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 8.dp)
+                ) {
                     Text(
                         text = category.title,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
                         color = colors.ink
                     )
-                    Spacer(modifier = Modifier.height(1.dp))
+                    Spacer(modifier = Modifier.height(2.dp))
                     Text(
                         text = "${category.rules.size} rules" + if (category.type == CategoryType.USER_PREFERENCE) " · Preference" else "",
                         fontSize = 11.sp,
+                        fontWeight = FontWeight.Medium,
                         color = colors.sub
                     )
                 }

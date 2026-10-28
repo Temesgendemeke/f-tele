@@ -174,29 +174,35 @@ fun ActivityScreen(
             ) {
                 Text(
                     text = "Activity (${aggregatedLogs.size})",
-                    fontSize = 15.sp,
+                    fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
+                    letterSpacing = 0.3.sp,
                     color = colors.ink
                 )
 
                 if (aggregatedLogs.isNotEmpty()) {
-                    Button(
-                        onClick = onClearLogs,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = colors.cardSoft,
-                            contentColor = colors.sub
-                        ),
-                        shape = RoundedCornerShape(8.dp),
-                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(colors.cardSoft)
+                            .clickable { onClearLogs() }
+                            .padding(horizontal = 9.dp, vertical = 5.dp)
                     ) {
-                        Icon(
-                            imageVector = Icons.Outlined.DeleteOutline,
-                            contentDescription = "Clear",
-                            modifier = Modifier.size(15.dp),
-                            tint = colors.sub
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(text = "Clear", fontSize = 11.sp, color = colors.sub)
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Outlined.DeleteOutline,
+                                contentDescription = "Clear",
+                                modifier = Modifier.size(14.dp),
+                                tint = colors.sub
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = "Clear",
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = colors.sub
+                            )
+                        }
                     }
                 }
             }
@@ -864,22 +870,23 @@ private fun LogItemCard(
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(6.dp))
+                        .background(colors.cardSoft)
                         .border(1.dp, colors.line, RoundedCornerShape(6.dp))
                         .clickable { onAllowPatternClick() }
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                        .padding(horizontal = 10.dp, vertical = 6.dp)
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             imageVector = Icons.Outlined.Check,
                             contentDescription = null,
-                            modifier = Modifier.size(12.dp),
+                            modifier = Modifier.size(13.dp),
                             tint = colors.accent
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
                             text = "Always Allow",
                             fontSize = 11.sp,
-                            fontWeight = FontWeight.Medium,
+                            fontWeight = FontWeight.SemiBold,
                             color = colors.ink
                         )
                     }
@@ -891,22 +898,23 @@ private fun LogItemCard(
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(6.dp))
+                        .background(colors.cardSoft)
                         .border(1.dp, colors.line, RoundedCornerShape(6.dp))
                         .clickable { onBlockPatternClick() }
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                        .padding(horizontal = 10.dp, vertical = 6.dp)
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             imageVector = Icons.Outlined.Close,
                             contentDescription = null,
-                            modifier = Modifier.size(12.dp),
+                            modifier = Modifier.size(13.dp),
                             tint = colors.block
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
                             text = "Block Pattern",
                             fontSize = 11.sp,
-                            fontWeight = FontWeight.Medium,
+                            fontWeight = FontWeight.SemiBold,
                             color = colors.ink
                         )
                     }
