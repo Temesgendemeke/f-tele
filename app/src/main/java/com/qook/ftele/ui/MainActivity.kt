@@ -193,6 +193,9 @@ class MainActivity : ComponentActivity() {
         hasSmsPermission = com.qook.ftele.engine.SmsInboxHelper.hasSmsPermission(this)
         syncRulesAndCategories()
         refreshLogs()
+        if (hasSmsPermission) {
+            loadInboxSmsAsync()
+        }
         checkNotificationPermission()
     }
 
@@ -203,23 +206,41 @@ class MainActivity : ComponentActivity() {
         activeShieldCount = PatternPacks.CATEGORIES.count { categoryStates[it.id] == true }
     }
 
-    private fun refreshLogs() {
-        val liveLogs = RuleStore.getLogs(this)
-        if (hasSmsPermission) {
-            Thread {
-                val inboxLogs = com.qook.ftele.engine.SmsInboxHelper.fetchInboxMessages(
+    private var cachedInboxLogs: List<LogEntry> = emptyList()
+    @Volatile private var isFetchingInbox = false
+
+    private fun loadInboxSmsAsync() {
+        if (!hasSmsPermission || isFetchingInbox) return
+        isFetchingInbox = true
+        Thread {
+            try {
+                val fetched = com.qook.ftele.engine.SmsInboxHelper.fetchInboxMessages(
                     context = this,
                     rules = effectiveRules,
                     mode = currentMode,
-                    limit = 1000
+                    limit = 500
                 )
-                val liveKeys = liveLogs.map { "${it.sender.trim().lowercase()}:::${Patterns.loose(it.text)}" }.toSet()
-                val uniqueInbox = inboxLogs.filter { "${it.sender.trim().lowercase()}:::${Patterns.loose(it.text)}" !in liveKeys }
-                val combined = (liveLogs + uniqueInbox).sortedByDescending { it.time }
                 runOnUiThread {
-                    logs = combined
+                    cachedInboxLogs = fetched
+                    isFetchingInbox = false
+                    updateMergedLogs()
                 }
-            }.start()
+            } catch (e: Exception) {
+                isFetchingInbox = false
+            }
+        }.start()
+    }
+
+    private fun refreshLogs() {
+        updateMergedLogs()
+    }
+
+    private fun updateMergedLogs() {
+        val liveLogs = RuleStore.getLogs(this)
+        if (cachedInboxLogs.isNotEmpty()) {
+            val liveKeys = liveLogs.map { "${it.sender.trim().lowercase()}:::${Patterns.loose(it.text)}" }.toSet()
+            val uniqueInbox = cachedInboxLogs.filter { "${it.sender.trim().lowercase()}:::${Patterns.loose(it.text)}" !in liveKeys }
+            logs = (liveLogs + uniqueInbox).sortedByDescending { it.time }
         } else {
             logs = liveLogs
         }
